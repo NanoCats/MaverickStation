@@ -15,7 +15,7 @@
 
 /datum/supply_pack/service/frontier_kitchen
 	name = "Frontier Kitchen Equipment"
-	desc = "A range of frontier appliance classics, enough to set up a functioning kitchen no matter where you are in the galaxy. Flatpacked contents cannot be deployed on station."
+	desc = "A range of frontier appliance classics, enough to set up a functioning kitchen no matter where you are in the galaxy."
 	cost = CARGO_CRATE_VALUE * 5
 	contains = list(
 		/obj/item/flatpacked_machine/water_synth,
@@ -31,7 +31,7 @@
 
 /datum/supply_pack/engineering/colony_starter
 	name = "Colonization Starter Kit"
-	desc = "The Sol standard minimum kit for frontier colonization, contains everything you need to construct a mostly functioning colony in most places across the galaxy. Flatpacked contents cannot be deployed on station."
+	desc = "The Sol standard minimum kit for frontier colonization, contains everything you need to construct a mostly functioning colony in most places across the galaxy."
 	cost = CARGO_CRATE_VALUE * 35 // 30 for the lathe, the rest for the organics printer and supplies
 	contains = list(
 		/obj/item/flatpacked_machine,

@@ -6,3 +6,5 @@ If a later upstream PR builds on a vetoed one, the sync flags it for a new decis
 
 | Upstream | PR | Title | Vetoed on | Reason |
 |----------|----|-------|-----------|--------|
+| Bubberstation | #6471 | Restricts the colony gear to not be used on-station. | 2026-11-19 | Colony gear works on station on MaverickStation. Fully reverted. |
+| Bubberstation | #6486 | Fixes colony core flatpacker oversights + lack of cargo descriptions | 2026-11-19 | Partial. The flatpacker block and the "cannot be deployed on station" text are removed. The flatpacked kitchen crate contents and the description cleanup are kept. |
