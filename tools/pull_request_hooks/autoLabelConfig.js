@@ -69,6 +69,12 @@ export const cleared_on_push = ['Testing Completed'];
 
 // When the key label is on a PR, the bot removes the listed labels.
 // A push clears Testing Completed, so Needs Playtest comes back by itself.
+// Old label name -> new label name. PR history keeps the name a label had
+// when it was applied, so list every rename here or the bot re-adds the old one.
+export const renamed_labels = {
+  'needs-playtest': 'Needs Playtest',
+};
+
 export const replaced_labels = {
   'Testing Completed': ['Needs Playtest'],
 };

@@ -254,10 +254,15 @@ export async function get_updated_label_set({ github, context }) {
       if (eventData.actor?.login === 'github-actions[bot]') {
         continue;
       }
+      // MAVERICK EDIT BEGIN - old events keep a renamed label's old name
+      const label_name =
+        autoLabelConfig.renamed_labels?.[eventData.label.name] ??
+        eventData.label.name;
+      // MAVERICK EDIT END
       if (eventData.event === 'labeled') {
-        updated_labels.add(eventData.label.name);
+        updated_labels.add(label_name); // MAVERICK EDIT - renamed labels
       } else if (eventData.event === 'unlabeled') {
-        updated_labels.delete(eventData.label.name);
+        updated_labels.delete(label_name); // MAVERICK EDIT - renamed labels
       }
     }
   } catch (error) {
