@@ -11,6 +11,8 @@ import { useBackend } from '../backend';
 import { Window } from '../layouts';
 
 type Data = {
+  ask_age: boolean;
+  policy_text: string;
   current_year: number;
   current_month: number;
   current_day: number;
@@ -71,67 +73,82 @@ export const AgeGate = (props) => {
   const dayValid = !!day && day <= dayCount;
   const age = year && month && dayValid ? ageOn(year, month, day, data) : null;
   const dateValid = age !== null && age >= 0 && age <= data.max_age;
+  const canSubmit = !data.ask_age || dateValid;
 
   return (
-    <Window width={420} height={250} title="Date of Birth">
+    <Window width={560} height={data.ask_age ? 640 : 560} title="Welcome">
       <Window.Content>
-        <Section fill>
-          <Stack vertical fill>
+        <Stack vertical fill>
+          <Stack.Item>
+            <Box>
+              {data.ask_age
+                ? 'This server is for adults only, and we keep as little of your data as we can. Read what we collect, then enter your date of birth.'
+                : 'Our privacy policy has changed. Please read it and agree to continue.'}
+            </Box>
+          </Stack.Item>
+          <Stack.Item grow>
+            <Section fill scrollable title="Privacy policy">
+              <Box style={{ whiteSpace: 'pre-wrap' }}>{data.policy_text}</Box>
+            </Section>
+          </Stack.Item>
+          {data.ask_age && (
             <Stack.Item>
-              <Box>
-                This server is for adults only. Enter your date of birth to
-                continue. We only keep whether you passed, not the date.
-              </Box>
+              <Section title="Date of birth">
+                <Stack>
+                  <Stack.Item grow>
+                    <Dropdown
+                      width="100%"
+                      placeholder="Month"
+                      selected={month ? MONTHS[month - 1] : null}
+                      options={MONTHS}
+                      onSelected={(value) =>
+                        setMonth(MONTHS.indexOf(value) + 1)
+                      }
+                    />
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Dropdown
+                      width="70px"
+                      placeholder="Day"
+                      selected={dayValid ? String(day) : null}
+                      options={dayOptions}
+                      onSelected={(value) => setDay(Number(value))}
+                    />
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Dropdown
+                      width="90px"
+                      placeholder="Year"
+                      selected={year ? String(year) : null}
+                      options={yearOptions}
+                      onSelected={(value) => setYear(Number(value))}
+                    />
+                  </Stack.Item>
+                </Stack>
+                {age !== null && !dateValid && (
+                  <NoticeBox danger mt={1} mb={0}>
+                    That date is not valid.
+                  </NoticeBox>
+                )}
+                <Box mt={1} color="label">
+                  We only keep whether you passed. Your date of birth never
+                  leaves your computer.
+                </Box>
+              </Section>
             </Stack.Item>
-            <Stack.Item>
-              <Stack>
-                <Stack.Item grow>
-                  <Dropdown
-                    width="100%"
-                    placeholder="Month"
-                    selected={month ? MONTHS[month - 1] : null}
-                    options={MONTHS}
-                    onSelected={(value) => setMonth(MONTHS.indexOf(value) + 1)}
-                  />
-                </Stack.Item>
-                <Stack.Item>
-                  <Dropdown
-                    width="70px"
-                    placeholder="Day"
-                    selected={dayValid ? String(day) : null}
-                    options={dayOptions}
-                    onSelected={(value) => setDay(Number(value))}
-                  />
-                </Stack.Item>
-                <Stack.Item>
-                  <Dropdown
-                    width="90px"
-                    placeholder="Year"
-                    selected={year ? String(year) : null}
-                    options={yearOptions}
-                    onSelected={(value) => setYear(Number(value))}
-                  />
-                </Stack.Item>
-              </Stack>
-            </Stack.Item>
-            <Stack.Item grow>
-              {age !== null && !dateValid && (
-                <NoticeBox danger>That date is not valid.</NoticeBox>
-              )}
-            </Stack.Item>
-            <Stack.Item>
-              <Button
-                fluid
-                textAlign="center"
-                color="good"
-                disabled={!dateValid}
-                onClick={() => act('submit', { age })}
-              >
-                Continue
-              </Button>
-            </Stack.Item>
-          </Stack>
-        </Section>
+          )}
+          <Stack.Item>
+            <Button
+              fluid
+              textAlign="center"
+              color="good"
+              disabled={!canSubmit}
+              onClick={() => act('submit', data.ask_age ? { age } : {})}
+            >
+              Agree and continue
+            </Button>
+          </Stack.Item>
+        </Stack>
       </Window.Content>
     </Window>
   );

@@ -7372,6 +7372,7 @@
 #include "modular_maverick\code\modules\age_gate\age_gate_prompt.dm"
 #include "modular_maverick\code\modules\age_gate\age_gate_subsystem.dm"
 #include "modular_maverick\code\modules\age_gate\config.dm"
+#include "modular_maverick\code\modules\log_retention\log_retention.dm"
 #include "modular_skyrat\master_files\code\_globalvars\configuration.dm"
 #include "modular_skyrat\master_files\code\_globalvars\regexes.dm"
 #include "modular_skyrat\master_files\code\_globalvars\religion.dm"

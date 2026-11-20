@@ -1,4 +1,4 @@
-/// Asks this client for their date of birth if they have not passed the age gate yet. Can sleep.
+/// Opens the welcome window (privacy policy and age gate) if this client still needs it. Can sleep.
 /client/proc/prompt_age_gate()
 	if(!SSage_gate.needs_check(src))
 		return
@@ -16,7 +16,7 @@
 // Lobby buttons on the title screen come in as hrefs. Joining, readying and observing wait for the age gate.
 /client/Topic(href, href_list, hsrc, hsrc_command)
 	if(isnewplayer(hsrc) && (href_list["toggle_ready"] || href_list["late_join"] || href_list["observe"]) && SSage_gate.needs_check(src))
-		to_chat(src, span_warning("You need to enter your date of birth before you can play."))
+		to_chat(src, span_warning("You need to finish the welcome window before you can play."))
 		INVOKE_ASYNC(src, PROC_REF(prompt_age_gate))
 		return
 	return ..()
@@ -44,5 +44,5 @@
 	log_access("Failed Login: [key] [address]-[computer_id] - banned by the age gate")
 	return list("reason" = "age gate", "desc" = "\nReason: Age verification failed. This server is for adults only.")
 
-ADMIN_VERB(test_age_gate, R_ADMIN, "Test Age Gate", "Opens the age gate window for yourself. Failing it as an admin does not ban you.", ADMIN_CATEGORY_DEBUG)
-	SSage_gate.open_prompt(user)
+ADMIN_VERB(test_age_gate, R_ADMIN, "Test Age Gate", "Opens the welcome window with the age check for yourself. Failing it as an admin does not ban you.", ADMIN_CATEGORY_DEBUG)
+	SSage_gate.open_prompt(user, test_age = TRUE)
