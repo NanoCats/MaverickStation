@@ -1,7 +1,4 @@
-// Makes the policing MODsuit buildable by the crew, and tones it down to a modest upgrade over the security suit.
-
-/datum/mod_theme/policing
-	plating_colors = "#2f3a5c#5a8dff"
+// Makes the policing MODsuit buildable by the crew, and tunes it to a small but clear upgrade over the security suit.
 
 // Set in New() because the theme's own definition compiles after this file and would win a plain var override.
 /datum/mod_theme/policing/New()
@@ -9,22 +6,24 @@
 	hearing_protection = EAR_PROTECTION_NORMAL
 	return ..()
 
+// Equal to or better than the security suit in every category.
 /datum/armor/mod_theme_policing/maverick
 	melee = 40
 	bullet = 35
 	laser = 30
-	energy = 30
+	energy = 40
 	bomb = 40
 	bio = 100
-	fire = 75
+	fire = 100
 	acid = 75
 	wound = 20
 
 /obj/item/mod/construction/plating/policing
 	theme = /datum/mod_theme/policing
 	post_init_icon_state = "plating"
-	greyscale_config = /datum/greyscale_config/mod_plating
-	greyscale_colors = "#2f3a5c#5a8dff"
+	// Red and blue stripe, like the lights on a patrol car.
+	greyscale_config = /datum/greyscale_config/mod_plating/split
+	greyscale_colors = "#2f3a5c#e0303a#4a8cff"
 	custom_materials = list(
 		/datum/material/iron = SHEET_MATERIAL_AMOUNT * 3,
 		/datum/material/titanium = SHEET_MATERIAL_AMOUNT,

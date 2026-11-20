@@ -13,6 +13,11 @@
 	icon_file = 'modular_maverick/icons/obj/clothing/modsuit/mod_plating_greyscale.dmi'
 	json_config = 'modular_maverick/code/datums/greyscale/json_configs/mod_plating.json'
 
+/// Same plating with a two-tone stripe.
+/datum/greyscale_config/mod_plating/split
+	name = "MOD External Plating (Split Stripe)"
+	json_config = 'modular_maverick/code/datums/greyscale/json_configs/mod_plating_split.json'
+
 /datum/mod_theme
 	/// GAGS colors ("#body#accent") for the generated plating sprite.
 	/// Only used when the theme has no hand-made plating sprite. Derived from the suit sprites when null.
@@ -99,7 +104,10 @@
 		return
 	var/datum/mod_theme/used_theme = GLOB.mod_themes[theme]
 	icon_state = "plating"
-	set_greyscale(greyscale_colors || used_theme.get_plating_colors(), /datum/greyscale_config/mod_plating)
+	if(greyscale_config && greyscale_colors)
+		set_greyscale(greyscale_colors, greyscale_config)
+		return
+	set_greyscale(used_theme.get_plating_colors(), /datum/greyscale_config/mod_plating)
 
 #undef MOD_PLATING_FALLBACK_COLORS
 #undef MOD_PLATING_MIN_VALUE

@@ -7368,6 +7368,7 @@
 #include "interface\fonts\spess_font.dm"
 #include "interface\fonts\tiny_unicode.dm"
 #include "interface\fonts\vcr_osd_mono.dm"
+#include "modular_maverick\code\modules\mod\mod_plating_colors.dm"
 #include "modular_maverick\code\modules\mod\mod_plating_gags.dm"
 #include "modular_maverick\code\modules\mod\mod_platings.dm"
 #include "modular_maverick\code\modules\mod\policing_plating.dm"
