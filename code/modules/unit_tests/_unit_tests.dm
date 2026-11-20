@@ -385,6 +385,9 @@
 #include "~zubbers\antag_prompt_timing.dm"
 #include "~zubbers\vitezstvi_turret_flags.dm"
 // SKYRAT EDIT END
+// MAVERICK EDIT BEGIN - Maverick unit tests
+#include "~maverick\mod_gags.dm"
+// MAVERICK EDIT END
 // END_INCLUDE
 #ifdef REFERENCE_TRACKING_DEBUG //Don't try and parse this file if ref tracking isn't turned on. IE: don't parse ref tracking please mr linter
 #include "find_reference_sanity.dm"

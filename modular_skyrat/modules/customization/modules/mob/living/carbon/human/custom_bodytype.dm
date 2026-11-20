@@ -106,7 +106,8 @@
 	var/fallback_greyscale_colors
 
 	// If this outfit is already GAGs, use the existing colors.
-	if(item.greyscale_colors)
+	// Items with sample_worn_colors_for_fallback are sampled from their worn sprite instead, because their color order does not match the fallback.
+	if(item.greyscale_colors && !item.sample_worn_colors_for_fallback) // MAVERICK EDIT - MODsuit GAGS - Original: if(item.greyscale_colors)
 		// Just use the colors already given to us, but re-align to expected colors.
 		var/list/colors = SSgreyscale.ParseColorString(item.greyscale_colors)
 		var/default_color = (length(colors) >= 1) ? colors[1] : COLOR_DARK
