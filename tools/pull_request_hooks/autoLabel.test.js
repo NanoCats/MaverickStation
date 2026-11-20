@@ -151,5 +151,19 @@ assert.ok(
   !labels.includes('Testing Completed'),
   'push clears Testing Completed',
 );
+labels = await run(
+  'synchronize',
+  'Thing',
+  ['modular_maverick/a.dm'],
+  [
+    {
+      event: 'labeled',
+      actor: { login: 'NanoCats' },
+      label: { name: 'needs-playtest' },
+    },
+  ],
+);
+assert.ok(labels.includes('Needs Playtest'), 'old label name maps to new name');
+assert.ok(!labels.includes('needs-playtest'), 'old label name is not re-added');
 console.log('Maverick label tests passed');
 // MAVERICK EDIT END
