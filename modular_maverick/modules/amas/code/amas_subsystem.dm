@@ -14,8 +14,6 @@ SUBSYSTEM_DEF(amas)
 	var/list/datum/amas_watchdog/watchdogs = list()
 	/// Every automaton in the round
 	var/list/mob/living/carbon/human/automatons = list()
-	/// Names already given out this round, so no two automatons share one
-	var/list/used_names = list()
 
 /datum/controller/subsystem/amas/Initialize()
 	if(CONFIG_GET(flag/amas_disabled))
@@ -53,12 +51,3 @@ SUBSYSTEM_DEF(amas)
 /datum/controller/subsystem/amas/proc/on_automaton_deleted(mob/living/carbon/human/automaton)
 	SIGNAL_HANDLER
 	automatons -= automaton
-
-/// Returns a free automaton name like "MCS-4127"
-/datum/controller/subsystem/amas/proc/generate_automaton_name()
-	var/new_name
-	do
-		new_name = "[AMAS_AUTOMATON_NAME_PREFIX]-[rand(1000, 9999)]"
-	while(used_names[new_name])
-	used_names[new_name] = TRUE
-	return new_name

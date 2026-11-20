@@ -16,7 +16,7 @@ Rules the module follows:
 
 - `SSamas` runs watchdogs. The materials watchdog measures ore silo inflow against a target that scales with living players.
 - A shortfall that lasts past its grace period is logged. Dispatch is not built yet.
-- Automatons can be spawned by admins. They have the job outfit, ID, access and a bank account, and no AI yet.
+- Automatons can be spawned by admins. They have the job outfit, ID, access, a bank account and a random name and gender, and no AI yet.
 
 ### Admin verbs (Debug tab)
 
