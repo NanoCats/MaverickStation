@@ -37,7 +37,42 @@ export const file_labels = {
     filepaths: ['tgui/'],
     add_only: true,
   },
+  // MAVERICK EDIT BEGIN - colony gear must never be restricted, so flag any PR that touches it
+  'Colony Gear': {
+    filepaths: [
+      'colony_fabricator/',
+      'kahraman_equipment/',
+      'colony_gear/',
+      'company_imports/akh_frontier',
+      'company_imports/kahraman',
+      'frontiertoolsdisk',
+    ],
+  },
+  // MAVERICK EDIT END
 };
+
+// MAVERICK EDIT BEGIN - outside labels
+// Outside Labels
+//
+// Add a label if any changed file is NOT under one of the given paths.
+// Files listed in ignore are skipped entirely (they do not count either way).
+export const outside_labels = {
+  'Upstream File Edit': {
+    allowed_paths: ['modular_maverick/', 'maverick/'],
+    ignore: ['tgstation.dme'],
+  },
+};
+
+// Labels that leadership applies by hand after a test, and that the bot takes
+// off again when new commits are pushed, since the old test no longer covers them.
+export const cleared_on_push = ['Testing Completed'];
+
+// When the key label is on a PR, the bot removes the listed labels.
+// A push clears Testing Completed, so Needs Playtest comes back by itself.
+export const replaced_labels = {
+  'Testing Completed': ['Needs Playtest'],
+};
+// MAVERICK EDIT END
 
 // Title Labels
 //
@@ -67,6 +102,16 @@ export const title_labels = {
   'Test Merge Only': {
     keywords: ['[tm only]', '[test merge only]'],
   },
+  // MAVERICK EDIT BEGIN - Maverick title labels
+  'Upstream Sync': {
+    keywords: ['[sync]', 'upstream sync'],
+  },
+  // whole_word so "report", "support" and "teleport" do not match
+  Port: {
+    keywords: ['port', 'ports', 'ported', 'porting'],
+    whole_word: true,
+  },
+  // MAVERICK EDIT END
 };
 
 // Changelog Labels
