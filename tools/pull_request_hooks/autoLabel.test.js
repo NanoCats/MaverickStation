@@ -135,5 +135,21 @@ for (const t of ['Fix report console', 'Teleporter support', 'Portable fan']) {
   labels = await run('opened', t, [], []);
   assert.ok(!labels.includes('Port'), `no Port label for "${t}"`);
 }
+const playtest = [
+  {
+    event: 'labeled',
+    actor: { login: 'NanoCats' },
+    label: { name: 'Needs Playtest' },
+  },
+  ...tested,
+];
+labels = await run('labeled', 'Thing', ['modular_maverick/a.dm'], playtest);
+assert.ok(!labels.includes('Needs Playtest'), 'tested PR drops Needs Playtest');
+labels = await run('synchronize', 'Thing', ['modular_maverick/a.dm'], playtest);
+assert.ok(labels.includes('Needs Playtest'), 'push brings Needs Playtest back');
+assert.ok(
+  !labels.includes('Testing Completed'),
+  'push clears Testing Completed',
+);
 console.log('Maverick label tests passed');
 // MAVERICK EDIT END

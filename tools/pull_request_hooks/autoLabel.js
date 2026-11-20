@@ -271,10 +271,18 @@ export async function get_updated_label_set({ github, context }) {
   // Always remove Test Merge Candidate
   updated_labels.delete('Test Merge Candidate');
 
-  // MAVERICK EDIT BEGIN - new commits invalidate an earlier test
+  // MAVERICK EDIT BEGIN - new commits invalidate an earlier test, and a test replaces the playtest flag
   if (context.payload.action === 'synchronize') {
     for (const label of autoLabelConfig.cleared_on_push ?? []) {
       updated_labels.delete(label);
+    }
+  }
+  for (const [label, replaced] of Object.entries(
+    autoLabelConfig.replaced_labels ?? {},
+  )) {
+    if (!updated_labels.has(label)) continue;
+    for (const old_label of replaced) {
+      updated_labels.delete(old_label);
     }
   }
   // MAVERICK EDIT END

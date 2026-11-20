@@ -66,6 +66,12 @@ export const outside_labels = {
 // Labels that leadership applies by hand after a test, and that the bot takes
 // off again when new commits are pushed, since the old test no longer covers them.
 export const cleared_on_push = ['Testing Completed'];
+
+// When the key label is on a PR, the bot removes the listed labels.
+// A push clears Testing Completed, so Needs Playtest comes back by itself.
+export const replaced_labels = {
+  'Testing Completed': ['Needs Playtest'],
+};
 // MAVERICK EDIT END
 
 // Title Labels
