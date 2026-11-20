@@ -20,9 +20,18 @@ const keywordToClLabel = (() => {
  */
 const titleKeywordSets = (() => {
   const map = {};
-  for (const [label, { keywords }] of Object.entries(
+  for (const [label, { keywords, whole_word }] of Object.entries(
     autoLabelConfig.title_labels,
   )) {
+    // MAVERICK EDIT BEGIN - whole_word keywords match as a regex with word boundaries
+    if (whole_word) {
+      const escaped = keywords.map((k) =>
+        k.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+      );
+      map[label] = new RegExp(`\\b(?:${escaped.join('|')})\\b`);
+      continue;
+    }
+    // MAVERICK EDIT END
     map[label] = new Set(keywords.map((k) => k.toLowerCase()));
   }
   return map;
@@ -96,6 +105,12 @@ function check_title_for_labels(title) {
   const labels_to_add = [];
 
   for (const [label, keywordSet] of Object.entries(titleKeywordSets)) {
+    // MAVERICK EDIT BEGIN - whole_word labels
+    if (keywordSet instanceof RegExp) {
+      if (keywordSet.test(title_lower)) labels_to_add.push(label);
+      continue;
+    }
+    // MAVERICK EDIT END
     for (const keyword of keywordSet) {
       if (title_lower.includes(keyword)) {
         labels_to_add.push(label);
@@ -166,6 +181,23 @@ async function check_diff_files_for_labels(github, context) {
         labels_to_remove.push(label);
       }
     }
+
+    // MAVERICK EDIT BEGIN - outside labels
+    for (const [label, { allowed_paths = [], ignore = [] }] of Object.entries(
+      autoLabelConfig.outside_labels ?? {},
+    )) {
+      const outside = [...changedFiles].some(
+        (filename) =>
+          !ignore.includes(filename) &&
+          !allowed_paths.some((path) => filename.startsWith(path)),
+      );
+      if (outside) {
+        labels_to_add.push(label);
+      } else {
+        labels_to_remove.push(label);
+      }
+    }
+    // MAVERICK EDIT END
   } catch (error) {
     console.error('Error fetching paginated files:', error);
   }
@@ -230,13 +262,22 @@ export async function get_updated_label_set({ github, context }) {
     }
   } catch (error) {
     console.error('Error fetching paginated events:', error);
-    for (const label of pull_request.labels) {
+    for (const label of pull_request.labels ?? []) {
+      // MAVERICK EDIT - tests pass PRs with no labels
       updated_labels.add(label.name);
     }
   }
 
   // Always remove Test Merge Candidate
   updated_labels.delete('Test Merge Candidate');
+
+  // MAVERICK EDIT BEGIN - new commits invalidate an earlier test
+  if (context.payload.action === 'synchronize') {
+    for (const label of autoLabelConfig.cleared_on_push ?? []) {
+      updated_labels.delete(label);
+    }
+  }
+  // MAVERICK EDIT END
 
   // Handle merge conflict label
   let merge_conflict = mergeable === false;
