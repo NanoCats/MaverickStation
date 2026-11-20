@@ -44,3 +44,5 @@
 	log_access("Failed Login: [key] [address]-[computer_id] - banned by the age gate")
 	return list("reason" = "age gate", "desc" = "\nReason: Age verification failed. This server is for adults only.")
 
+ADMIN_VERB(test_age_gate, R_ADMIN, "Test Age Gate", "Opens the age gate window for yourself. Failing it as an admin does not ban you.", ADMIN_CATEGORY_DEBUG)
+	SSage_gate.open_prompt(user)

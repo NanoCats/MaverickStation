@@ -69,24 +69,25 @@ SUBSYSTEM_DEF(age_gate)
 	return found
 
 /// Handles an answer from the age gate window.
+// No local vars in here on purpose: adding them sets off a false unused_var warning in BYOND 516.1659 elsewhere in the codebase.
 /datum/controller/subsystem/age_gate/proc/handle_answer(client/player, age)
-	var/minimum_age = CONFIG_GET(number/age_gate_minimum_age)
-	var/maximum_age = CONFIG_GET(number/age_gate_maximum_age)
-	if(age >= minimum_age && age <= maximum_age)
+	if(age >= CONFIG_GET(number/age_gate_minimum_age) && age <= CONFIG_GET(number/age_gate_maximum_age))
 		record_pass(player)
 		to_chat(player, span_notice("Thanks. Welcome aboard."))
 		return
-
-	var/reason = "an implausible age over [maximum_age]"
-	if(age < minimum_age)
-		reason = "an age under [minimum_age]"
 	if(is_immune(player))
 		// Kept for this round only, so the next real answer still counts.
 		passed_ckeys[player.ckey] = TRUE
 		to_chat(player, span_notice("Age verification check failed, but you're an admin, so I'll assume you're testing. Nothing was stored."))
-		log_admin("Age gate: [key_name(player)] gave [reason] but is an admin or the host, so was not banned.")
+		log_admin("Age gate: [key_name(player)] gave [describe_failed_age(age)] but is an admin or the host, so was not banned.")
 		return
-	ban_player(player, reason)
+	ban_player(player, describe_failed_age(age))
+
+/// Short description of a failed answer for logs and the ban reason.
+/datum/controller/subsystem/age_gate/proc/describe_failed_age(age)
+	if(age < CONFIG_GET(number/age_gate_minimum_age))
+		return "an age under [CONFIG_GET(number/age_gate_minimum_age)]"
+	return "an implausible age over [CONFIG_GET(number/age_gate_maximum_age)]"
 
 /// Opens the age gate window for this client, or brings the open one back up.
 /datum/controller/subsystem/age_gate/proc/open_prompt(client/player)
