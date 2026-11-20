@@ -77,7 +77,9 @@ SUBSYSTEM_DEF(age_gate)
 		to_chat(player, span_notice("Thanks. Welcome aboard."))
 		return
 
-	var/reason = age < minimum_age ? "an age under [minimum_age]" : "an implausible age over [maximum_age]"
+	var/reason = "an implausible age over [maximum_age]"
+	if(age < minimum_age)
+		reason = "an age under [minimum_age]"
 	if(is_immune(player))
 		// Kept for this round only, so the next real answer still counts.
 		passed_ckeys[player.ckey] = TRUE
