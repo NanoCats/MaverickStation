@@ -5,3 +5,6 @@ AGE_GATE 1
 
 ## Minimum age to pass the age gate. Cannot be set below 18.
 AGE_GATE_MINIMUM_AGE 18
+
+## Ages above this are treated as a fake answer and banned. Between 60 and 120.
+AGE_GATE_MAXIMUM_AGE 100

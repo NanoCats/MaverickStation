@@ -38,9 +38,11 @@ SUBSYSTEM_DEF(age_gate)
 		return FALSE
 	if(!player)
 		return FALSE
-	if(player.holder)
-		return FALSE
 	return !passed_ckeys[player.ckey]
+
+/// Admins and the host can fail the age gate without being banned, so they can test it and cannot lock themselves out.
+/datum/controller/subsystem/age_gate/proc/is_immune(client/player)
+	return player.holder || GLOB.deadmins[player.ckey] || player.is_localhost()
 
 /// Looks for a stored pass for this ckey and caches it. Can sleep on the database.
 /datum/controller/subsystem/age_gate/proc/lookup(ckey)
@@ -65,6 +67,24 @@ SUBSYSTEM_DEF(age_gate)
 	if(found)
 		passed_ckeys[ckey] = TRUE
 	return found
+
+/// Handles an answer from the age gate window.
+/datum/controller/subsystem/age_gate/proc/handle_answer(client/player, age)
+	var/minimum_age = CONFIG_GET(number/age_gate_minimum_age)
+	var/maximum_age = CONFIG_GET(number/age_gate_maximum_age)
+	if(age >= minimum_age && age <= maximum_age)
+		record_pass(player)
+		to_chat(player, span_notice("Thanks. Welcome aboard."))
+		return
+
+	var/reason = age < minimum_age ? "an age under [minimum_age]" : "an implausible age over [maximum_age]"
+	if(is_immune(player))
+		// Kept for this round only, so the next real answer still counts.
+		passed_ckeys[player.ckey] = TRUE
+		to_chat(player, span_notice("Age verification check failed, but you're an admin, so I'll assume you're testing. Nothing was stored."))
+		log_admin("Age gate: [key_name(player)] gave [reason] but is an admin or the host, so was not banned.")
+		return
+	ban_player(player, reason)
 
 /// Opens the age gate window for this client, or brings the open one back up.
 /datum/controller/subsystem/age_gate/proc/open_prompt(client/player)
@@ -97,22 +117,22 @@ SUBSYSTEM_DEF(age_gate)
 	file_passed_ckeys[ckey] = TRUE
 	save_data_file()
 
-/// Called when a player gives an age under the minimum. Bans them and kicks them.
-/datum/controller/subsystem/age_gate/proc/ban_underage(client/player)
+/// Bans and kicks a player who failed the age gate. Reason is a short description of the age they gave.
+/datum/controller/subsystem/age_gate/proc/ban_player(client/player, reason)
 	var/ckey = player.ckey
 	var/player_key = player.key
 	var/player_cid = player.computer_id
 
-	message_admins("Age gate: [key_name_admin(player)] gave an age under [CONFIG_GET(number/age_gate_minimum_age)] and was banned automatically.")
-	log_admin_private("Age gate: [key_name(player)] gave an age under [CONFIG_GET(number/age_gate_minimum_age)] and was banned automatically.")
+	message_admins("Age gate: [key_name_admin(player)] gave [reason] and was banned automatically.")
+	log_admin_private("Age gate: [key_name(player)] gave [reason] and was banned automatically.")
 
-	to_chat_immediate(player, span_boldannounce("This server is for adults only. You have been banned."))
+	to_chat_immediate(player, span_boldannounce("Age verification failed. This server is for adults only. You have been banned."))
 	qdel(player)
 
-	INVOKE_ASYNC(src, PROC_REF(store_ban), ckey, player_key, player_cid)
+	INVOKE_ASYNC(src, PROC_REF(store_ban), ckey, player_key, player_cid, reason)
 
-/datum/controller/subsystem/age_gate/proc/store_ban(ckey, player_key, player_cid)
-	if(SSdbcore.IsConnected() && insert_db_ban(ckey, player_cid))
+/datum/controller/subsystem/age_gate/proc/store_ban(ckey, player_key, player_cid, reason)
+	if(SSdbcore.IsConnected() && insert_db_ban(ckey, player_cid, reason))
 		return
 	load_data_file()
 	file_underage_ckeys[ckey] = TRUE
@@ -120,7 +140,7 @@ SUBSYSTEM_DEF(age_gate)
 	log_admin_private("Age gate: database unavailable, ban for [player_key] kept in [AGE_GATE_DATA_FILE].")
 
 /// Writes a permanent server ban on the ckey and computer ID. IP is left out so housemates are not caught.
-/datum/controller/subsystem/age_gate/proc/insert_db_ban(ckey, player_cid)
+/datum/controller/subsystem/age_gate/proc/insert_db_ban(ckey, player_cid, reason)
 	var/list/clients_online = GLOB.clients.Copy()
 	var/list/admins_online = list()
 	for(var/client/online as anything in clients_online)
@@ -140,7 +160,7 @@ SUBSYSTEM_DEF(age_gate)
 		"role" = "Server",
 		"global_ban" = TRUE,
 		"applies_to_admins" = FALSE,
-		"reason" = "Automatic ban: gave an age under [CONFIG_GET(number/age_gate_minimum_age)] at the age gate.",
+		"reason" = "Automatic ban: gave [reason] at the age gate.",
 		"ckey" = ckey,
 		"computerid" = player_cid || null,
 		"a_ckey" = AGE_GATE_BAN_ADMIN,

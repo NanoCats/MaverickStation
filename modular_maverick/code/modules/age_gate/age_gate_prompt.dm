@@ -1,4 +1,4 @@
-/// Oldest age the age gate window will accept. Anything older is treated as a typo.
+/// Oldest age the age gate window offers. Answers above AGE_GATE_MAXIMUM_AGE (config) are banned as implausible.
 #define AGE_GATE_MAX_AGE 120
 
 /// The age gate window. One per player, reopens itself until answered.
@@ -54,11 +54,7 @@
 	answered = TRUE
 	var/client/player = owner
 	ui.close()
-	if(age >= CONFIG_GET(number/age_gate_minimum_age))
-		SSage_gate.record_pass(player)
-		to_chat(player, span_notice("Thanks. Welcome aboard."))
-	else
-		SSage_gate.ban_underage(player)
+	SSage_gate.handle_answer(player, age)
 	return TRUE
 
 /datum/age_gate_prompt/ui_close(mob/user)
@@ -69,6 +65,6 @@
 	if(!reopen)
 		return
 	to_chat(player, span_warning("You need to enter your date of birth before you can play."))
-	SSage_gate.open_prompt(player)
+	INVOKE_ASYNC(SSage_gate, TYPE_PROC_REF(/datum/controller/subsystem/age_gate, open_prompt), player)
 
 #undef AGE_GATE_MAX_AGE
