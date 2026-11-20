@@ -12,9 +12,20 @@
 
 MaverickStation is a personal Space Station 13 server, run by one woman and her crab.
 
-Like a lot of people, I wanted to make Space Station 13 my way. This is where I do that, on my own terms.
-
 **Please note that this repository contains sexually explicit content and is not suitable for those under the age of 18.**
+
+### Why this exists
+
+I'm doing the best I can.
+
+MaverickStation is me saying no to things that were unreasonable and doing me harm. If a system isn't working for you, you have the power to change it, even if that means leaving it and building your own. So I did.
+
+There are no secret votes in the middle of the night here. Until further notice there is one vote type: is this COOL AS HELL? I am the only voter.
+
+Maybe this goes nowhere. I wanted to try anyway.
+
+> "Saying no to things that are unreasonable."
+> Coach, [Say No! More](https://store.steampowered.com/app/1191900/Say_No_More/) (2021)
 
 ### Contributions
 
