@@ -32,6 +32,7 @@ MaverickStation is the personal SS13 fork of commander Aeri. Upstream chain: /tg
 
 - Never use em dashes in anything you write: code comments, PR bodies, issues, docs or chat.
 - Keep commit messages short and descriptive.
+- Every PR with player-facing changes gets a `:cl:` changelog block in its body, even while the changelog workflows are off.
 
 ## Testing
 
