@@ -4,13 +4,26 @@
 	id = SPECIES_AMAS_AUTOMATON
 	changesource_flags = MIRROR_BADMIN
 	bodypart_overrides = list(
-		BODY_ZONE_HEAD = /obj/item/bodypart/head/robot,
-		BODY_ZONE_CHEST = /obj/item/bodypart/chest/robot,
-		BODY_ZONE_L_ARM = /obj/item/bodypart/arm/left/robot/advanced,
-		BODY_ZONE_R_ARM = /obj/item/bodypart/arm/right/robot/advanced,
-		BODY_ZONE_L_LEG = /obj/item/bodypart/leg/left/robot/advanced,
-		BODY_ZONE_R_LEG = /obj/item/bodypart/leg/right/robot/advanced,
+		BODY_ZONE_HEAD = /obj/item/bodypart/head/robot/android,
+		BODY_ZONE_CHEST = /obj/item/bodypart/chest/robot/android,
+		BODY_ZONE_L_ARM = /obj/item/bodypart/arm/left/robot/advanced/amas_automaton,
+		BODY_ZONE_R_ARM = /obj/item/bodypart/arm/right/robot/advanced/amas_automaton,
+		BODY_ZONE_L_LEG = /obj/item/bodypart/leg/left/robot/advanced/amas_automaton,
+		BODY_ZONE_R_LEG = /obj/item/bodypart/leg/right/robot/advanced/amas_automaton,
 	)
+
+// Robotic limbs normally survive a species change. Species limbs must not, or the old limbs stay stuck on the mob.
+/obj/item/bodypart/arm/left/robot/advanced/amas_automaton
+	change_exempt_flags = NONE
+
+/obj/item/bodypart/arm/right/robot/advanced/amas_automaton
+	change_exempt_flags = NONE
+
+/obj/item/bodypart/leg/left/robot/advanced/amas_automaton
+	change_exempt_flags = NONE
+
+/obj/item/bodypart/leg/right/robot/advanced/amas_automaton
+	change_exempt_flags = NONE
 
 /datum/species/android/amas_automaton/get_species_description()
 	return "Synthetic staff built by Micron Control Systems to fill crew shortages on the frontier."
