@@ -61,6 +61,7 @@
 		/obj/item/modular_computer/pda/nri_police,
 		/obj/item/card/id/advanced/nri_police,
 		/obj/item/folder/blue/nri_cop,
+		/obj/item/salvaged_policing_chestplate,
 	)
 
 /datum/techweb_node/freelance_policing/New()
@@ -131,3 +132,15 @@
 	category = list(
 		RND_CATEGORY_MODSUIT_MODULES + RND_SUBCATEGORY_MODSUIT_MODULES_SECURITY
 	)
+
+// Maint loot. Does nothing on its own; science can dismantle it to research the node above.
+/obj/item/salvaged_policing_chestplate
+	name = "battered policing chestplate"
+	desc = "A dead chestplate off a Commonwealth policing MODsuit. It's scorched, dented, and holed in a tight group right over \
+		where the wearer's heart would be. Whoever wore this last stopped needing it in a hurry. \
+		The power systems are slag, but a science department could still learn something from what's left."
+	icon = 'modular_skyrat/modules/novaya_ert/icons/mod.dmi'
+	icon_state = "policing-chestplate"
+	color = "#cfcfcf"
+	w_class = WEIGHT_CLASS_BULKY
+	custom_materials = list(/datum/material/iron = SHEET_MATERIAL_AMOUNT * 2, /datum/material/titanium = HALF_SHEET_MATERIAL_AMOUNT)
