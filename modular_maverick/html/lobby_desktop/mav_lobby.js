@@ -1,0 +1,1475 @@
+/* MaverickStation lobby desktop.
+ *
+ * The server writes a `window.MAV` settings object into the page before this
+ * script loads. Clicks talk back to the server through byond:// links, and the
+ * server calls the global hook functions near the bottom (toggle_ready etc).
+ */
+(function () {
+	"use strict";
+
+	var C = window.MAV || {};
+	C.music = C.music || { enabled: false, tracks: [] };
+	C.boot = C.boot || {};
+	var started = false;
+
+	// ------------------------------------------------------------- helpers
+
+	function byond(query) {
+		if (C.preview) {
+			C.preview(query);
+			return;
+		}
+		location.href = "byond://?src=" + C.ref + ";" + query;
+	}
+
+	function el(tag, cls, parent, text) {
+		var e = document.createElement(tag);
+		if (cls) {
+			e.className = cls;
+		}
+		if (text !== undefined) {
+			e.textContent = text;
+		}
+		if (parent) {
+			parent.appendChild(e);
+		}
+		return e;
+	}
+
+	function img(src, cls, parent) {
+		var e = el("img", cls, parent);
+		e.src = src;
+		e.draggable = false;
+		return e;
+	}
+
+	function pick(list) {
+		return list[Math.floor(Math.random() * list.length)];
+	}
+
+	function after(ms, fn) {
+		return setTimeout(fn, ms);
+	}
+
+	var stage = document.getElementById("stage");
+	var stage_w = 480;
+	var scale = 1;
+
+	function layout() {
+		var vw = window.innerWidth;
+		var vh = window.innerHeight;
+		scale = vh / 270;
+		stage_w = Math.max(360, Math.round(270 * vw / vh));
+		stage.style.width = stage_w + "px";
+		stage.style.transform = "scale(" + scale + ")";
+		var wall = document.getElementById("wall");
+		if (wall) {
+			wall.style.left = Math.round((stage_w - 640) / 2) + "px";
+		}
+		place_icons();
+		clamp_windows();
+	}
+
+	// ------------------------------------------------------------- time of day
+
+	// The player's own clock decides the sky.
+	function time_slot(hour) {
+		if (hour >= 22 || hour < 5) {
+			return "night";
+		}
+		if (hour < 9) {
+			return "dawn";
+		}
+		if (hour < 17) {
+			return "day";
+		}
+		return "dusk";
+	}
+
+	var wall_imgs = [];
+	var wall_front = 0;
+	var current_slot = null;
+
+	function build_wall(parent) {
+		var wall = el("div", null, parent);
+		wall.id = "wall";
+		wall_imgs = [img("", null, wall), img("", null, wall)];
+		wall_imgs[1].style.opacity = 0;
+		update_sky(true);
+		setInterval(update_sky, 15000);
+		return wall;
+	}
+
+	function update_sky(instant) {
+		var slot = time_slot(new Date().getHours());
+		if (slot === current_slot) {
+			return;
+		}
+		current_slot = slot;
+		var src = "mav_wall_" + slot + ".png";
+		if (instant === true) {
+			wall_imgs[0].src = src;
+			return;
+		}
+		var back = 1 - wall_front;
+		wall_imgs[back].src = src;
+		wall_imgs[back].style.opacity = 1;
+		wall_imgs[wall_front].style.opacity = 0;
+		wall_front = back;
+	}
+
+	// ------------------------------------------------------------- lobby actions
+
+	var ready = false;
+	var antag = false;
+
+	var ACTIONS = {
+		ready: function () {
+			byond(C.playing ? "late_join=1" : "toggle_ready=1");
+		},
+		observe: function () { byond("observe=1"); },
+		manifest: function () { byond("view_manifest=1"); },
+		directory: function () { byond("character_directory=1"); },
+		setup: function () { byond("character_setup=1"); },
+		options: function () { byond("game_options=1"); },
+		antag: function () { byond("toggle_antag=1"); },
+		servers: function () { byond("server_swap=1"); },
+		traits: function () { byond("job_traits=1"); },
+		polls: function () { byond("polls_menu=1"); },
+	};
+
+	function ready_label() {
+		if (C.playing) {
+			return "Join Game";
+		}
+		return ready ? "Ready ☑" : "Ready? ☒";
+	}
+
+	// ------------------------------------------------------------- windows
+
+	var wins = {};
+	var z_top = 10;
+	var save_timer = null;
+
+	var WINDOWS = {
+		station: {
+			title: "station.exe", icon: "station", w: 190, h: 172,
+			x: function () { return Math.round(stage_w / 2 - 120); }, y: 12,
+			build: build_station,
+		},
+		paint: {
+			title: "MSpacePaint.exe - Honk.bmp", icon: "paint", w: 168, h: 152,
+			x: function () { return 6; }, y: 104,
+			build: build_paint,
+		},
+		amp: {
+			title: "SpaceAmp", icon: "music", w: 160, h: 112,
+			x: function () { return 8; }, y: 6,
+			build: build_amp,
+		},
+		readme: {
+			title: "readme.txt - Notepad", icon: "readme", w: 170, h: 120,
+			x: function () { return Math.round(stage_w / 2 - 40); }, y: 40,
+			build: build_readme,
+		},
+		recycle: {
+			title: "Recycle Bin", icon: "recycle", w: 150, h: 112,
+			x: function () { return Math.round(stage_w / 2 - 20); }, y: 70,
+			build: build_recycle,
+		},
+	};
+
+	function make_window(id, spec, opts) {
+		opts = opts || {};
+		var w = el("div", "win" + (opts.cls ? " " + opts.cls : ""), document.getElementById("windows"));
+		w.style.width = spec.w + "px";
+		if (spec.h) {
+			w.style.height = spec.h + "px";
+		}
+		w.style.left = (typeof spec.x === "function" ? spec.x() : spec.x) + "px";
+		w.style.top = spec.y + "px";
+		var bar = el("div", "titlebar", w);
+		if (spec.icon) {
+			img("mav_icon_" + spec.icon + ".png", null, bar);
+		}
+		el("span", "ttl", bar, spec.title);
+		var buttons = opts.buttons || ["min", "max", "close"];
+		buttons.forEach(function (b) {
+			var t = el("div", "tbtn", bar, { min: "_", max: "□", close: "x" }[b]);
+			t.addEventListener("mousedown", function (e) { e.stopPropagation(); });
+			t.addEventListener("click", function (e) {
+				e.stopPropagation();
+				if (opts.on_button) {
+					opts.on_button(b);
+					return;
+				}
+				if (b === "min") { minimize(id); }
+				if (b === "max") { toggle_max(id); }
+				if (b === "close") { close_window(id); }
+			});
+		});
+		drag(w, bar, id);
+		w.addEventListener("mousedown", function () { focus(id); });
+		return w;
+	}
+
+	function open_window(id) {
+		if (wins[id]) {
+			wins[id].el.classList.remove("min");
+			focus(id);
+			queue_save();
+			return wins[id];
+		}
+		var spec = WINDOWS[id];
+		var w = make_window(id, spec);
+		var body = el("div", "body", w);
+		wins[id] = { el: w, spec: spec, body: body };
+		spec.build(body, wins[id]);
+		focus(id);
+		update_taskbar();
+		queue_save();
+		return wins[id];
+	}
+
+	function close_window(id) {
+		var win = wins[id];
+		if (!win) {
+			return;
+		}
+		if (win.on_close) {
+			win.on_close();
+		}
+		win.el.remove();
+		delete wins[id];
+		update_taskbar();
+		queue_save();
+	}
+
+	function minimize(id) {
+		wins[id].el.classList.add("min");
+		update_taskbar();
+		queue_save();
+	}
+
+	function toggle_max(id) {
+		wins[id].el.classList.toggle("max");
+		queue_save();
+	}
+
+	function focus(id) {
+		var win = wins[id] || dialogs[id];
+		if (!win) {
+			return;
+		}
+		win.el.style.zIndex = ++z_top;
+		Object.keys(wins).forEach(function (k) {
+			wins[k].el.classList.toggle("inactive", k !== id);
+		});
+		update_taskbar(id);
+	}
+
+	function drag(w, handle, id) {
+		handle.addEventListener("mousedown", function (e) {
+			if (w.classList.contains("max") || w.dataset.locked) {
+				return;
+			}
+			var sx = e.clientX;
+			var sy = e.clientY;
+			var ox = w.offsetLeft;
+			var oy = w.offsetTop;
+			function move(ev) {
+				w.style.left = Math.round(ox + (ev.clientX - sx) / scale) + "px";
+				w.style.top = Math.round(oy + (ev.clientY - sy) / scale) + "px";
+			}
+			function up() {
+				document.removeEventListener("mousemove", move);
+				document.removeEventListener("mouseup", up);
+				clamp_one(w);
+				queue_save();
+			}
+			document.addEventListener("mousemove", move);
+			document.addEventListener("mouseup", up);
+		});
+	}
+
+	function clamp_one(w) {
+		var x = Math.min(Math.max(w.offsetLeft, -w.offsetWidth + 30), stage_w - 30);
+		var y = Math.min(Math.max(w.offsetTop, 0), 270 - 30);
+		w.style.left = x + "px";
+		w.style.top = y + "px";
+	}
+
+	function clamp_windows() {
+		Object.keys(wins).forEach(function (k) { clamp_one(wins[k].el); });
+	}
+
+	// Window layout survives page reloads: the server keeps it for the session.
+	function queue_save() {
+		if (C.classic || C.mode !== "lobby") {
+			return;
+		}
+		clearTimeout(save_timer);
+		save_timer = after(700, function () {
+			var order = Object.keys(wins).sort(function (a, b) {
+				return (+wins[a].el.style.zIndex) - (+wins[b].el.style.zIndex);
+			});
+			var state = order.map(function (k) {
+				var w = wins[k].el;
+				return {
+					id: k, x: w.offsetLeft, y: w.offsetTop,
+					min: w.classList.contains("min") ? 1 : 0, max: w.classList.contains("max") ? 1 : 0,
+				};
+			});
+			byond("desktop_state=" + encodeURIComponent(JSON.stringify(state)));
+		});
+	}
+
+	function restore_windows() {
+		var saved = null;
+		try {
+			saved = C.desktop ? (typeof C.desktop === "string" ? JSON.parse(C.desktop) : C.desktop) : null;
+		} catch (e) {
+			saved = null;
+		}
+		if (!saved || !saved.length) {
+			saved = [{ id: "paint" }, { id: "amp", min: 1 }, { id: "station" }];
+		}
+		saved.forEach(function (s) {
+			if (!WINDOWS[s.id]) {
+				return;
+			}
+			var win = open_window(s.id);
+			if (s.x !== undefined) {
+				win.el.style.left = s.x + "px";
+				win.el.style.top = s.y + "px";
+			}
+			if (s.max) {
+				win.el.classList.add("max");
+			}
+			if (s.min) {
+				win.el.classList.add("min");
+			}
+		});
+		clamp_windows();
+		update_taskbar();
+	}
+
+	// ------------------------------------------------------------- dialogs
+
+	var dialogs = {};
+	var dialog_seq = 0;
+
+	// opts: title, text, icon ("err" | image name), buttons [{label, fn}], x, y, w, big, on_x, cls
+	function dialog(opts) {
+		var id = "dlg" + (++dialog_seq);
+		var spec = {
+			title: opts.title, icon: opts.title_icon, w: opts.w || 170, h: null,
+			x: opts.x !== undefined ? opts.x : Math.round(stage_w / 2 - (opts.w || 170) / 2),
+			y: opts.y !== undefined ? opts.y : 80,
+		};
+		var close = function () {
+			if (dialogs[id]) {
+				dialogs[id].el.remove();
+				delete dialogs[id];
+			}
+		};
+		var w = make_window(id, spec, {
+			cls: "dlg" + (opts.big ? " big_dlg" : "") + (opts.cls ? " " + opts.cls : ""),
+			buttons: ["close"],
+			on_button: function () {
+				if (opts.on_x) {
+					opts.on_x(close);
+				} else {
+					close();
+				}
+			},
+		});
+		var body = el("div", "body", w);
+		if (opts.icon === "err") {
+			el("div", "err_x", body, "x");
+		} else if (opts.icon) {
+			img(opts.icon, "dicon", body);
+		}
+		var text = el("div", "dtext", body);
+		if (opts.html) {
+			text.innerHTML = opts.html;
+		} else {
+			text.textContent = opts.text;
+		}
+		var btns = el("div", "dbtns", w);
+		(opts.buttons || [{ label: "OK" }]).forEach(function (b) {
+			var bt = el("div", "btn", btns, b.label);
+			bt.addEventListener("click", function () {
+				if (b.fn) {
+					b.fn(close);
+				} else {
+					close();
+				}
+			});
+		});
+		dialogs[id] = { el: w, close: close };
+		w.style.zIndex = ++z_top;
+		w.addEventListener("mousedown", function () { w.style.zIndex = ++z_top; });
+		return dialogs[id];
+	}
+
+	// ------------------------------------------------------------- station.exe
+
+	var station_refs = {};
+
+	function station_menu(body) {
+		body.classList.add("station_body");
+		var head = el("div", "station_head", body);
+		img("mav_wordmark.png", "wm", head);
+		var menu = el("div", null, body);
+		function item(label, action, cls) {
+			var b = el("a", "mbtn" + (cls ? " " + cls : ""), menu);
+			b.innerHTML = label;
+			b.addEventListener("click", function () { ACTIONS[action](); });
+			return b;
+		}
+		if (C.playing) {
+			station_refs.ready = item("JOIN GAME", "ready");
+			item("CREW MANIFEST", "manifest");
+		} else {
+			station_refs.ready = item("", "ready");
+		}
+		item("CHARACTER DIRECTORY", "directory");
+		item("OBSERVE", "observe");
+		el("hr", null, menu);
+		station_refs.setup = item("", "setup");
+		item("GAME OPTIONS", "options");
+		station_refs.antag = item("", "antag");
+		if (C.servers || C.traits || C.polls) {
+			el("hr", null, menu);
+		}
+		if (C.servers) {
+			item("SWAP SERVERS", "servers");
+		}
+		if (C.traits) {
+			item("JOB TRAITS", "traits");
+		}
+		if (C.polls) {
+			item(C.polls === "new" ? "POLLS (NEW)" : "POLLS", "polls", C.polls === "new" ? "newpoll" : "");
+		}
+		refresh_station();
+	}
+
+	function build_station(body) {
+		station_menu(body);
+	}
+
+	function refresh_station() {
+		if (station_refs.ready && !C.playing) {
+			station_refs.ready.innerHTML = ready
+				? "<span class='checked'>☑</span> READY"
+				: "<span class='unchecked'>☒</span> READY";
+		}
+		if (station_refs.setup) {
+			station_refs.setup.innerHTML = "SETUP CHARACTER (<span></span>)";
+			station_refs.setup.querySelector("span").textContent = (C.name || "").toUpperCase();
+		}
+		if (station_refs.antag) {
+			station_refs.antag.innerHTML = antag
+				? "<span class='checked'>☑</span> BE ANTAGONIST"
+				: "<span class='unchecked'>☒</span> BE ANTAGONIST";
+		}
+		var icon = icon_refs.ready;
+		if (icon) {
+			icon.querySelector(".label").textContent = ready_label();
+		}
+	}
+
+	// ------------------------------------------------------------- notepad, recycle bin
+
+	var README = [
+		"WELCOME TO MAVERICKSTATION",
+		"",
+		"yes, this is a desktop. no, it does not run doom.",
+		"",
+		"- double click things. they do stuff.",
+		"- station.exe is where the game is.",
+		"- SpaceAmp plays the lobby music.",
+		"- do NOT open the clown.",
+		"",
+		"if something breaks, it was the clown.",
+	].join("\n");
+
+	function build_readme(body) {
+		var box = el("div", "sunken notepad", body);
+		box.style.height = "100%";
+		box.textContent = README;
+	}
+
+	var BIN = [
+		["my_will_to_live.txt", "0 KB"],
+		["nuke_disk (2).lnk", "1 KB"],
+		["clown_permission_slip.pdf", "12 KB"],
+		["atmos_was_fine_actually.doc", "3 KB"],
+		["captains_spare_id.jpg", "88 KB"],
+		["supermatter_manual.txt", "0 KB"],
+		["NOT_A_VIRUS.exe", "666 KB"],
+	];
+
+	function build_recycle(body) {
+		var tb = el("div", "toolbar", body);
+		var empty = el("div", "btn", tb, "Empty Recycle Bin");
+		empty.addEventListener("click", function () {
+			dialog({
+				title: "Recycle Bin", icon: "mav_icon_clown.png",
+				text: "Nice try. The clown lives in here now.",
+			});
+		});
+		var list = el("div", "sunken filelist", body);
+		list.style.height = "calc(100% - 14px)";
+		list.style.overflowY = "auto";
+		BIN.forEach(function (f) {
+			var row = el("div", null, list);
+			el("span", null, row, f[0]);
+			el("span", "sz", row, f[1]);
+			row.addEventListener("dblclick", function () {
+				dialog({
+					title: f[0], icon: "err",
+					text: "This file has been deleted. Like your hopes and dreams.",
+				});
+			});
+		});
+	}
+
+	// ------------------------------------------------------------- MSpacePaint
+
+	var PAINT_COLORS = [
+		"#000000", "#808080", "#800000", "#808000", "#008000", "#008080", "#000080", "#800080", "#808040", "#004040", "#0080ff", "#004080", "#8000ff", "#804000",
+		"#ffffff", "#c0c0c0", "#ff0000", "#ffff00", "#00ff00", "#00ffff", "#0000ff", "#ff00ff", "#ffff80", "#00ff80", "#80ffff", "#8080ff", "#ff0080", "#ff8040",
+	];
+
+	// The crude clown, as pencil strokes on a 120x84 canvas.
+	function clown_strokes() {
+		var s = [];
+		function circle(cx, cy, r, color, n, wob) {
+			var pts = [];
+			for (var i = 0; i <= n; i++) {
+				var a = i / n * Math.PI * 2 - 0.4;
+				var rr = r + (wob ? Math.sin(i * 1.7) * wob : 0);
+				pts.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr * 0.95]);
+			}
+			s.push({ c: color, w: 1, p: pts });
+		}
+		// hair tufts, scribbled
+		[[30, 30], [90, 30]].forEach(function (h) {
+			var pts = [];
+			for (var i = 0; i < 26; i++) {
+				var a = i * 0.9;
+				pts.push([h[0] + Math.cos(a) * (6 + i * 0.25), h[1] + Math.sin(a) * (5 + i * 0.2) + i * 0.4]);
+			}
+			s.push({ c: "#ff8040", w: 2, p: pts });
+		});
+		circle(60, 42, 21, "#000000", 28, 1.2);                       // head
+		circle(51, 37, 3, "#0000ff", 8, 0);                           // eyes
+		circle(69, 37, 3, "#0000ff", 8, 0);
+		s.push({ c: "#000000", w: 1, p: [[49, 31], [54, 32]] });      // brows
+		s.push({ c: "#000000", w: 1, p: [[66, 32], [71, 31]] });
+		for (var r = 5; r >= 1; r -= 1) {                             // nose, coloured in
+			circle(60, 45, r, "#ff0000", 10, 0);
+		}
+		s.push({ c: "#ff0000", w: 2, p: [[46, 51], [50, 56], [56, 59], [64, 59], [70, 56], [74, 51]] });
+		s.push({ c: "#ff0000", w: 1, p: [[50, 55], [60, 58], [70, 55]] });
+		// HONK, badly
+		var letters = [
+			[[90, 62], [90, 74]], [[90, 68], [95, 68]], [[95, 62], [95, 74]],
+			[[98, 62], [102, 62], [102, 74], [98, 74], [98, 62]],
+			[[105, 74], [105, 62], [110, 74], [110, 62]],
+			[[113, 62], [113, 74]], [[118, 62], [113, 68], [118, 74]],
+		];
+		letters.forEach(function (l) { s.push({ c: "#ff00ff", w: 1, p: l }); });
+		s.push({ c: "#000000", w: 1, p: [[60, 63], [58, 70], [62, 76], [60, 82]] }); // neck squiggle
+		return s;
+	}
+
+	function build_paint(body, win) {
+		var wrap = el("div", "paint_wrap", body);
+		var menu = el("div", "menubar", body.parentNode);
+		["File", "Edit", "View", "Image", "Options", "Help"].forEach(function (m) { el("span", null, menu, m); });
+		body.parentNode.insertBefore(menu, body);
+		var main = el("div", "paint_main", wrap);
+		var tools = el("div", "paint_tools", main);
+		var tool_els = [];
+		for (var i = 0; i < 16; i++) {
+			var t = el("div", "tool", tools);
+			t.style.backgroundPosition = (-(i % 2) * 12) + "px " + (-Math.floor(i / 2) * 12) + "px";
+			tool_els.push(t);
+		}
+		var cw = el("div", "paint_canvas_wrap", main);
+		var canvas = el("canvas", null, cw);
+		canvas.width = 120;
+		canvas.height = 84;
+		canvas.style.width = "120px";
+		canvas.style.height = "84px";
+		var cursor = el("div", "paint_cursor", cw);
+		cursor.style.background = "url(mav_paint_tools.png) -12px -48px";
+		var pal = el("div", "paint_palette", wrap);
+		var cur = el("div", "cur", pal);
+		var fg = el("i", null, cur);
+		fg.style.left = "2px";
+		fg.style.top = "2px";
+		var bg = el("i", null, cur);
+		bg.style.left = "6px";
+		bg.style.top = "6px";
+		bg.style.background = "#fff";
+		var cols = el("div", "col", pal);
+		PAINT_COLORS.forEach(function (c) {
+			el("div", "sw", cols).style.background = c;
+		});
+		var status = el("div", "paint_status", wrap, "For Help, click Help Topics on the Help Menu.");
+
+		var ctx = canvas.getContext("2d");
+		var strokes = clown_strokes();
+		var si = 0;
+		var pi = 0;
+		var t = 0;
+		var last = null;
+		var timer = null;
+
+		function dot(x, y, c, w) {
+			ctx.fillStyle = c;
+			ctx.fillRect(Math.round(x), Math.round(y), w, w);
+		}
+
+		function reset() {
+			ctx.fillStyle = "#fff";
+			ctx.fillRect(0, 0, 120, 84);
+			si = 0;
+			pi = 0;
+			t = 0;
+			last = null;
+		}
+
+		function step() {
+			if (si >= strokes.length) {
+				clearInterval(timer);
+				status.textContent = "Honk.bmp saved. Masterpiece.";
+				timer = null;
+				after(5000, function () {
+					if (!wins.paint) {
+						return;
+					}
+					status.textContent = "For Help, click Help Topics on the Help Menu.";
+					reset();
+					timer = setInterval(step, 30);
+				});
+				return;
+			}
+			var st = strokes[si];
+			fg.style.background = st.c;
+			tool_els.forEach(function (te, k) { te.classList.toggle("on", k === (st.w > 1 ? 13 : 9)); });
+			var a = st.p[pi];
+			var b = st.p[pi + 1];
+			if (!b) {
+				si++;
+				pi = 0;
+				t = 0;
+				last = null;
+				return;
+			}
+			var len = Math.max(1, Math.hypot(b[0] - a[0], b[1] - a[1]));
+			for (var k = 0; k < 2; k++) {
+				t += 1 / len;
+				if (t >= 1) {
+					t = 0;
+					pi++;
+					break;
+				}
+				var x = a[0] + (b[0] - a[0]) * t;
+				var y = a[1] + (b[1] - a[1]) * t;
+				dot(x, y, st.c, st.w);
+				cursor.style.left = (3 + Math.round(x)) + "px";
+				cursor.style.top = (3 + Math.round(y) - 11) + "px";
+			}
+		}
+
+		reset();
+		timer = setInterval(step, 30);
+		win.on_close = function () { clearInterval(timer); };
+	}
+
+	// ------------------------------------------------------------- SpaceAmp
+
+	var amp = null;
+
+	function fmt_time(s) {
+		s = Math.max(0, Math.floor(s));
+		var m = Math.floor(s / 60);
+		var r = s % 60;
+		return (m < 10 ? "0" : "") + m + ":" + (r < 10 ? "0" : "") + r;
+	}
+
+	function build_amp(body, win) {
+		body.classList.add("amp_body");
+		var M = C.music;
+		if (!M.enabled) {
+			el("div", "amp_off", body, "Lobby music is disabled on this server. SpaceAmp is sad.");
+			return;
+		}
+		var lcd = el("div", "amp_lcd", body);
+		var time = el("div", "amp_time", lcd, "00:00");
+		var marquee = el("div", "amp_marquee", lcd);
+		var marquee_text = el("span", null, marquee);
+		el("div", "amp_info", lcd, "128 kbps  44 kHz  stereo");
+		var spec = el("canvas", null, lcd);
+		spec.width = 38;
+		spec.height = 14;
+		spec.style.width = "38px";
+		spec.style.height = "14px";
+		var seek = el("div", "amp_seek", body);
+		var seek_fill = el("i", null, seek);
+		var row = el("div", "amp_row", body);
+		var glyph = { prev: 0, play: 1, pause: 2, stop: 3, next: 4 };
+		var btns = {};
+		["prev", "play", "pause", "stop", "next"].forEach(function (b) {
+			var e = el("div", "amp_btn", row);
+			e.style.backgroundPosition = (-glyph[b] * 8 + 2) + "px 2px";
+			e.title = b;
+			e.addEventListener("click", function () { amp_cmd(b); });
+			btns[b] = e;
+		});
+		var vol = el("div", "amp_vol", row);
+		var vol_fill = el("i", null, vol);
+		var vol_knob = el("b", null, vol);
+		var rpt = el("div", "amp_tog", row, "RPT");
+		var list = el("div", "amp_list", body);
+
+		amp = {
+			repeat: "all", elapsed: M.elapsed || 0, last_tick: Date.now(),
+			time: time, marquee_text: marquee_text, seek_fill: seek_fill, vol_fill: vol_fill, vol_knob: vol_knob,
+			btns: btns, list: list, rpt: rpt, spec: spec, ended_sent: false,
+		};
+
+		rpt.classList.add("on");
+		rpt.addEventListener("click", function () {
+			amp.repeat = { all: "one", one: "off", off: "all" }[amp.repeat];
+			rpt.textContent = { all: "RPT", one: "RPT1", off: "OFF" }[amp.repeat];
+			rpt.classList.toggle("on", amp.repeat !== "off");
+		});
+		seek.addEventListener("click", function (e) {
+			if (!M.len) {
+				return;
+			}
+			var r = e.offsetX / seek.offsetWidth;
+			byond("music=seek;pos=" + Math.floor(r * M.len));
+		});
+		var vol_timer = null;
+		function set_vol_from(e) {
+			var r = Math.min(1, Math.max(0, (e.clientX - vol.getBoundingClientRect().left) / (vol.offsetWidth * scale)));
+			M.vol = Math.round(r * 100);
+			draw_amp();
+			clearTimeout(vol_timer);
+			vol_timer = after(250, function () { byond("music=vol;vol=" + M.vol); });
+		}
+		vol.addEventListener("mousedown", function (e) {
+			set_vol_from(e);
+			function mv(ev) { set_vol_from(ev); }
+			function up() {
+				document.removeEventListener("mousemove", mv);
+				document.removeEventListener("mouseup", up);
+			}
+			document.addEventListener("mousemove", mv);
+			document.addEventListener("mouseup", up);
+		});
+
+		draw_amp(true);
+		var tick = setInterval(amp_tick, 100);
+		win.on_close = function () {
+			clearInterval(tick);
+			amp = null;
+		};
+	}
+
+	function amp_cmd(b) {
+		var M = C.music;
+		if (b === "play") {
+			byond(M.paused ? "music=resume" : "music=play");
+		} else if (b === "pause") {
+			byond(M.paused ? "music=resume" : "music=pause");
+		} else {
+			byond("music=" + b);
+		}
+	}
+
+	function draw_amp(rebuild_list) {
+		if (!amp) {
+			return;
+		}
+		var M = C.music;
+		var t = M.tracks[M.index] || { title: "Nothing" };
+		var label = (M.index + 1) + ". " + t.title + "  ***  " + (M.playing ? (M.paused ? "PAUSED" : "It really whips the clown's ass.") : "STOPPED");
+		if (amp.marquee_text.textContent !== label) {
+			amp.marquee_text.textContent = label;
+		}
+		amp.time.classList.toggle("paused", !!M.paused);
+		amp.btns.play.classList.toggle("on", M.playing && !M.paused);
+		amp.btns.pause.classList.toggle("on", !!M.paused);
+		amp.vol_fill.style.width = M.vol + "%";
+		amp.vol_knob.style.left = M.vol + "%";
+		if (rebuild_list) {
+			amp.list.innerHTML = "";
+			M.tracks.forEach(function (tr, i) {
+				var row = el("div", i === M.index ? "cur" : "", amp.list, (i + 1) + ". " + tr.title);
+				row.addEventListener("dblclick", function () { byond("music=track;track=" + (i + 1)); });
+			});
+		}
+	}
+
+	var spec_levels = [];
+	function amp_tick() {
+		if (!amp) {
+			return;
+		}
+		var M = C.music;
+		var now = Date.now();
+		if (M.playing && !M.paused) {
+			amp.elapsed += (now - amp.last_tick) / 1000;
+		}
+		amp.last_tick = now;
+		var shown = M.len ? Math.min(amp.elapsed, M.len) : amp.elapsed;
+		amp.time.textContent = M.playing ? fmt_time(shown) : "00:00";
+		amp.seek_fill.style.width = M.len && M.playing ? (100 * shown / M.len) + "%" : "0%";
+		if (M.playing && !M.paused && M.len && amp.elapsed >= M.len && !amp.ended_sent) {
+			amp.ended_sent = true;
+			byond("music=ended;repeat=" + amp.repeat);
+		}
+		// fake spectrum, it just needs to look busy
+		var ctx = amp.spec.getContext("2d");
+		ctx.clearRect(0, 0, 38, 14);
+		for (var i = 0; i < 12; i++) {
+			var target = (M.playing && !M.paused) ? Math.random() * (14 - i * 0.6) * (0.5 + 0.5 * Math.sin(now / 240 + i)) : 0;
+			spec_levels[i] = Math.max(target, (spec_levels[i] || 0) - 1.5);
+			var h = Math.round(spec_levels[i]);
+			for (var y = 0; y < h; y++) {
+				ctx.fillStyle = y > 10 ? "#e03a3a" : (y > 7 ? "#ffe066" : "#5fff5f");
+				ctx.fillRect(i * 3 + 1, 13 - y, 2, 1);
+			}
+		}
+	}
+
+	// ------------------------------------------------------------- desktop icons
+
+	var icon_refs = {};
+	var icon_list = [];
+
+	function icon_defs() {
+		var list = [
+			{ id: "station", label: "station.exe", icon: "station", open: function () { open_window("station"); } },
+			{ id: "ready", label: ready_label(), icon: "join", open: ACTIONS.ready },
+			{ id: "observe", label: "Observe", icon: "observe", open: ACTIONS.observe },
+			{ id: "setup", label: "Setup Character", icon: "setup", open: ACTIONS.setup },
+			{ id: "options", label: "Game Options", icon: "options", open: ACTIONS.options },
+			{ id: "directory", label: "Characters", icon: "directory", open: ACTIONS.directory },
+			{ id: "amp", label: "SpaceAmp", icon: "music", open: function () { open_window("amp"); } },
+			{ id: "paint", label: "MSpacePaint", icon: "paint", open: function () { open_window("paint"); } },
+			{ id: "readme", label: "readme.txt", icon: "readme", open: function () { open_window("readme"); } },
+			{ id: "clown", label: "Clown.exe (NEVER OPEN)", icon: "clown", open: clown_exe },
+			{ id: "recycle", label: "Recycle Bin", icon: "recycle", open: function () { open_window("recycle"); } },
+		];
+		if (C.playing) {
+			list.splice(2, 0, { id: "manifest", label: "Crew Manifest", icon: "manifest", open: ACTIONS.manifest });
+		}
+		if (C.servers) {
+			list.push({ id: "servers", label: "Swap Servers", icon: "servers", open: ACTIONS.servers });
+		}
+		if (C.traits) {
+			list.push({ id: "traits", label: "Job Traits", icon: "traits", open: ACTIONS.traits });
+		}
+		if (C.polls) {
+			list.push({ id: "polls", label: C.polls === "new" ? "Polls (NEW)" : "Polls", icon: "polls", open: ACTIONS.polls });
+		}
+		return list;
+	}
+
+	function build_icons(parent) {
+		var box = el("div", null, parent);
+		box.id = "icons";
+		icon_defs().forEach(function (d) {
+			var ic = el("div", "icon", box);
+			img("mav_icon_" + d.icon + ".png", null, ic);
+			el("span", "label", ic, d.label);
+			ic.addEventListener("mousedown", function (e) {
+				e.stopPropagation();
+				select_icon(d.id);
+			});
+			ic.addEventListener("dblclick", function () { d.open(); });
+			icon_refs[d.id] = ic;
+			icon_list.push(ic);
+		});
+		parent.addEventListener("mousedown", function (e) {
+			if (e.target === parent || e.target.id === "wall" || e.target.parentNode.id === "wall") {
+				select_icon(null);
+			}
+		});
+		select_icon("clown");
+	}
+
+	function select_icon(id) {
+		Object.keys(icon_refs).forEach(function (k) {
+			icon_refs[k].classList.toggle("selected", k === id);
+		});
+	}
+
+	var ICON_W = 50;
+	var ICON_H = 44;
+
+	function place_icons() {
+		var rows = Math.floor((270 - 16 - 4) / ICON_H);
+		icon_list.forEach(function (ic, i) {
+			var col = Math.floor(i / rows);
+			var row = i % rows;
+			ic.style.left = (stage_w - 4 - ICON_W * (col + 1)) + "px";
+			ic.style.top = (4 + row * ICON_H) + "px";
+		});
+	}
+
+	// ------------------------------------------------------------- taskbar, start menu, clock
+
+	function build_taskbar(parent) {
+		var tb = el("div", null, parent);
+		tb.id = "taskbar";
+		var start = el("div", "btn", tb);
+		start.id = "startbtn";
+		img("mav_chevron.png", null, start);
+		el("span", null, start, "Start");
+		var tasks = el("div", null, tb);
+		tasks.id = "tasks";
+		var tray = el("div", null, tb);
+		tray.id = "tray";
+		var horn = img("mav_icon_horn.png", null, tray);
+		horn.title = "Honk";
+		horn.addEventListener("click", function () { honk(); });
+		var clock = el("span", null, tray);
+		clock.id = "clock";
+		function tick() {
+			var d = new Date();
+			clock.textContent = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+			clock.title = d.toLocaleDateString([], { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+		}
+		tick();
+		setInterval(tick, 1000);
+
+		var menu = el("div", null, parent);
+		menu.id = "startmenu";
+		var side = el("div", "side", menu);
+		side.innerHTML = "Maverick<b>OS</b>";
+		function item(icon, label, fn) {
+			var it = el("div", "item", menu);
+			img("mav_icon_" + icon + ".png", null, it);
+			el("span", null, it, label);
+			it.addEventListener("click", function () {
+				menu.style.display = "none";
+				start.classList.remove("on");
+				fn();
+			});
+		}
+		item("station", "station.exe", function () { open_window("station"); });
+		item("music", "SpaceAmp", function () { open_window("amp"); });
+		item("paint", "MSpacePaint", function () { open_window("paint"); });
+		item("readme", "readme.txt", function () { open_window("readme"); });
+		el("div", "sep", menu);
+		item("join", C.playing ? "Join Game" : "Toggle Ready", ACTIONS.ready);
+		item("observe", "Observe", ACTIONS.observe);
+		item("setup", "Setup Character", ACTIONS.setup);
+		item("options", "Game Options", ACTIONS.options);
+		if (C.servers) {
+			item("servers", "Swap Servers", ACTIONS.servers);
+		}
+		el("div", "sep", menu);
+		item("recycle", "Shut Down...", shut_down);
+		start.addEventListener("click", function (e) {
+			e.stopPropagation();
+			var open = menu.style.display === "block";
+			menu.style.display = open ? "none" : "block";
+			start.classList.toggle("on", !open);
+		});
+		document.addEventListener("mousedown", function (e) {
+			if (!menu.contains(e.target) && !start.contains(e.target)) {
+				menu.style.display = "none";
+				start.classList.remove("on");
+			}
+		});
+	}
+
+	function update_taskbar(active) {
+		var tasks = document.getElementById("tasks");
+		if (!tasks) {
+			return;
+		}
+		tasks.innerHTML = "";
+		Object.keys(wins).forEach(function (k) {
+			var w = wins[k];
+			var minimized = w.el.classList.contains("min");
+			var on = !minimized && !w.el.classList.contains("inactive");
+			var t = el("div", "task" + (on ? " on" : ""), tasks);
+			img("mav_icon_" + w.spec.icon + ".png", null, t);
+			el("span", null, t, w.spec.title);
+			t.addEventListener("click", function () {
+				if (on) {
+					minimize(k);
+				} else {
+					open_window(k);
+				}
+			});
+		});
+	}
+
+	function shut_down() {
+		var s = document.getElementById("shutdown");
+		s.style.display = "block";
+		s.textContent = "It's now safe to turn off your station.";
+		s.onclick = function () { s.style.display = "none"; };
+	}
+
+	// ------------------------------------------------------------- clown.exe
+
+	var clown_busy = false;
+	var last_honk = 0;
+
+	function honk() {
+		var now = Date.now();
+		if (now - last_honk < 2500) {
+			return;
+		}
+		last_honk = now;
+		byond("lobby_honk=1");
+		var r = document.getElementById("root");
+		r.classList.remove("shake");
+		void r.offsetWidth;
+		r.classList.add("shake");
+	}
+
+	function clown_exe() {
+		if (clown_busy) {
+			return;
+		}
+		dialog({
+			title: "Clown.exe (NEVER OPEN)", icon: "mav_icon_clown.png", w: 170, y: 90,
+			text: "Are you sure you want to open Clown.exe? It says NEVER OPEN. Right there. In the name.",
+			buttons: [
+				{ label: "Yes", fn: function (close) { close(); clown_chain(); } },
+				{ label: "Also yes", fn: function (close) { close(); clown_chain(); } },
+			],
+		});
+	}
+
+	var ERRORS = [
+		"clown.exe has performed an illegal operation and will be HONKED.",
+		"A fatal exception HONK has occurred at 0028:C0011E36.",
+		"clown.exe is not responding. It never was.",
+		"Not enough memory to run clown.exe. Closing your dignity to free memory.",
+		"Error: banana peel detected in RAM.",
+		"clown.exe has encountered a problem and needs to honk. We are sorry for the inconvenience.",
+	];
+
+	function clown_chain() {
+		clown_busy = true;
+		var spam = [];
+		for (var i = 0; i < 9; i++) {
+			(function (i) {
+				after(i * 110, function () {
+					spam.push(dialog({
+						title: "clown.exe", icon: "err", w: 160,
+						x: 40 + i * 12, y: 20 + i * 11,
+						text: ERRORS[i % ERRORS.length],
+					}));
+				});
+			})(i);
+		}
+		after(1300, honk);
+		after(1700, function () { clown_run(spam); });
+	}
+
+	function clown_run(spam) {
+		var c = document.getElementById("clown");
+		var W = stage_w;
+		var path = [
+			[-32, 196], [Math.round(W * 0.45 / 16) * 16, 196], [Math.round(W * 0.45 / 16) * 16, 112],
+			[W - 112, 112], [W - 112, 32], [W + 40, 32],
+		];
+		var pts = [];
+		for (var p = 0; p < path.length - 1; p++) {
+			var a = path[p];
+			var b = path[p + 1];
+			var steps = Math.max(1, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / 16));
+			for (var s = 0; s < steps; s++) {
+				pts.push([a[0] + (b[0] - a[0]) * s / steps, a[1] + (b[1] - a[1]) * s / steps]);
+			}
+		}
+		pts.push(path[path.length - 1]);
+		c.style.display = "block";
+		c.style.transition = "left 0.07s linear, top 0.07s linear";
+		var i = 0;
+		var bob = 0;
+		var honked_again = false;
+		var mover = setInterval(function () {
+			if (i >= pts.length) {
+				clearInterval(mover);
+				c.style.display = "none";
+				spam.forEach(function (d) { d.close(); });
+				open_window("paint");
+				after(3000, function () {
+					icon_list.forEach(function (ic) { ic.classList.remove("knocked", "knocked2"); });
+					clown_busy = false;
+				});
+				return;
+			}
+			var pt = pts[i];
+			var prev = pts[Math.max(0, i - 1)];
+			var dir = pt[0] > prev[0] ? "E" : (pt[0] < prev[0] ? "W" : "S");
+			c.src = "mav_clown_" + dir + ".png";
+			bob = 1 - bob;
+			c.style.left = pt[0] + "px";
+			c.style.top = (pt[1] - bob) + "px";
+			// knock over icons and fling error boxes we run through
+			icon_list.forEach(function (ic, k) {
+				if (Math.abs(ic.offsetLeft + 6 - pt[0]) < 26 && Math.abs(ic.offsetTop - pt[1]) < 26) {
+					ic.classList.add(k % 2 ? "knocked" : "knocked2");
+				}
+			});
+			spam.forEach(function (d) {
+				var e = d.el;
+				if (e.classList.contains("flung")) {
+					return;
+				}
+				var cx = e.offsetLeft + e.offsetWidth / 2;
+				var cy = e.offsetTop + e.offsetHeight / 2;
+				if (Math.abs(cx - pt[0]) < e.offsetWidth / 2 + 10 && Math.abs(cy - pt[1]) < e.offsetHeight / 2 + 10) {
+					e.classList.add("flung");
+					e.style.transform = "translate(" + (pt[0] < cx ? 160 : -160) + "px, 220px) rotate(" + (pt[0] < cx ? 160 : -160) + "deg)";
+				}
+			});
+			if (!honked_again && i > pts.length * 0.6) {
+				honked_again = true;
+				last_honk = 0;
+				honk();
+			}
+			i++;
+		}, 70);
+	}
+
+	// ------------------------------------------------------------- CRT
+
+	function add_crt() {
+		if (C.classic) {
+			return;
+		}
+		document.body.classList.add("crt_on");
+		["crt_scan", "crt_grille", "crt_flicker", "crt_roll", "crt_glass"].forEach(function (c) {
+			el("div", "crt_layer " + c, document.body);
+		});
+	}
+
+	// ------------------------------------------------------------- startup splashes
+
+	var progress = { cur: 0, total: 1, last: Date.now() };
+	var latest_line = "";
+	var splash_refs = {};
+
+	function strip(html) {
+		var d = document.createElement("div");
+		d.innerHTML = html;
+		return (d.textContent || "").trim();
+	}
+
+	function build_splash(root) {
+		var B = C.boot || {};
+		progress.cur = +B.progress_time || 0;
+		progress.total = +B.progress_total || 1500;
+		(B.messages || []).forEach(function (m) { latest_line = strip(m) || latest_line; });
+		var kind = C.splash || pick(["bios", "setup", "bsod"]);
+		if (kind === "bios") {
+			build_bios(root, B);
+		} else if (kind === "setup") {
+			build_setup(root);
+		} else {
+			build_bsod(root, B);
+		}
+		setInterval(progress_tick, 100);
+		progress_tick();
+	}
+
+	function progress_ratio() {
+		return progress.cur / Math.max(1, progress.total);
+	}
+
+	function progress_tick() {
+		var now = Date.now();
+		if (progress.cur < progress.total * 3) {
+			progress.cur += (now - progress.last) / 100;
+		}
+		progress.last = now;
+		var r = progress_ratio();
+		if (splash_refs.bar) {
+			splash_refs.bar.style.width = Math.min(100, r * 100) + "%";
+		}
+		if (splash_refs.pct) {
+			splash_refs.pct.textContent = Math.floor(r * 100) + "% complete";
+		}
+		if (splash_refs.status) {
+			splash_refs.status.textContent = latest_line ? latest_line : "Waking up the hamsters...";
+		}
+		if (splash_refs.humans) {
+			splash_refs.humans.textContent = String(C.boot.humans || 0);
+		}
+	}
+
+	function line(parent, text, cls) {
+		var d = el("div", cls, parent);
+		d.textContent = text === "" ? " " : text;
+		return d;
+	}
+
+	function build_bios(root, B) {
+		var s = el("div", "splash bios", root);
+		img("mav_chevron.png", "logo", s);
+		line(s, "MAVERICK-OS BIOS v1.13", "hi");
+		line(s, "(C) Aeri Consultations and Services. No refunds.");
+		line(s, "");
+		line(s, "Memory test ............. 640K OK (it's enough)");
+		line(s, "BYOND engine ............ " + (B.byond || "???"));
+		line(s, "Tick rate ............... " + (B.fps || "?") + " FPS");
+		line(s, "Scanning crew manifest ...");
+		var h = line(s, "  Humans detected ....... ");
+		splash_refs.humans = el("span", null, h);
+		line(s, "  Automatons ............ 0 (on strike)");
+		line(s, "Loading blackjack ....... OK");
+		line(s, "Loading hookers ......... OK");
+		line(s, "Mounting STATION ........ " + (B.map || "Unknown Station"));
+		line(s, "  OK (Not really, but let's pretend)");
+		var st = line(s, "");
+		splash_refs.status = st;
+		var bar = el("div", "bar", s);
+		splash_refs.bar = el("i", null, bar);
+		var boom = line(s, B.explode_line || "TOUCH ANY BUTTON TO EXPLODE", "hi blink");
+		boom.style.marginTop = "6px";
+		var drills = ["...relax. that was a drill.", "ok that one was a joke. stop touching things.", "you're lucky it's a test server.", "BOOM. (it didn't explode. we lied.)"];
+		function kaboom() {
+			var r = document.getElementById("root");
+			r.classList.remove("shake", "flash");
+			void r.offsetWidth;
+			r.classList.add("shake", "flash");
+			boom.classList.remove("blink");
+			boom.textContent = pick(drills);
+		}
+		document.addEventListener("keydown", kaboom);
+		s.addEventListener("mousedown", kaboom);
+	}
+
+	function build_setup(root) {
+		var s = el("div", "splash setup_bg", root);
+		var w = 384;
+		var holder = el("div", null, s);
+		holder.id = "windows";
+		var spec = { title: "MaverickStation Setup", icon: "station", w: w, h: 168, x: Math.round(stage_w / 2 - w / 2), y: 46 };
+		function no_escape() {
+			dialog({ title: "Setup", icon: "err", w: 140, text: "THERE IS NO ESCAPE", big: false, y: 110 });
+		}
+		var win = make_window("setup", spec, { buttons: ["close"], on_button: no_escape });
+		win.dataset.locked = "1";
+		var body = el("div", "body", win);
+		body.style.display = "flex";
+		body.style.padding = "4px";
+		var panel = el("div", "setup_panel", body);
+		img("mav_icon_join.png", null, panel);
+		var col = el("div", null, body);
+		col.style.flex = "1";
+		var head = el("div", null, col, "Preparing your shift");
+		head.style.fontFamily = "Pixellari";
+		head.style.fontSize = "16px";
+		head.style.marginBottom = "6px";
+		[
+			"Waking the crew... (robots, they don't sleep)",
+			"Restocking vendors... (lol, lmao)",
+		].forEach(function (t) { line(col, t); });
+		var disk = el("div", null, col);
+		disk.style.display = "flex";
+		disk.style.alignItems = "center";
+		disk.style.whiteSpace = "nowrap";
+		el("span", null, disk, "Hiding the nuke disk (selected location:\u00a0");
+		var where = el("span", null, disk, "Clown's ass");
+		where.style.color = "#c01010";
+		el("span", null, disk, ")");
+		var cl = img("mav_clown_small.png", null, disk);
+		cl.style.marginLeft = "3px";
+		splash_refs.status = line(col, "");
+		splash_refs.status.style.color = "#404040";
+		splash_refs.status.style.marginTop = "6px";
+		splash_refs.status.style.whiteSpace = "nowrap";
+		splash_refs.status.style.overflow = "hidden";
+		var pb = el("div", "pbar", col);
+		splash_refs.bar = el("i", null, pb);
+		var btns = el("div", null, col);
+		btns.style.textAlign = "right";
+		btns.style.marginTop = "8px";
+		var cancel = el("div", "btn", btns, "Cancel");
+		cancel.addEventListener("click", no_escape);
+	}
+
+	var STOP_CODES = ["SHIT_FUCK", "HELP_ME", "OH_NO"];
+
+	function build_bsod(root, B) {
+		var s = el("div", "splash bsod", root);
+		el("div", "face", s, ";)");
+		var msg = el("div", "msg", s);
+		msg.innerHTML = "Your FRIEND ran into a problem and needs to restart.<br>We're just collecting some <span class='redact'>████</span> and then<br>we'll be right back!";
+		splash_refs.pct = el("div", "pct", s, "0% complete");
+		var small = el("div", "small", s);
+		el("div", null, small, "If you call a clown, give them this info. They won't be able to help, but it might be funny.");
+		el("div", null, small, "Stop code: " + (B.stop_code || pick(STOP_CODES)));
+		img("mav_blinds.png", "blinds", s);
+		el("div", "gl1", s);
+		el("div", "gl2", s);
+		el("div", "gl3", s);
+	}
+
+	// ------------------------------------------------------------- page build
+
+	function build_lobby(root) {
+		build_wall(root);
+		var hot = el("div", null, root);
+		hot.id = "crt_hot";
+		hot.title = "station.exe";
+		var hs = C.crt_hotspot || [100, 105, 92, 96];
+		hot.addEventListener("dblclick", function () { open_window("station"); });
+		var holder = el("div", null, root);
+		holder.id = "windows";
+		if (C.classic) {
+			var spec = { title: "MaverickStation", icon: "station", w: 190, h: 172, x: function () { return Math.round(stage_w / 2 - 95); }, y: 24, build: station_menu };
+			var w = make_window("classic", spec, { buttons: [] });
+			w.dataset.locked = "1";
+			var body = el("div", "body", w);
+			station_menu(body);
+			wins.classic = { el: w, spec: spec, body: body };
+			if (C.notice) {
+				show_notice();
+			}
+			return;
+		}
+		build_icons(root);
+		var clown = img("mav_clown_E.png", null, root);
+		clown.id = "clown";
+		build_taskbar(root);
+		var sd = el("div", null, root);
+		sd.id = "shutdown";
+		restore_windows();
+		if (C.assigned) {
+			dialog({
+				title: "Message", icon: "mav_chevron.png", big: true, w: 220, y: 70,
+				text: "You have been assigned a STATION.",
+				buttons: [
+					{ label: "OK", fn: function (close) { close(); byond("assigned_seen=1;late_join=1"); } },
+					{ label: "Also OK", fn: function (close) { close(); byond("assigned_seen=1;late_join=1"); } },
+				],
+				on_x: function (close) { close(); byond("assigned_seen=1"); },
+			});
+		}
+		if (C.notice) {
+			show_notice();
+		}
+		// keep the hotspot glued to the CRT in the wallpaper
+		var place_hot = function () {
+			var left = Math.round((stage_w - 640) / 2);
+			hot.style.left = (left + hs[0]) + "px";
+			hot.style.top = hs[1] + "px";
+			hot.style.width = hs[2] + "px";
+			hot.style.height = hs[3] + "px";
+		};
+		window.addEventListener("resize", place_hot);
+		place_hot();
+	}
+
+	function show_notice() {
+		dialog({
+			title: "IMPORTANT.txt - Notepad", icon: "err", w: 200, y: 30,
+			html: "<div class='notice_text'></div>",
+		});
+		var boxes = document.querySelectorAll(".notice_text");
+		boxes[boxes.length - 1].textContent = C.notice;
+	}
+
+	function init() {
+		if (started) {
+			return;
+		}
+		started = true;
+		var root = el("div", null, stage);
+		root.id = "root";
+		root.style.position = "absolute";
+		root.style.inset = "0";
+		ready = !!C.ready;
+		antag = !!C.antag;
+		if (C.mode === "startup") {
+			build_splash(root);
+		} else {
+			build_lobby(root);
+		}
+		add_crt();
+		window.addEventListener("resize", layout);
+		layout();
+	}
+
+	// ------------------------------------------------------------- hooks the server calls
+
+	window.toggle_ready = function (value) {
+		ready = String(value) === String(C.ready_value);
+		refresh_station();
+	};
+	window.toggle_antag = function (value) {
+		if (value !== undefined && value !== "") {
+			antag = !!(+value);
+		} else {
+			antag = !antag;
+		}
+		refresh_station();
+	};
+	window.update_current_character = function (name) {
+		C.name = name;
+		refresh_station();
+	};
+	window.append_terminal_text = function (html) {
+		var t = strip(html || "");
+		if (t) {
+			latest_line = t;
+		}
+	};
+	window.update_loading_progress = function (current, total) {
+		progress.cur = parseFloat(current) || progress.cur;
+		progress.total = parseFloat(total) || progress.total;
+	};
+	window.update_humans = function (count) {
+		if (C.boot) {
+			C.boot.humans = +count;
+		}
+	};
+	window.music_state = function (json) {
+		var s;
+		try {
+			s = JSON.parse(json);
+		} catch (e) {
+			return;
+		}
+		var track_changed = s.index !== C.music.index || s.started;
+		Object.keys(s).forEach(function (k) { C.music[k] = s[k]; });
+		if (amp) {
+			if (track_changed) {
+				amp.elapsed = s.offset || 0;
+				amp.ended_sent = false;
+			}
+			if (s.offset !== undefined) {
+				amp.elapsed = s.offset;
+				amp.ended_sent = false;
+			}
+			draw_amp(true);
+		}
+	};
+
+	document.addEventListener("DOMContentLoaded", init);
+	if (document.readyState !== "loading") {
+		init();
+	}
+})();
