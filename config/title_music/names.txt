@@ -16,16 +16,21 @@
 #   date=10-31                one day (month-day), on the player's own calendar
 #   date=08-01..08-07         a range of days, both ends included
 #   holiday=Halloween         a holiday the game celebrates today, by its in-game name
+#   alert=red                 the station alert level, or several: alert=red,delta
+#                             (green, blue, amber, orange, violet, red, delta, gamma, epsilon)
 #   chance=25                 percent chance to win when the rules match (default 50)
+#   hidden                    keep it out of the playlist too, while its rules don't match
 #
 # When a player first opens the lobby, each special track that matches gets one
-# roll. If none wins, they hear the regular lobby track.
+# roll. If none wins, they hear the regular lobby track. When the alert level
+# changes, alert tracks roll again for lobby players who didn't pick their own song.
 #
 # Examples:
 #   lobbymusic2 : BIRDBRAIN - Jamie Paige
 #   starry_sky : Starry Sky - nor | time=22-5
 #   gladiators : Entry of the Gladiators | date=08-01..08-07 | chance=100
 #   spooky : Spooky Scary Skeletons | holiday=Halloween
+#   evacuate : EVACUATE - Ketsu | alert=red,delta | hidden
 
 # Stock tracks
 title0 : Endless Space - Solus

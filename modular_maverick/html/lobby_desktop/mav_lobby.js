@@ -1399,7 +1399,7 @@
 			return;
 		}
 		var d = new Date();
-		byond("music=hello;hour=" + d.getHours() + ";month=" + (d.getMonth() + 1) + ";day=" + d.getDate());
+		byond("music=hello;hour=" + d.getHours() + ";minute=" + d.getMinutes() + ";month=" + (d.getMonth() + 1) + ";day=" + d.getDate());
 	}
 
 	function init() {

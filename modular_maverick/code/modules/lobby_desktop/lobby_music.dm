@@ -9,6 +9,8 @@ GLOBAL_LIST_INIT(maverick_track_names, list(
 
 /// Every lobby track SpaceAmp can play, as file paths.
 GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
+/// Rolls alert-limited tracks for lobby players when the station alert level changes.
+GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener)
 
 /client
 	/// Track this player picked in SpaceAmp. Null means the round's lobby track.
@@ -25,6 +27,10 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 	var/maverick_music_paused_at
 	/// Whether we already picked this session's first track from the player's clock.
 	var/maverick_music_greeted = FALSE
+	/// The player's clock when the lobby first loaded: list(minute of day, month * 100 + day, world.realtime then).
+	var/list/maverick_music_clock
+	/// The player picked a track themselves, so alert changes leave their music alone.
+	var/maverick_music_manual = FALSE
 
 /// Same pool the round's lobby track is picked from: common config tracks plus this map's tracks, else the stock list.
 /proc/maverick_lobby_tracks()
@@ -56,6 +62,8 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 		tracks.Insert(1, SSticker.login_music)
 
 	GLOB.maverick_lobby_tracks = tracks
+	if(!GLOB.maverick_lobby_alert_listener)
+		GLOB.maverick_lobby_alert_listener = new
 	return tracks
 
 /// Chance a special track wins when its rules match and the line gives no chance=.
@@ -95,10 +103,13 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 		entries[key] = list("name" = display, "rules" = rules)
 	return entries
 
-/// Reads one "key=value" rule into rules. Rules it can't read are skipped.
+/// Reads one "key=value" rule (or the "hidden" flag) into rules. Rules it can't read are skipped.
 /proc/maverick_parse_track_rule(rule, list/rules)
 	var/split = findtext(rule, "=")
 	if(!split)
+		// hidden : keep the track out of the playlist while its rules don't match
+		if(LOWER_TEXT(rule) == "hidden")
+			rules["hidden"] = TRUE
 		return
 	var/key = LOWER_TEXT(trim(copytext(rule, 1, split)))
 	var/value = trim(copytext(rule, split + 1))
@@ -123,6 +134,15 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 		if("holiday")
 			if(value)
 				rules["holiday"] = LOWER_TEXT(value)
+		// alert=red or alert=red,delta : only while the station is at one of these alert levels
+		if("alert")
+			var/list/levels = list()
+			for(var/level in splittext(LOWER_TEXT(value), ","))
+				level = trim(level)
+				if(level)
+					levels += level
+			if(length(levels))
+				rules["alert"] = levels
 		// chance=25 : percent chance to win when the other rules match
 		if("chance")
 			var/chance = text2num(value)
@@ -169,13 +189,15 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 /// Rules that limit when a track may auto-play. Null for regular tracks.
 /proc/maverick_track_window(path)
 	var/list/rules = maverick_track_entry(path)?["rules"]
-	if(!rules || !(rules["time"] || rules["date"] || rules["holiday"]))
+	if(!rules || !(rules["time"] || rules["date"] || rules["holiday"] || rules["alert"]))
 		return null
 	return rules
 
-/// TRUE when every rule in the window matches the given player time.
+/// TRUE when every rule in the window matches. hour and month_day are the player's, null if unknown.
 /proc/maverick_track_window_open(list/rules, hour, month_day)
 	if(rules["time"])
+		if(isnull(hour))
+			return FALSE
 		var/list/hours = rules["time"]
 		var/start = hours[1]
 		var/finish = hours[2]
@@ -186,6 +208,8 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 			if(hour < start && hour >= finish)
 				return FALSE
 	if(rules["date"])
+		if(isnull(month_day))
+			return FALSE
 		var/list/dates = rules["date"]
 		var/first = dates[1]
 		var/last = dates[2]
@@ -202,7 +226,53 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 				break
 		if(!found)
 			return FALSE
+	if(rules["alert"])
+		var/list/levels = rules["alert"]
+		if(!(SSsecurity_level.get_current_level_as_text() in levels))
+			return FALSE
 	return TRUE
+
+/// The player's clock right now, worked out from what the lobby told us: list(hour, month * 100 + day).
+/client/proc/maverick_player_clock()
+	if(!maverick_music_clock)
+		return list(null, null)
+	var/minutes = maverick_music_clock[1] + round((world.realtime - maverick_music_clock[3]) / (1 MINUTES))
+	return list(round(minutes / 60) % 24, maverick_music_clock[2])
+
+/// TRUE if the track has no rules, or all its rules match for this player now.
+/client/proc/maverick_track_open(track)
+	var/list/rules = maverick_track_window(track)
+	if(!rules)
+		return TRUE
+	var/list/clock = maverick_player_clock()
+	return maverick_track_window_open(rules, clock[1], clock[2])
+
+/// The tracks this player sees in SpaceAmp: everything except hidden tracks whose rules don't match.
+/client/proc/maverick_visible_tracks()
+	var/current = maverick_current_track()
+	var/list/visible = list()
+	for(var/track in maverick_lobby_tracks())
+		var/list/rules = maverick_track_window(track)
+		if(rules?["hidden"] && track != current && !maverick_track_open(track))
+			continue
+		visible += track
+	return visible
+
+/// Rolls special tracks from candidates. Plays the first winner and returns TRUE.
+/client/proc/maverick_roll_special_tracks(list/candidates)
+	for(var/track in shuffle(candidates))
+		var/list/rules = maverick_track_window(track)
+		var/chance = isnull(rules["chance"]) ? TRACK_RULE_DEFAULT_CHANCE : rules["chance"]
+		if(prob(chance))
+			maverick_music_play(track)
+			return TRUE
+	return FALSE
+
+/// Whether we may start a track on our own for this player right now.
+/client/proc/maverick_music_may_autoplay()
+	if(CONFIG_GET(flag/disallow_title_music) || maverick_music_stopped)
+		return FALSE
+	return !!prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
 
 /**
  * Picks this player's first lobby track from their own clock.
@@ -211,38 +281,55 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
  * round's track is special but outside its window for this player, they get
  * a regular track instead. Runs once per session, when the lobby first loads.
  */
-/client/proc/maverick_music_hello(hour, month, day)
+/client/proc/maverick_music_hello(hour, minute, month, day)
 	if(maverick_music_greeted)
 		return
 	maverick_music_greeted = TRUE
-	if(!isnum(hour) || !isnum(month) || !isnum(day))
+	if(!isnum(hour) || !isnum(minute) || !isnum(month) || !isnum(day))
 		return
-	if(CONFIG_GET(flag/disallow_title_music) || maverick_music_stopped)
-		return
-	if(!prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume))
+	maverick_music_clock = list(clamp(hour, 0, 23) * 60 + clamp(minute, 0, 59), month * 100 + day, world.realtime)
+	if(!maverick_music_may_autoplay())
 		return
 
-	var/month_day = month * 100 + day
 	var/list/open_specials = list()
 	var/list/regulars = list()
 	for(var/track in maverick_lobby_tracks())
-		var/list/rules = maverick_track_window(track)
-		if(!rules)
+		if(!maverick_track_window(track))
 			regulars += track
-		else if(maverick_track_window_open(rules, hour, month_day))
+		else if(maverick_track_open(track))
 			open_specials += track
-
-	for(var/track in shuffle(open_specials))
-		var/list/rules = maverick_track_window(track)
-		var/chance = isnull(rules["chance"]) ? TRACK_RULE_DEFAULT_CHANCE : rules["chance"]
-		if(prob(chance))
-			maverick_music_play(track)
-			return
+	if(maverick_roll_special_tracks(open_specials))
+		return
 
 	var/current = maverick_current_track()
-	var/list/current_rules = current && maverick_track_window(current)
-	if(current_rules && !maverick_track_window_open(current_rules, hour, month_day) && length(regulars))
+	if(current && !maverick_track_open(current) && length(regulars))
 		maverick_music_play(pick(regulars))
+
+/// The station alert changed. Alert-limited tracks get a roll, unless the player picked their own music.
+/client/proc/maverick_music_alert_changed()
+	if(!isnewplayer(mob))
+		return
+	if(!maverick_music_manual && maverick_music_may_autoplay())
+		var/current = maverick_current_track()
+		var/list/candidates = list()
+		for(var/track in maverick_lobby_tracks())
+			var/list/rules = maverick_track_window(track)
+			if(rules?["alert"] && track != current && maverick_track_open(track))
+				candidates += track
+		if(maverick_roll_special_tracks(candidates))
+			return
+	// the playlist may have gained or lost hidden alert tracks
+	maverick_music_push()
+
+/datum/maverick_lobby_alert_listener/New()
+	. = ..()
+	RegisterSignal(SSsecurity_level, COMSIG_SECURITY_LEVEL_CHANGED, PROC_REF(on_alert_changed))
+
+/datum/maverick_lobby_alert_listener/proc/on_alert_changed(datum/source, level)
+	SIGNAL_HANDLER
+	for(var/mob/dead/new_player/player as anything in GLOB.new_player_list)
+		if(player.client)
+			INVOKE_ASYNC(player.client, TYPE_PROC_REF(/client, maverick_music_alert_changed))
 
 #undef TRACK_RULE_DEFAULT_CHANCE
 
@@ -260,7 +347,7 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 	return SSticker.login_music
 
 /client/proc/maverick_music_state()
-	var/list/tracks = maverick_lobby_tracks()
+	var/list/tracks = maverick_visible_tracks()
 	var/current = maverick_current_track()
 	var/list/titles = list()
 	for(var/track in tracks)
@@ -314,14 +401,14 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 /client/proc/maverick_music_command(command, list/href_list)
 	if(!isnewplayer(mob))
 		return
-	var/list/tracks = maverick_lobby_tracks()
+	var/list/tracks = maverick_visible_tracks()
 	if(!length(tracks))
 		return
 	var/current = maverick_current_track()
 	var/index = max(1, tracks.Find(current))
 	switch(command)
 		if("hello")
-			maverick_music_hello(text2num(href_list["hour"]), text2num(href_list["month"]), text2num(href_list["day"]))
+			maverick_music_hello(text2num(href_list["hour"]), text2num(href_list["minute"]), text2num(href_list["month"]), text2num(href_list["day"]))
 		if("play")
 			maverick_music_play(current)
 		if("pause")
@@ -348,12 +435,15 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 			maverick_music_paused = FALSE
 			maverick_music_push()
 		if("next")
+			maverick_music_manual = TRUE
 			maverick_music_play(tracks[(index % length(tracks)) + 1])
 		if("prev")
+			maverick_music_manual = TRUE
 			maverick_music_play(tracks[((index - 2 + length(tracks)) % length(tracks)) + 1])
 		if("track")
 			var/pick = text2num(href_list["track"])
 			if(isnum(pick) && pick >= 1 && pick <= length(tracks))
+				maverick_music_manual = TRUE
 				maverick_music_play(tracks[pick])
 		if("seek")
 			var/position = text2num(href_list["pos"])
