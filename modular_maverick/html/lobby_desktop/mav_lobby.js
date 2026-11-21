@@ -972,7 +972,6 @@
 				select_icon(null);
 			}
 		});
-		select_icon("clown");
 	}
 
 	function select_icon(id) {
