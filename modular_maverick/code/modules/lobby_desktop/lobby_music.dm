@@ -23,6 +23,8 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 	var/maverick_music_started
 	/// world.time the track was paused at.
 	var/maverick_music_paused_at
+	/// Whether we already picked this session's first track from the player's clock.
+	var/maverick_music_greeted = FALSE
 
 /// Same pool the round's lobby track is picked from: common config tracks plus this map's tracks, else the stock list.
 /proc/maverick_lobby_tracks()
@@ -56,51 +58,193 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 	GLOB.maverick_lobby_tracks = tracks
 	return tracks
 
+/// Chance a special track wins when its rules match and the line gives no chance=.
+#define TRACK_RULE_DEFAULT_CHANCE 50
+
 /**
- * Display names from config/title_music/names.txt.
+ * Lines from config/title_music/names.txt, keyed by lowercase file name.
  *
- * One track per line, "file name : Display Name". The file name can have its
+ * Format: "file name : Display Name | rule | rule". The file name can have its
  * extension or not, and case does not matter. Lines starting with # are skipped.
+ * Each entry is list("name" = display name, "rules" = list of parsed rules).
  */
-/proc/maverick_track_name_overrides()
-	var/static/list/overrides
-	if(overrides)
-		return overrides
-	overrides = list()
+/proc/maverick_track_entries()
+	var/static/list/entries
+	if(entries)
+		return entries
+	entries = list()
 	var/names_file = "[global.config.directory]/title_music/names.txt"
 	if(!fexists(names_file))
-		return overrides
+		return entries
 	for(var/line in world.file2list(names_file))
 		line = trim(line)
 		if(!line || line[1] == "#")
 			continue
-		var/split = findtext(line, ":")
+		var/list/segments = splittext(line, "|")
+		var/head = segments[1]
+		var/split = findtext(head, ":")
 		if(!split)
 			continue
-		var/key = LOWER_TEXT(trim(copytext(line, 1, split)))
-		var/display = trim(copytext(line, split + 1))
-		if(key && display)
-			overrides[key] = display
-	return overrides
+		var/key = LOWER_TEXT(trim(copytext(head, 1, split)))
+		var/display = trim(copytext(head, split + 1))
+		if(!key)
+			continue
+		var/list/rules = list()
+		for(var/i in 2 to length(segments))
+			maverick_parse_track_rule(trim(segments[i]), rules)
+		entries[key] = list("name" = display, "rules" = rules)
+	return entries
 
-/proc/maverick_track_name(path)
+/// Reads one "key=value" rule into rules. Rules it can't read are skipped.
+/proc/maverick_parse_track_rule(rule, list/rules)
+	var/split = findtext(rule, "=")
+	if(!split)
+		return
+	var/key = LOWER_TEXT(trim(copytext(rule, 1, split)))
+	var/value = trim(copytext(rule, split + 1))
+	switch(key)
+		// time=22-5 : from 22:00 up to 05:00, on the player's clock
+		if("time")
+			var/list/hours = splittext(value, "-")
+			if(length(hours) != 2)
+				return
+			var/start = text2num(hours[1])
+			var/finish = text2num(hours[2])
+			if(isnum(start) && isnum(finish) && start >= 0 && start <= 24 && finish >= 0 && finish <= 24)
+				rules["time"] = list(start % 24, finish % 24)
+		// date=08-01..08-07 or date=10-31 : month-day, both ends included, on the player's calendar
+		if("date")
+			var/list/ends = splittext(value, "..")
+			var/first = maverick_parse_month_day(ends[1])
+			var/last = length(ends) > 1 ? maverick_parse_month_day(ends[2]) : first
+			if(first && last)
+				rules["date"] = list(first, last)
+		// holiday=Halloween : any holiday the game itself celebrates today
+		if("holiday")
+			if(value)
+				rules["holiday"] = LOWER_TEXT(value)
+		// chance=25 : percent chance to win when the other rules match
+		if("chance")
+			var/chance = text2num(value)
+			if(isnum(chance))
+				rules["chance"] = clamp(chance, 0, 100)
+
+/// "08-01" becomes 801, so dates compare as plain numbers. Null if it is not a date.
+/proc/maverick_parse_month_day(text)
+	var/list/parts = splittext(trim(text), "-")
+	if(length(parts) != 2)
+		return null
+	var/month = text2num(parts[1])
+	var/day = text2num(parts[2])
+	if(!isnum(month) || !isnum(day) || month < 1 || month > 12 || day < 1 || day > 31)
+		return null
+	return month * 100 + day
+
+/proc/maverick_track_entry(path)
 	var/list/parts = splittext(path, "/")
-	var/file = parts[length(parts)]
+	var/file = LOWER_TEXT(parts[length(parts)])
 	var/base = file
 	var/dot = findlasttext(base, ".")
 	if(dot > 1)
 		base = copytext(base, 1, dot)
+	var/list/entries = maverick_track_entries()
+	return entries[file] || entries[base]
 
-	var/list/overrides = maverick_track_name_overrides()
-	var/display = overrides[LOWER_TEXT(file)] || overrides[LOWER_TEXT(base)]
-	if(display)
-		return display
+/proc/maverick_track_name(path)
+	var/list/entry = maverick_track_entry(path)
+	if(entry?["name"])
+		return entry["name"]
 	if(GLOB.maverick_track_names[path])
 		return GLOB.maverick_track_names[path]
 
 	// drop the "rare+" / "MapName+" sorting prefix the title music folder uses
+	var/list/parts = splittext(path, "/")
+	var/base = parts[length(parts)]
+	var/dot = findlasttext(base, ".")
+	if(dot > 1)
+		base = copytext(base, 1, dot)
 	var/list/sort_parts = splittext(base, "+")
 	return replacetext(sort_parts[length(sort_parts)], "_", " ")
+
+/// Rules that limit when a track may auto-play. Null for regular tracks.
+/proc/maverick_track_window(path)
+	var/list/rules = maverick_track_entry(path)?["rules"]
+	if(!rules || !(rules["time"] || rules["date"] || rules["holiday"]))
+		return null
+	return rules
+
+/// TRUE when every rule in the window matches the given player time.
+/proc/maverick_track_window_open(list/rules, hour, month_day)
+	if(rules["time"])
+		var/list/hours = rules["time"]
+		var/start = hours[1]
+		var/finish = hours[2]
+		if(start < finish)
+			if(hour < start || hour >= finish)
+				return FALSE
+		else if(start > finish)
+			if(hour < start && hour >= finish)
+				return FALSE
+	if(rules["date"])
+		var/list/dates = rules["date"]
+		var/first = dates[1]
+		var/last = dates[2]
+		if(first <= last)
+			if(month_day < first || month_day > last)
+				return FALSE
+		else if(month_day < first && month_day > last)
+			return FALSE
+	if(rules["holiday"])
+		var/found = FALSE
+		for(var/holiday_name in GLOB.holidays)
+			if(LOWER_TEXT(holiday_name) == rules["holiday"])
+				found = TRUE
+				break
+		if(!found)
+			return FALSE
+	return TRUE
+
+/**
+ * Picks this player's first lobby track from their own clock.
+ *
+ * Special tracks whose rules match get a roll each. If none wins and the
+ * round's track is special but outside its window for this player, they get
+ * a regular track instead. Runs once per session, when the lobby first loads.
+ */
+/client/proc/maverick_music_hello(hour, month, day)
+	if(maverick_music_greeted)
+		return
+	maverick_music_greeted = TRUE
+	if(!isnum(hour) || !isnum(month) || !isnum(day))
+		return
+	if(CONFIG_GET(flag/disallow_title_music) || maverick_music_stopped)
+		return
+	if(!prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume))
+		return
+
+	var/month_day = month * 100 + day
+	var/list/open_specials = list()
+	var/list/regulars = list()
+	for(var/track in maverick_lobby_tracks())
+		var/list/rules = maverick_track_window(track)
+		if(!rules)
+			regulars += track
+		else if(maverick_track_window_open(rules, hour, month_day))
+			open_specials += track
+
+	for(var/track in shuffle(open_specials))
+		var/list/rules = maverick_track_window(track)
+		var/chance = isnull(rules["chance"]) ? TRACK_RULE_DEFAULT_CHANCE : rules["chance"]
+		if(prob(chance))
+			maverick_music_play(track)
+			return
+
+	var/current = maverick_current_track()
+	var/list/current_rules = current && maverick_track_window(current)
+	if(current_rules && !maverick_track_window_open(current_rules, hour, month_day) && length(regulars))
+		maverick_music_play(pick(regulars))
+
+#undef TRACK_RULE_DEFAULT_CHANCE
 
 /// Length in seconds, or 0 when we can't tell (tracker formats like .mod).
 /proc/maverick_track_length(path)
@@ -138,6 +282,7 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 		"len" = current ? maverick_track_length(current) : 0,
 		"elapsed" = elapsed,
 		"offset" = elapsed,
+		"needs_hello" = !maverick_music_greeted,
 	)
 
 /// Sends SpaceAmp the new state. started tells it the track changed.
@@ -175,6 +320,8 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 	var/current = maverick_current_track()
 	var/index = max(1, tracks.Find(current))
 	switch(command)
+		if("hello")
+			maverick_music_hello(text2num(href_list["hour"]), text2num(href_list["month"]), text2num(href_list["day"]))
 		if("play")
 			maverick_music_play(current)
 		if("pause")

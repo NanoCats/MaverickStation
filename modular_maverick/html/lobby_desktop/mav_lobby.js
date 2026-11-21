@@ -1392,6 +1392,16 @@
 		boxes[boxes.length - 1].textContent = C.notice;
 	}
 
+	// Once per session, tell the server the player's clock so it can pick
+	// time- or date-limited lobby tracks (see config/title_music/names.txt).
+	function music_hello() {
+		if (!C.music.enabled || !C.music.needs_hello) {
+			return;
+		}
+		var d = new Date();
+		byond("music=hello;hour=" + d.getHours() + ";month=" + (d.getMonth() + 1) + ";day=" + d.getDate());
+	}
+
 	function init() {
 		if (started) {
 			return;
@@ -1407,6 +1417,7 @@
 			build_splash(root);
 		} else {
 			build_lobby(root);
+			music_hello();
 		}
 		add_crt();
 		window.addEventListener("resize", layout);

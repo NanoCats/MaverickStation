@@ -1,15 +1,31 @@
-# Display names for lobby tracks, shown in the SpaceAmp music player.
+# Display names and play rules for lobby tracks, shown in the SpaceAmp music player.
 # Names here win over the built-in names for the stock tracks.
 #
 # Tracks without a line here show their file name, minus the extension and any
 # "rare+" or "MapName+" prefix. Underscores become spaces.
 #
 # Format, one track per line:
-#   file name : Display Name
+#   file name : Display Name | rule | rule
 # The file name can have its extension or not. Case does not matter.
+# Rules are optional. A track with no rules is a regular track.
 #
-# Example:
+# Rules make a "special" track. It only starts on its own when every rule on
+# its line matches. It always stays in the SpaceAmp playlist, so players can
+# still pick it by hand.
+#   time=22-5                 from 22:00 up to 05:00, on the player's own clock
+#   date=10-31                one day (month-day), on the player's own calendar
+#   date=08-01..08-07         a range of days, both ends included
+#   holiday=Halloween         a holiday the game celebrates today, by its in-game name
+#   chance=25                 percent chance to win when the rules match (default 50)
+#
+# When a player first opens the lobby, each special track that matches gets one
+# roll. If none wins, they hear the regular lobby track.
+#
+# Examples:
 #   lobbymusic2 : BIRDBRAIN - Jamie Paige
+#   starry_sky : Starry Sky - nor | time=22-5
+#   gladiators : Entry of the Gladiators | date=08-01..08-07 | chance=100
+#   spooky : Spooky Scary Skeletons | holiday=Halloween
 
 # Stock tracks
 title0 : Endless Space - Solus
