@@ -18,6 +18,8 @@
 #   holiday=Halloween         a holiday the game celebrates today, by its in-game name
 #   alert=red                 the station alert level, or several: alert=red,delta
 #                             (green, blue, amber, orange, violet, red, delta, gamma, epsilon)
+#   alert=amber+              that level or any level above it. From low to high:
+#                             green, blue, violet, orange, amber, red, delta, epsilon, gamma
 #   chance=25                 percent chance to win when the rules match (default 50)
 #   hidden                    keep it out of the playlist too, while its rules don't match
 #   exclusive                 while its rules match, it takes over: one of the matching

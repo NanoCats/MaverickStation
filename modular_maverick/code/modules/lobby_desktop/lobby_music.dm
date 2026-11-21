@@ -195,18 +195,27 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 				return "\"[value]\" is not a holiday the game knows"
 			rules["holiday"] = LOWER_TEXT(value)
 		// alert=red or alert=red,delta : only while the station is at one of these alert levels
+		// alert=amber+ : amber or any level ranked above it
 		if("alert")
-			var/list/known_levels = list()
+			var/list/known_levels = list() // name = rank
 			for(var/datum/security_level/level_type as anything in subtypesof(/datum/security_level))
-				known_levels += initial(level_type.name)
+				known_levels[initial(level_type.name)] = initial(level_type.number_level)
 			var/list/levels = list()
 			for(var/level in splittext(LOWER_TEXT(value), ","))
 				level = trim(level)
 				if(!level)
 					continue
+				var/or_above = copytext(level, -1) == "+"
+				if(or_above)
+					level = trim(copytext(level, 1, -1))
 				if(!(level in known_levels))
 					return "\"[level]\" is not an alert level (known: [jointext(known_levels, ", ")])"
-				levels += level
+				if(!or_above)
+					levels |= level
+					continue
+				for(var/other in known_levels)
+					if(known_levels[other] >= known_levels[level])
+						levels |= other
 			if(!length(levels))
 				return "alert= needs at least one alert level"
 			rules["alert"] = levels
