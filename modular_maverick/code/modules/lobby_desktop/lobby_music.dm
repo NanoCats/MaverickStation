@@ -24,7 +24,7 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 	/// world.time the track was paused at.
 	var/maverick_music_paused_at
 
-/// Same pool the round's lobby track is picked from: common config tracks, else the stock list.
+/// Same pool the round's lobby track is picked from: common config tracks plus this map's tracks, else the stock list.
 /proc/maverick_lobby_tracks()
 	var/list/tracks = GLOB.maverick_lobby_tracks
 	if(length(tracks) && (!SSticker.login_music || (SSticker.login_music in tracks)))
@@ -32,12 +32,19 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 
 	tracks = list()
 	var/music_dir = "[global.config.directory]/title_music/sounds/"
+	var/map_name = LOWER_TEXT(SSmapping.current_map?.map_name)
 	for(var/file in flist(music_dir))
-		// "+" marks rare or map-only tracks; leave those as surprises
-		if(findtext(file, "+") || file == "exclude")
+		if(!IS_SOUND_FILE("[music_dir][file]"))
 			continue
-		if(IS_SOUND_FILE("[music_dir][file]"))
-			tracks += "[music_dir][file]"
+		var/list/name_parts = splittext(LOWER_TEXT(file), "+")
+		switch(length(name_parts))
+			if(1)
+				if(name_parts[1] != "exclude")
+					tracks += "[music_dir][file]"
+			if(2)
+				// map tracks for this map are fair game; rare ones stay a surprise
+				if(name_parts[1] == map_name)
+					tracks += "[music_dir][file]"
 	if(!length(tracks))
 		for(var/line in world.file2list("strings/round_start_sounds.txt"))
 			line = trim(line)
@@ -49,15 +56,51 @@ GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
 	GLOB.maverick_lobby_tracks = tracks
 	return tracks
 
+/**
+ * Display names from config/title_music/names.txt.
+ *
+ * One track per line, "file name : Display Name". The file name can have its
+ * extension or not, and case does not matter. Lines starting with # are skipped.
+ */
+/proc/maverick_track_name_overrides()
+	var/static/list/overrides
+	if(overrides)
+		return overrides
+	overrides = list()
+	var/names_file = "[global.config.directory]/title_music/names.txt"
+	if(!fexists(names_file))
+		return overrides
+	for(var/line in world.file2list(names_file))
+		line = trim(line)
+		if(!line || line[1] == "#")
+			continue
+		var/split = findtext(line, ":")
+		if(!split)
+			continue
+		var/key = LOWER_TEXT(trim(copytext(line, 1, split)))
+		var/display = trim(copytext(line, split + 1))
+		if(key && display)
+			overrides[key] = display
+	return overrides
+
 /proc/maverick_track_name(path)
+	var/list/parts = splittext(path, "/")
+	var/file = parts[length(parts)]
+	var/base = file
+	var/dot = findlasttext(base, ".")
+	if(dot > 1)
+		base = copytext(base, 1, dot)
+
+	var/list/overrides = maverick_track_name_overrides()
+	var/display = overrides[LOWER_TEXT(file)] || overrides[LOWER_TEXT(base)]
+	if(display)
+		return display
 	if(GLOB.maverick_track_names[path])
 		return GLOB.maverick_track_names[path]
-	var/list/parts = splittext(path, "/")
-	var/name = parts[length(parts)]
-	var/dot = findlasttext(name, ".")
-	if(dot > 1)
-		name = copytext(name, 1, dot)
-	return replacetext(name, "_", " ")
+
+	// drop the "rare+" / "MapName+" sorting prefix the title music folder uses
+	var/list/sort_parts = splittext(base, "+")
+	return replacetext(sort_parts[length(sort_parts)], "_", " ")
 
 /// Length in seconds, or 0 when we can't tell (tracker formats like .mod).
 /proc/maverick_track_length(path)

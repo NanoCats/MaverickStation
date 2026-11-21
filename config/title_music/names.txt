@@ -1,0 +1,11 @@
+# Display names for lobby tracks, shown in the SpaceAmp music player.
+#
+# Tracks without a line here show their file name, minus the extension and any
+# "rare+" or "MapName+" prefix. Underscores become spaces.
+#
+# Format, one track per line:
+#   file name : Display Name
+# The file name can have its extension or not. Case does not matter.
+#
+# Example:
+#   lobbymusic2 : BIRDBRAIN - Jamie Paige
