@@ -1,7 +1,7 @@
 /// Display names for tracks we know the real title of. Anything else shows its file name.
 GLOBAL_LIST_INIT(maverick_track_names, list(
 	"sound/music/lobby_music/title0.ogg" = "Endless Space - Solus",
-	"sound/music/lobby_music/title1.mod" = "Flip-Flap - AceMan",
+	"sound/music/lobby_music/title1.mod" = "Flip-flap - X-Ceed",
 	"sound/music/lobby_music/title2.ogg" = "Robocop Theme (gameboy) - Eric Schumacker",
 	"sound/music/lobby_music/title3.ogg" = "Tintin On The Moon - Cuboos",
 	"sound/music/lobby_music/clown.ogg" = "clown.ogg (you know what this is)",
