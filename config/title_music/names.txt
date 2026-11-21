@@ -10,8 +10,8 @@
 # Rules are optional. A track with no rules is a regular track.
 #
 # Rules make a "special" track. It only starts on its own when every rule on
-# its line matches. It always stays in the SpaceAmp playlist, so players can
-# still pick it by hand.
+# its line matches. It still shows in the SpaceAmp playlist (unless marked
+# hidden), so players can pick it by hand.
 #   time=22-5                 from 22:00 up to 05:00, on the player's own clock
 #   date=10-31                one day (month-day), on the player's own calendar
 #   date=08-01..08-07         a range of days, both ends included
