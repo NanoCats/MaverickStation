@@ -1,0 +1,40 @@
+MAVERICKSTATION PRIVACY POLICY (version %POLICY_VERSION%)
+
+We want as little of your data as we can get away with. This page tells you what we collect, why we collect it, and how long we keep it.
+
+WHO WE ARE
+MaverickStation is a small, private Space Station 13 server. Leadership runs it. We do not sell your data, we do not share it, and we do not show ads.
+
+WHAT WE COLLECT, AND WHY
+1. Your BYOND key, IP address and computer ID. BYOND sends these to every server you join. We use them to run bans and to stop ban evasion.
+2. Connection records. We record when you connect, with the data in item 1.
+3. Game logs. The server records what happens in a round: speech, OOC, PDA messages, emotes, fights and admin actions. Admins use these logs to handle reports.
+4. Your characters and preferences. We save them so they load next time.
+5. Your age check result. We keep "passed", or a ban if you did not pass. We never store your date of birth. Your game client works out your age and sends only that number.
+6. Your recent connections. Your game window keeps your last 5 connections (key, IP address, computer ID) on your computer. It sends them to us when you join. We use them only to find alt accounts and ban evasion.
+
+WHAT WE DO NOT DO
+- We do not ask for ID, photos or your real name.
+- We do not sell or share your data.
+- We do not publish logs.
+- We do not send your data to outside services.
+
+HOW LONG WE KEEP IT
+- Game logs and connection records: %LOG_RETENTION_DAYS% days. The server deletes older records automatically.
+- Bans: until the ban is lifted. A ban keeps the key and computer ID it applies to.
+- Your account record (key, last IP address, last computer ID, first and last join date): while the server runs, unless you ask us to delete it.
+- Characters and preferences: until you delete them or ask us to.
+- Your age check result and this agreement: while the server runs.
+
+YOUR CHOICES
+You can ask leadership to show you your data or to delete it. We can keep a ban record, and logs that are part of an open report, until that matter is closed.
+Contact: to be announced.
+
+ADULTS ONLY
+You must be %MINIMUM_AGE% or older to play here. If we find out that you are not, we ban you and delete your data, except the ban record.
+
+BYOND
+BYOND is a separate service with its own privacy policy. We do not control what BYOND collects.
+
+CHANGES
+If we change this policy in a way that matters, we ask you to agree again the next time you join.

@@ -25,7 +25,8 @@ jobs:
       - name: Compile
         run: |
           source $HOME/BYOND/byond/bin/byondsetup
-          tools/build/build.sh --ci dm -DCIBUILDING -DANSICOLORS -Werror -ITG0001 -I"loop_checks"
+          # MAVERICK EDIT - BYOND gives false unused_var warnings on upstream code depending on the layout of the whole codebase. The build tool matches ignores against the message text, not the code.
+          tools/build/build.sh --ci dm -DCIBUILDING -DANSICOLORS -Werror -ITG0001 -I"loop_checks" -I"defined but not used"
       - name: Setup variable for output path
         run: |
           OUTPUT_DIR="target"
