@@ -21,6 +21,12 @@
 #   chance=25                 percent chance to win when the rules match (default 50)
 #   hidden                    keep it out of the playlist too, while its rules don't match
 #
+# Stock tracks: once the sounds folder has even one song of your own, the stock
+# tracks that come with the game drop out of the lobby. Add the word include to
+# a stock track's line to bring it back (into SpaceAmp and the rule rolls; the
+# round's main track is still picked from your folder only).
+#   include                   bring this stock track back
+#
 # When a player first opens the lobby, each special track that matches gets one
 # roll. If none wins, they hear the regular lobby track. When the alert level
 # changes, alert tracks roll again for lobby players who didn't pick their own song.
@@ -31,6 +37,7 @@
 #   gladiators : Entry of the Gladiators | date=08-01..08-07 | chance=100
 #   spooky : Spooky Scary Skeletons | holiday=Halloween
 #   evacuate : EVACUATE - Ketsu | alert=red,delta | hidden
+#   title1 : Flip-flap - X-Ceed | include
 
 # Stock tracks
 title0 : Endless Space - Solus

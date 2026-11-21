@@ -32,7 +32,10 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	/// The player picked a track themselves, so alert changes leave their music alone.
 	var/maverick_music_manual = FALSE
 
-/// Same pool the round's lobby track is picked from: common config tracks plus this map's tracks, else the stock list.
+/**
+ * Same pool the round's lobby track is picked from: common config tracks plus this map's tracks.
+ * With no config tracks at all, the stock list. Stock tracks marked "include" in names.txt join a config pool.
+ */
 /proc/maverick_lobby_tracks()
 	var/list/tracks = GLOB.maverick_lobby_tracks
 	if(length(tracks) && (!SSticker.login_music || (SSticker.login_music in tracks)))
@@ -53,11 +56,15 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 				// map tracks for this map are fair game; rare ones stay a surprise
 				if(name_parts[1] == map_name)
 					tracks += "[music_dir][file]"
-	if(!length(tracks))
-		for(var/line in world.file2list("strings/round_start_sounds.txt"))
-			line = trim(line)
-			if(line && IS_SOUND_FILE(line))
-				tracks += line
+	var/have_own_music = length(tracks) > 0
+	for(var/line in world.file2list("strings/round_start_sounds.txt"))
+		line = trim(line)
+		if(!line || !IS_SOUND_FILE(line))
+			continue
+		// your own music pushes the stock tracks out, unless names.txt brings one back
+		if(have_own_music && !maverick_track_entry(line)?["rules"]?["include"])
+			continue
+		tracks += line
 	if(SSticker.login_music && !(SSticker.login_music in tracks))
 		tracks.Insert(1, SSticker.login_music)
 
@@ -140,17 +147,19 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 			known[copytext(file, 1, dot)] = TRUE
 	return known
 
-/// Reads one "key=value" rule (or the "hidden" flag) into rules. Returns a problem description if it can't.
+/// Reads one "key=value" rule (or the "hidden" or "include" flag) into rules. Returns a problem description if it can't.
 /proc/maverick_parse_track_rule(rule, list/rules)
 	if(!rule)
 		return "empty rule between two \"|\""
 	var/split = findtext(rule, "=")
 	if(!split)
 		// hidden : keep the track out of the playlist while its rules don't match
-		if(LOWER_TEXT(rule) == "hidden")
-			rules["hidden"] = TRUE
+		// include : bring a stock track back when the server has its own music
+		var/flag = LOWER_TEXT(rule)
+		if(flag == "hidden" || flag == "include")
+			rules[flag] = TRUE
 			return null
-		return "\"[rule]\" is not a rule (rules look like key=value, or the word hidden)"
+		return "\"[rule]\" is not a rule (rules look like key=value, or the word hidden or include)"
 	var/key = LOWER_TEXT(trim(copytext(rule, 1, split)))
 	var/value = trim(copytext(rule, split + 1))
 	switch(key)
@@ -205,7 +214,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 				return "\"chance=[value]\" should be a number from 0 to 100"
 			rules["chance"] = chance
 		else
-			return "unknown rule \"[key]\" (known: time, date, holiday, alert, chance, hidden)"
+			return "unknown rule \"[key]\" (known: time, date, holiday, alert, chance, hidden, include)"
 	return null
 
 /// "08-01" becomes 801, so dates compare as plain numbers. Null if it is not a date.
