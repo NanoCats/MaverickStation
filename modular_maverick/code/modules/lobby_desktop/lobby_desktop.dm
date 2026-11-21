@@ -6,6 +6,8 @@
 #define LOBBY_DESKTOP_CRT_HOTSPOT list(100, 105, 92, 96)
 
 /datum/asset/simple/maverick_lobby
+	// The page asks for these files by name, so they can't be renamed to their hash.
+	keep_local_name = TRUE
 	assets = list(
 		"mav_lobby.css" = 'modular_maverick/html/lobby_desktop/mav_lobby.css',
 		"mav_lobby.js" = 'modular_maverick/html/lobby_desktop/mav_lobby.js',
