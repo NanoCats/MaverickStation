@@ -20,7 +20,12 @@
 		return FALSE
 
 	if(href_list["lobby_honk"])
-		if(COOLDOWN_FINISHED(client, maverick_honk_cooldown))
+		// "rift" is the Clown.exe icon: five rising honks, on its own cooldown
+		if(href_list["lobby_honk"] == "rift")
+			if(COOLDOWN_FINISHED(client, maverick_icon_honk_cooldown))
+				COOLDOWN_START(client, maverick_icon_honk_cooldown, 1.2 SECONDS)
+				SEND_SOUND(src, sound('modular_zubbers/sound/effects/clown/clown_rift_high.ogg'))
+		else if(COOLDOWN_FINISHED(client, maverick_honk_cooldown))
 			COOLDOWN_START(client, maverick_honk_cooldown, 0.5 SECONDS)
 			SEND_SOUND(src, sound('sound/items/bikehorn.ogg'))
 		return TRUE

@@ -52,6 +52,8 @@
 	/// Round ID for which this client already saw the "You have been assigned a STATION" popup.
 	var/maverick_assigned_round
 	COOLDOWN_DECLARE(maverick_honk_cooldown)
+	/// Separate from the honk cooldown so clicking the Clown.exe icon never mutes the honks right after it.
+	COOLDOWN_DECLARE(maverick_icon_honk_cooldown)
 
 /datum/controller/subsystem/title
 	/// Which boot screen this server start shows: "bios", "setup" or "bsod".

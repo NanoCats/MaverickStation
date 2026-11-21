@@ -962,6 +962,9 @@
 			ic.addEventListener("mousedown", function (e) {
 				e.stopPropagation();
 				select_icon(d.id);
+				if (d.id === "clown") {
+					clown_icon_honk();
+				}
 			});
 			ic.addEventListener("dblclick", function () { d.open(); });
 			icon_refs[d.id] = ic;
@@ -1095,6 +1098,18 @@
 
 	var clown_busy = false;
 	var last_honk = 0;
+
+	var last_icon_honk = 0;
+
+	// Clicking the Clown.exe icon plays the clown rift honks. No shake: it's not asking for attention.
+	function clown_icon_honk() {
+		var now = Date.now();
+		if (now - last_icon_honk < 1200) {
+			return;
+		}
+		last_icon_honk = now;
+		byond("lobby_honk=rift");
+	}
 
 	function honk() {
 		var now = Date.now();
