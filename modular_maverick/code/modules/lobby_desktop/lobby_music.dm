@@ -84,7 +84,11 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	var/names_file = "[global.config.directory]/title_music/names.txt"
 	if(!fexists(names_file))
 		return entries
+	var/list/problems = list()
+	var/list/known_files = maverick_known_music_files()
+	var/line_number = 0
 	for(var/line in world.file2list(names_file))
+		line_number++
 		line = trim(line)
 		if(!line || line[1] == "#")
 			continue
@@ -92,62 +96,117 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		var/head = segments[1]
 		var/split = findtext(head, ":")
 		if(!split)
+			problems += "line [line_number]: no \":\" between the file name and the display name"
 			continue
 		var/key = LOWER_TEXT(trim(copytext(head, 1, split)))
 		var/display = trim(copytext(head, split + 1))
 		if(!key)
+			problems += "line [line_number]: no file name before the \":\""
 			continue
+		if(!display)
+			problems += "line [line_number]: no display name after the \":\""
+		if(!(key in known_files))
+			problems += "line [line_number]: \"[key]\" matches no lobby music file"
+		if(entries[key])
+			problems += "line [line_number]: \"[key]\" is listed twice, the later line wins"
 		var/list/rules = list()
 		for(var/i in 2 to length(segments))
-			maverick_parse_track_rule(trim(segments[i]), rules)
+			var/problem = maverick_parse_track_rule(trim(segments[i]), rules)
+			if(problem)
+				problems += "line [line_number]: [problem]"
 		entries[key] = list("name" = display, "rules" = rules)
+
+	for(var/problem in problems)
+		log_config("title_music/names.txt [problem]")
+	if(length(problems))
+		message_admins("title_music/names.txt has [length(problems)] problem\s. Details are in the config log.")
 	return entries
 
-/// Reads one "key=value" rule (or the "hidden" flag) into rules. Rules it can't read are skipped.
+/// Lowercase names of every lobby music file, with and without extensions, for spotting typos in names.txt.
+/proc/maverick_known_music_files()
+	var/list/known = list()
+	var/list/paths = list()
+	for(var/file in flist("[global.config.directory]/title_music/sounds/"))
+		paths += file
+	for(var/line in world.file2list("strings/round_start_sounds.txt"))
+		if(trim(line))
+			paths += trim(line)
+	for(var/path in paths)
+		var/list/parts = splittext(path, "/")
+		var/file = LOWER_TEXT(parts[length(parts)])
+		known[file] = TRUE
+		var/dot = findlasttext(file, ".")
+		if(dot > 1)
+			known[copytext(file, 1, dot)] = TRUE
+	return known
+
+/// Reads one "key=value" rule (or the "hidden" flag) into rules. Returns a problem description if it can't.
 /proc/maverick_parse_track_rule(rule, list/rules)
+	if(!rule)
+		return "empty rule between two \"|\""
 	var/split = findtext(rule, "=")
 	if(!split)
 		// hidden : keep the track out of the playlist while its rules don't match
 		if(LOWER_TEXT(rule) == "hidden")
 			rules["hidden"] = TRUE
-		return
+			return null
+		return "\"[rule]\" is not a rule (rules look like key=value, or the word hidden)"
 	var/key = LOWER_TEXT(trim(copytext(rule, 1, split)))
 	var/value = trim(copytext(rule, split + 1))
 	switch(key)
 		// time=22-5 : from 22:00 up to 05:00, on the player's clock
 		if("time")
 			var/list/hours = splittext(value, "-")
-			if(length(hours) != 2)
-				return
-			var/start = text2num(hours[1])
-			var/finish = text2num(hours[2])
-			if(isnum(start) && isnum(finish) && start >= 0 && start <= 24 && finish >= 0 && finish <= 24)
-				rules["time"] = list(start % 24, finish % 24)
+			var/start = length(hours) == 2 ? text2num(hours[1]) : null
+			var/finish = length(hours) == 2 ? text2num(hours[2]) : null
+			if(!isnum(start) || !isnum(finish) || start < 0 || start > 24 || finish < 0 || finish > 24)
+				return "\"time=[value]\" should be two hours from 0 to 24, like time=22-5"
+			rules["time"] = list(start % 24, finish % 24)
 		// date=08-01..08-07 or date=10-31 : month-day, both ends included, on the player's calendar
 		if("date")
 			var/list/ends = splittext(value, "..")
 			var/first = maverick_parse_month_day(ends[1])
 			var/last = length(ends) > 1 ? maverick_parse_month_day(ends[2]) : first
-			if(first && last)
-				rules["date"] = list(first, last)
+			if(!first || !last || length(ends) > 2)
+				return "\"date=[value]\" should be month-day, like date=10-31 or date=08-01..08-07"
+			rules["date"] = list(first, last)
 		// holiday=Halloween : any holiday the game itself celebrates today
 		if("holiday")
-			if(value)
-				rules["holiday"] = LOWER_TEXT(value)
+			if(!value)
+				return "holiday= needs a holiday name"
+			var/known = FALSE
+			for(var/datum/holiday/holiday_type as anything in subtypesof(/datum/holiday))
+				if(LOWER_TEXT(initial(holiday_type.name)) == LOWER_TEXT(value))
+					known = TRUE
+					break
+			if(!known)
+				return "\"[value]\" is not a holiday the game knows"
+			rules["holiday"] = LOWER_TEXT(value)
 		// alert=red or alert=red,delta : only while the station is at one of these alert levels
 		if("alert")
+			var/list/known_levels = list()
+			for(var/datum/security_level/level_type as anything in subtypesof(/datum/security_level))
+				known_levels += initial(level_type.name)
 			var/list/levels = list()
 			for(var/level in splittext(LOWER_TEXT(value), ","))
 				level = trim(level)
-				if(level)
-					levels += level
-			if(length(levels))
-				rules["alert"] = levels
+				if(!level)
+					continue
+				if(!(level in known_levels))
+					return "\"[level]\" is not an alert level (known: [jointext(known_levels, ", ")])"
+				levels += level
+			if(!length(levels))
+				return "alert= needs at least one alert level"
+			rules["alert"] = levels
 		// chance=25 : percent chance to win when the other rules match
 		if("chance")
 			var/chance = text2num(value)
-			if(isnum(chance))
-				rules["chance"] = clamp(chance, 0, 100)
+			if(!isnum(chance) || chance < 0 || chance > 100)
+				return "\"chance=[value]\" should be a number from 0 to 100"
+			rules["chance"] = chance
+		else
+			return "unknown rule \"[key]\" (known: time, date, holiday, alert, chance, hidden)"
+	return null
 
 /// "08-01" becomes 801, so dates compare as plain numbers. Null if it is not a date.
 /proc/maverick_parse_month_day(text)
