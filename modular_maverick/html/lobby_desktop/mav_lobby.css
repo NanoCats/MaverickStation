@@ -24,6 +24,8 @@ img { image-rendering: pixelated; border: none; }
 #wall { position: absolute; top: 0; width: 640px; height: 270px; }
 #wall img { position: absolute; left: 0; top: 0; transition: opacity 3s linear; }
 #crt_hot { position: absolute; cursor: pointer; }
+#sky { position: absolute; left: 0; top: 0; width: 100%; height: 270px; pointer-events: none; overflow: hidden; }
+.sky_shape { position: absolute; left: 0; top: 0; background: url("mav_sky_glyphs.png") no-repeat; image-rendering: pixelated; }
 
 /* ---------------------------------------------------------------- icons */
 .icon {

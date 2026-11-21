@@ -118,6 +118,73 @@
 		wall_front = back;
 	}
 
+	// ------------------------------------------------------------- sky shapes
+
+	// [x, w, h, twinkles] for each shape in mav_sky_glyphs.png
+	var SKY_FRAMES = [[0, 32, 26, 0], [33, 32, 30, 0], [66, 16, 15, 0], [83, 15, 13, 0], [99, 11, 11, 1], [111, 11, 11, 1],
+		[123, 11, 11, 1], [135, 11, 11, 1], [147, 12, 13, 0], [160, 11, 11, 1], [172, 16, 15, 0]];
+	// Wallpaper art the shapes slip behind (wall coordinates): the wordmark, then the CRT.
+	var SKY_COVERS = [[96, 14, 166, 52], C.crt_hotspot || [100, 105, 92, 96]];
+	var sky_shapes = [];
+
+	// The neon shapes drift slowly across the sky, behind the windows, so some always peek out.
+	function build_sky(parent) {
+		var sky = el("div", null, parent);
+		sky.id = "sky";
+		var order = [0, 1, 2, 3, 8, 10, 4, 5, 6, 7, 9, 4, 6, 9];
+		for (var i = 0; i < order.length; i++) {
+			var f = SKY_FRAMES[order[i]];
+			var e = el("div", "sky_shape", sky);
+			e.style.width = f[1] + "px";
+			e.style.height = f[2] + "px";
+			e.style.backgroundPosition = -f[0] + "px 0";
+			sky_shapes.push({
+				e: e, w: f[1], h: f[2], twinkle: f[3],
+				x: Math.random() * stage_w,
+				lane: 6 + Math.random() * (172 - f[2]),
+				speed: (1.5 + Math.random() * 3) * (Math.random() < 0.5 ? -1 : 1),
+				bob: 1 + Math.random() * 3,
+				period: 5 + Math.random() * 6,
+				phase: Math.random() * 6.28,
+				fade: 1,
+			});
+		}
+		var last = null;
+		function frame(now) {
+			var dt = last === null ? 0 : Math.min(0.25, (now - last) / 1000);
+			last = now;
+			var t = now / 1000;
+			var wall_x = Math.round((stage_w - 640) / 2);
+			for (var j = 0; j < sky_shapes.length; j++) {
+				var s = sky_shapes[j];
+				s.x += s.speed * dt;
+				if (s.x > stage_w + 4) {
+					s.x = -s.w - 4;
+				} else if (s.x < -s.w - 4) {
+					s.x = stage_w + 4;
+				}
+				var x = Math.round(s.x);
+				var y = Math.round(s.lane + Math.sin(t * 6.28 / s.period + s.phase) * s.bob);
+				// fade out while crossing the wordmark or the CRT, so they read as passing behind
+				var hidden = false;
+				for (var k = 0; k < SKY_COVERS.length; k++) {
+					var c = SKY_COVERS[k];
+					var cx = c[0] + wall_x;
+					if (x < cx + c[2] && x + s.w > cx && y < c[1] + c[3] && y + s.h > c[1]) {
+						hidden = true;
+					}
+				}
+				s.fade = Math.max(0, Math.min(1, s.fade + (hidden ? -3 : 3) * dt));
+				var glow = s.twinkle ? 0.55 + 0.45 * Math.abs(Math.sin(t * 1.7 + s.phase)) : 1;
+				s.e.style.transform = "translate(" + x + "px," + y + "px)";
+				s.e.style.opacity = (s.fade * glow).toFixed(2);
+			}
+			window.requestAnimationFrame(frame);
+		}
+		window.requestAnimationFrame(frame);
+		return sky;
+	}
+
 	// ------------------------------------------------------------- lobby actions
 
 	var ready = false;
@@ -1323,6 +1390,7 @@
 
 	function build_lobby(root) {
 		build_wall(root);
+		build_sky(root);
 		var hot = el("div", null, root);
 		hot.id = "crt_hot";
 		hot.title = "station.exe";

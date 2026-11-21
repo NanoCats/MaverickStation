@@ -18,6 +18,7 @@
 		"mav_wall_day.png" = 'modular_maverick/html/lobby_desktop/mav_wall_day.png',
 		"mav_wall_dusk.png" = 'modular_maverick/html/lobby_desktop/mav_wall_dusk.png',
 		"mav_amp_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_amp_glyphs.png',
+		"mav_sky_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_sky_glyphs.png',
 		"mav_blinds.png" = 'modular_maverick/html/lobby_desktop/mav_blinds.png',
 		"mav_chevron.png" = 'modular_maverick/html/lobby_desktop/mav_chevron.png',
 		"mav_clown_E.png" = 'modular_maverick/html/lobby_desktop/mav_clown_E.png',
