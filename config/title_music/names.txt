@@ -20,6 +20,10 @@
 #                             (green, blue, amber, orange, violet, red, delta, gamma, epsilon)
 #   chance=25                 percent chance to win when the rules match (default 50)
 #   hidden                    keep it out of the playlist too, while its rules don't match
+#   exclusive                 while its rules match, it takes over: one of the matching
+#                             exclusive tracks always plays, the playlist shows only them,
+#                             and next, previous and repeat stay inside that set. Hidden
+#                             the rest of the time. Needs a time, date, holiday or alert rule.
 #
 # Stock tracks: once the sounds folder has even one song of your own, the stock
 # tracks that come with the game drop out of the lobby. Add the word include to
@@ -37,6 +41,7 @@
 #   gladiators : Entry of the Gladiators | date=08-01..08-07 | chance=100
 #   spooky : Spooky Scary Skeletons | holiday=Halloween
 #   evacuate : EVACUATE - Ketsu | alert=red,delta | hidden
+#   onepiece_op01 : We Are! - Hiroshi Kitadani | holiday=Talk-Like-a-Pirate Day | exclusive
 #   title1 : Flip-flap - X-Ceed | include
 
 # Stock tracks

@@ -121,6 +121,8 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 			var/problem = maverick_parse_track_rule(trim(segments[i]), rules)
 			if(problem)
 				problems += "line [line_number]: [problem]"
+		if(rules["exclusive"] && !(rules["time"] || rules["date"] || rules["holiday"] || rules["alert"]))
+			problems += "line [line_number]: exclusive needs a time, date, holiday or alert rule, or it would take over every lobby"
 		entries[key] = list("name" = display, "rules" = rules)
 
 	for(var/problem in problems)
@@ -147,7 +149,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 			known[copytext(file, 1, dot)] = TRUE
 	return known
 
-/// Reads one "key=value" rule (or the "hidden" or "include" flag) into rules. Returns a problem description if it can't.
+/// Reads one "key=value" rule (or the "hidden", "include" or "exclusive" flag) into rules. Returns a problem description if it can't.
 /proc/maverick_parse_track_rule(rule, list/rules)
 	if(!rule)
 		return "empty rule between two \"|\""
@@ -155,11 +157,12 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	if(!split)
 		// hidden : keep the track out of the playlist while its rules don't match
 		// include : bring a stock track back when the server has its own music
+		// exclusive : while its rules match, only matching exclusive tracks play or show. Hidden otherwise.
 		var/flag = LOWER_TEXT(rule)
-		if(flag == "hidden" || flag == "include")
+		if(flag == "hidden" || flag == "include" || flag == "exclusive")
 			rules[flag] = TRUE
 			return null
-		return "\"[rule]\" is not a rule (rules look like key=value, or the word hidden or include)"
+		return "\"[rule]\" is not a rule (rules look like key=value, or the word hidden, include or exclusive)"
 	var/key = LOWER_TEXT(trim(copytext(rule, 1, split)))
 	var/value = trim(copytext(rule, split + 1))
 	switch(key)
@@ -214,7 +217,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 				return "\"chance=[value]\" should be a number from 0 to 100"
 			rules["chance"] = chance
 		else
-			return "unknown rule \"[key]\" (known: time, date, holiday, alert, chance, hidden, include)"
+			return "unknown rule \"[key]\" (known: time, date, holiday, alert, chance, hidden, include, exclusive)"
 	return null
 
 /// "08-01" becomes 801, so dates compare as plain numbers. Null if it is not a date.
@@ -315,13 +318,28 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	var/list/clock = maverick_player_clock()
 	return maverick_track_window_open(rules, clock[1], clock[2])
 
-/// The tracks this player sees in SpaceAmp: everything except hidden tracks whose rules don't match.
+/// Exclusive tracks whose rules match for this player now. While any exist, nothing else plays.
+/client/proc/maverick_open_exclusive_tracks()
+	var/list/open = list()
+	for(var/track in maverick_lobby_tracks())
+		var/list/rules = maverick_track_window(track)
+		if(rules?["exclusive"] && maverick_track_open(track))
+			open += track
+	return open
+
+/**
+ * The tracks this player sees in SpaceAmp. While an exclusive track is open, only the open
+ * exclusive tracks. Otherwise everything except hidden or exclusive tracks whose rules don't match.
+ */
 /client/proc/maverick_visible_tracks()
+	var/list/exclusive = maverick_open_exclusive_tracks()
+	if(length(exclusive))
+		return exclusive
 	var/current = maverick_current_track()
 	var/list/visible = list()
 	for(var/track in maverick_lobby_tracks())
 		var/list/rules = maverick_track_window(track)
-		if(rules?["hidden"] && track != current && !maverick_track_open(track))
+		if((rules?["hidden"] || rules?["exclusive"]) && track != current && !maverick_track_open(track))
 			continue
 		visible += track
 	return visible
@@ -359,6 +377,12 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	if(!maverick_music_may_autoplay())
 		return
 
+	var/list/exclusive = maverick_open_exclusive_tracks()
+	if(length(exclusive))
+		if(!(maverick_current_track() in exclusive))
+			maverick_music_play(pick(exclusive))
+		return
+
 	var/list/open_specials = list()
 	var/list/regulars = list()
 	for(var/track in maverick_lobby_tracks())
@@ -373,11 +397,19 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	if(current && !maverick_track_open(current) && length(regulars))
 		maverick_music_play(pick(regulars))
 
-/// The station alert changed. Alert-limited tracks get a roll, unless the player picked their own music.
+/**
+ * The station alert changed. An exclusive track that just opened takes over, even over the player's own pick,
+ * since their pick is no longer in the playlist. Otherwise alert-limited tracks get a roll, unless the player picked their own music.
+ */
 /client/proc/maverick_music_alert_changed()
 	if(!isnewplayer(mob))
 		return
-	if(!maverick_music_manual && maverick_music_may_autoplay())
+	var/list/exclusive = maverick_open_exclusive_tracks()
+	if(length(exclusive) && maverick_music_may_autoplay())
+		if(!(maverick_current_track() in exclusive))
+			maverick_music_play(pick(exclusive))
+			return
+	else if(!maverick_music_manual && maverick_music_may_autoplay())
 		var/current = maverick_current_track()
 		var/list/candidates = list()
 		for(var/track in maverick_lobby_tracks())
@@ -473,12 +505,14 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	if(!length(tracks))
 		return
 	var/current = maverick_current_track()
-	var/index = max(1, tracks.Find(current))
+	// 0 when the current track is not in the playlist, which happens while an exclusive track is open
+	var/index = tracks.Find(current)
+	var/next_track = tracks[(index % length(tracks)) + 1]
 	switch(command)
 		if("hello")
 			maverick_music_hello(text2num(href_list["hour"]), text2num(href_list["minute"]), text2num(href_list["month"]), text2num(href_list["day"]))
 		if("play")
-			maverick_music_play(current)
+			maverick_music_play(index ? current : next_track)
 		if("pause")
 			if(maverick_music_stopped || maverick_music_paused)
 				return
@@ -504,10 +538,10 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 			maverick_music_push()
 		if("next")
 			maverick_music_manual = TRUE
-			maverick_music_play(tracks[(index % length(tracks)) + 1])
+			maverick_music_play(next_track)
 		if("prev")
 			maverick_music_manual = TRUE
-			maverick_music_play(tracks[((index - 2 + length(tracks)) % length(tracks)) + 1])
+			maverick_music_play(index ? tracks[((index - 2 + length(tracks)) % length(tracks)) + 1] : tracks[length(tracks)])
 		if("track")
 			var/pick = text2num(href_list["track"])
 			if(isnum(pick) && pick >= 1 && pick <= length(tracks))
@@ -529,9 +563,9 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		if("ended")
 			switch(href_list["repeat"])
 				if("one")
-					maverick_music_play(current)
+					maverick_music_play(index ? current : next_track)
 				if("all")
-					maverick_music_play(tracks[(index % length(tracks)) + 1])
+					maverick_music_play(next_track)
 				else
 					maverick_music_stopped = TRUE
 					maverick_music_push()
