@@ -27,11 +27,11 @@ img { image-rendering: pixelated; border: none; }
 
 /* ---------------------------------------------------------------- icons */
 .icon {
-	position: absolute; width: 48px; height: 42px; text-align: center; cursor: pointer;
+	position: absolute; width: 52px; height: 44px; text-align: center; cursor: pointer;
 }
 .icon img { display: block; margin: 0 auto; width: 32px; height: 32px; }
 .icon .label {
-	display: inline-block; max-width: 48px; font-family: "TinyUnicode"; font-size: 16px; line-height: 7px;
+	display: inline-block; max-width: 52px; font-family: "TinyUnicode"; font-size: 16px; line-height: 10px;
 	color: #fff; padding: 0 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 	text-shadow: 1px 1px 0 #101028, -1px 0 0 #101028, 0 -1px 0 #101028, 1px 0 0 #101028, 0 1px 0 #101028;
 }
@@ -65,7 +65,7 @@ img { image-rendering: pixelated; border: none; }
 	box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #404040;
 }
 .tbtn:active { box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff; }
-.menubar { height: 9px; flex: 0 0 9px; display: flex; gap: 6px; padding: 1px 3px 0; color: #101028; }
+.menubar { height: 10px; flex: 0 0 10px; line-height: 10px; display: flex; gap: 6px; padding: 1px 3px 0; color: #101028; }
 .body { flex: 1; position: relative; overflow: hidden; margin-top: 2px; }
 .sunken {
 	background: #fff; box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff, inset 2px 2px 0 #404040;
@@ -138,7 +138,7 @@ img { image-rendering: pixelated; border: none; }
 .paint_palette .cur i { position: absolute; width: 8px; height: 8px; box-shadow: 0 0 0 1px #404040; }
 .paint_palette .sw { width: 8px; height: 8px; box-shadow: inset 1px 1px 0 #808080, 0 0 0 1px #fff; }
 .paint_palette .col { display: grid; grid-template-rows: 8px 8px; grid-auto-flow: column; gap: 1px; }
-.paint_status { height: 9px; flex: 0 0 9px; color: #404040; font-size: 8px; }
+.paint_status { height: 10px; flex: 0 0 10px; line-height: 10px; color: #404040; font-size: 8px; white-space: nowrap; overflow: hidden; }
 
 /* ---------------------------------------------------------------- taskbar */
 #taskbar {
@@ -251,10 +251,10 @@ img { image-rendering: pixelated; border: none; }
 .amp_lcd { background: #000; height: 30px; flex: 0 0 30px; position: relative; box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #3a3f60; overflow: hidden; }
 .amp_time { position: absolute; left: 4px; top: 4px; font-family: "Pixellari"; font-size: 16px; color: #5fff5f; line-height: 14px; }
 .amp_time.paused { animation: blink 1s step-start infinite; }
-.amp_marquee { position: absolute; left: 50px; right: 3px; top: 3px; height: 9px; overflow: hidden; white-space: nowrap; color: #5fff5f; }
+.amp_marquee { position: absolute; left: 50px; right: 3px; top: 2px; height: 11px; line-height: 11px; overflow: hidden; white-space: nowrap; color: #5fff5f; }
 .amp_marquee span { display: inline-block; padding-left: 100%; animation: marquee 12s linear infinite; }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
-.amp_info { position: absolute; left: 50px; top: 13px; color: #2f9f2f; font-size: 8px; }
+.amp_info { position: absolute; left: 50px; top: 14px; line-height: 10px; white-space: nowrap; color: #2f9f2f; font-size: 8px; }
 .amp_lcd canvas { position: absolute; right: 3px; bottom: 3px; image-rendering: pixelated; }
 .amp_seek { height: 5px; flex: 0 0 5px; background: #0b0d18; position: relative; cursor: pointer; box-shadow: inset 1px 1px 0 #000; }
 .amp_seek i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, #3a78e0, #7df2ff); width: 0; }
@@ -268,7 +268,7 @@ img { image-rendering: pixelated; border: none; }
 .amp_vol { flex: 1; height: 4px; background: #0b0d18; position: relative; cursor: pointer; margin: 0 3px; }
 .amp_vol i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, #2f9f2f, #ffe066 70%, #e03a3a); }
 .amp_vol b { position: absolute; top: -2px; width: 4px; height: 8px; background: #d8e0f0; margin-left: -2px; box-shadow: inset -1px -1px 0 #606890; }
-.amp_list { flex: 1; background: #000; overflow-y: auto; color: #5fff5f; font-size: 8px; line-height: 9px; padding: 1px 2px; }
+.amp_list { flex: 1; background: #000; overflow-y: auto; color: #5fff5f; font-size: 8px; line-height: 10px; padding: 1px 2px; }
 .amp_list div { cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .amp_list div.cur { color: #fff; background: #0a24a8; }
 .amp_off { color: #e03a3a; padding: 6px; text-align: center; }

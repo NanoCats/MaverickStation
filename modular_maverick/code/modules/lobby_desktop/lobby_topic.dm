@@ -21,7 +21,7 @@
 
 	if(href_list["lobby_honk"])
 		if(COOLDOWN_FINISHED(client, maverick_honk_cooldown))
-			COOLDOWN_START(client, maverick_honk_cooldown, 2 SECONDS)
+			COOLDOWN_START(client, maverick_honk_cooldown, 0.5 SECONDS)
 			SEND_SOUND(src, sound('sound/items/bikehorn.ogg'))
 		return TRUE
 

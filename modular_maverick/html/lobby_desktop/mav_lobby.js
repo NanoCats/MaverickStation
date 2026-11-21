@@ -142,7 +142,7 @@
 		if (C.playing) {
 			return "Join Game";
 		}
-		return ready ? "Ready ☑" : "Ready? ☒";
+		return ready ? "Ready: YES" : "Ready: NO";
 	}
 
 	// ------------------------------------------------------------- windows
@@ -714,7 +714,7 @@
 		var time = el("div", "amp_time", lcd, "00:00");
 		var marquee = el("div", "amp_marquee", lcd);
 		var marquee_text = el("span", null, marquee);
-		el("div", "amp_info", lcd, "128 kbps  44 kHz  stereo");
+		el("div", "amp_info", lcd, "128kbps");
 		var spec = el("canvas", null, lcd);
 		spec.width = 38;
 		spec.height = 14;
@@ -914,8 +914,8 @@
 		});
 	}
 
-	var ICON_W = 50;
-	var ICON_H = 44;
+	var ICON_W = 54;
+	var ICON_H = 46;
 
 	function place_icons() {
 		var rows = Math.floor((270 - 16 - 4) / ICON_H);
@@ -1032,7 +1032,7 @@
 
 	function honk() {
 		var now = Date.now();
-		if (now - last_honk < 2500) {
+		if (now - last_honk < 500) {
 			return;
 		}
 		last_honk = now;
@@ -1057,15 +1057,6 @@
 		});
 	}
 
-	var ERRORS = [
-		"clown.exe has performed an illegal operation and will be HONKED.",
-		"A fatal exception HONK has occurred at 0028:C0011E36.",
-		"clown.exe is not responding. It never was.",
-		"Not enough memory to run clown.exe. Closing your dignity to free memory.",
-		"Error: banana peel detected in RAM.",
-		"clown.exe has encountered a problem and needs to honk. We are sorry for the inconvenience.",
-	];
-
 	function clown_chain() {
 		clown_busy = true;
 		var spam = [];
@@ -1073,9 +1064,10 @@
 			(function (i) {
 				after(i * 110, function () {
 					spam.push(dialog({
-						title: "clown.exe", icon: "err", w: 160,
+						title: "clown.exe", icon: "err", w: 120, big: true,
 						x: 40 + i * 12, y: 20 + i * 11,
-						text: ERRORS[i % ERRORS.length],
+						text: "HONK!",
+						buttons: [{ label: "HONK", fn: function (close) { close(); last_honk = 0; honk(); } }],
 					}));
 				});
 			})(i);
@@ -1362,8 +1354,8 @@
 				title: "Message", icon: "mav_chevron.png", big: true, w: 220, y: 70,
 				text: "You have been assigned a STATION.",
 				buttons: [
-					{ label: "OK", fn: function (close) { close(); byond("assigned_seen=1;late_join=1"); } },
-					{ label: "Also OK", fn: function (close) { close(); byond("assigned_seen=1;late_join=1"); } },
+					{ label: "Awesome", fn: function (close) { close(); byond("assigned_seen=1;late_join=1"); } },
+					{ label: "Wowsome", fn: function (close) { close(); byond("assigned_seen=1;late_join=1"); } },
 				],
 				on_x: function (close) { close(); byond("assigned_seen=1"); },
 			});
