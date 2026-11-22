@@ -1,0 +1,57 @@
+# Display names and play rules for lobby tracks, shown in the SpaceAmp music player.
+# Names here win over the built-in names for the stock tracks.
+#
+# Tracks without a line here show their file name, minus the extension and any
+# "rare+" or "MapName+" prefix. Underscores become spaces.
+#
+# Format, one track per line:
+#   file name : Display Name | rule | rule
+# The file name can have its extension or not. Case does not matter.
+# Rules are optional. A track with no rules is a regular track.
+#
+# Rules make a "special" track. It only starts on its own when every rule on
+# its line matches. It still shows in the SpaceAmp playlist (unless marked
+# hidden), so players can pick it by hand.
+#   time=22-5                 from 22:00 up to 05:00, on the player's own clock
+#   date=10-31                one day (month-day), on the player's own calendar
+#   date=08-01..08-07         a range of days, both ends included
+#   holiday=Halloween         a holiday the game celebrates today, by its in-game name
+#   alert=red                 the station alert level, or several: alert=red,delta
+#                             (green, blue, amber, orange, violet, red, delta, gamma, epsilon)
+#   alert=amber+              that level or any level above it. From low to high:
+#                             green, blue, violet, orange, amber, red, delta, epsilon, gamma
+#   chance=25                 percent chance to win when the rules match (default 50)
+#   hidden                    keep it out of the playlist too, while its rules don't match
+#   exclusive                 while its rules match, it takes over: one of the matching
+#                             exclusive tracks always plays, the playlist shows only them,
+#                             and next, previous and repeat stay inside that set. Hidden
+#                             the rest of the time. Needs a time, date, holiday or alert rule.
+#
+# Stock tracks: once the sounds folder has even one song of your own, the stock
+# tracks that come with the game drop out of the lobby. Add the word include to
+# a stock track's line to bring it back (into SpaceAmp and the rule rolls; the
+# round's main track is still picked from your folder only).
+#   include                   bring this stock track back
+#
+# When a player first opens the lobby, each special track that matches gets one
+# roll. If none wins, they hear the regular lobby track. When the alert level
+# changes, alert tracks roll again for lobby players who didn't pick their own song.
+#
+# Your own tracks: put their lines in names_local.txt, in this same folder and
+# with the same format. It is read after this file, so its lines win, and git
+# ignores it, so your test tracks never show up as changes.
+#
+# Examples:
+#   lobbymusic2 : BIRDBRAIN - Jamie Paige
+#   starry_sky : Starry Sky - nor | time=22-5
+#   gladiators : Entry of the Gladiators | date=08-01..08-07 | chance=100
+#   spooky : Spooky Scary Skeletons | holiday=Halloween
+#   evacuate : EVACUATE - Ketsu | alert=red,delta | hidden
+#   onepiece_op01 : We Are! - Hiroshi Kitadani | holiday=Talk-Like-a-Pirate Day | exclusive
+#   title1 : Flip-flap - X-Ceed | include
+
+# Stock tracks
+title0 : Endless Space - Solus
+title1 : Flip-flap - X-Ceed
+title2 : Robocop Theme (gameboy) - Eric Schumacker
+title3 : Tintin On The Moon - Cuboos

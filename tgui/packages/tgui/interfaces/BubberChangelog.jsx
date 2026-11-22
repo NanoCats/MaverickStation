@@ -315,27 +315,23 @@ export const BubberChangelog = (props) => {
 
   const header = (
     <Section>
-      <h1>Bubberstation 13</h1>
+      {/* MAVERICK EDIT - our name, with the upstreams credited below */}
+      <h1>MaverickStation 13</h1>
       <p>
         <b>Thanks to: </b>
-        /tg/station 13, Effigy, Stellar Haven, Baystation 12, /vg/station,
+        Bubberstation, Skyrat Space Station 13, /tg/station 13, Effigy, Stellar Haven, Baystation 12, /vg/station,
         NTstation, CDK Station devs, FacepunchStation, GoonStation devs, the
         original Space Station 13 developers, and the countless others who have
         contributed to the game.
       </p>
+      {/* MAVERICK EDIT BEGIN - No Discord yet, point at our repo */}
       <p>
-        {'Current organization members can be found '}
-        <a href="https://github.com/orgs/Bubberstation/people">here</a>
-        {', recent GitHub contributors can be found '}
-        <a href="https://github.com/Bubberstation/Bubberstation/pulse/monthly">
-          here
-        </a>
-        .
+        {
+          'You may be able to join our discord eventually, when it exists, or check the '
+        }
+        <a href="https://github.com/NanoCats/MaverickStation">github</a>.
       </p>
-      <p>
-        {'You can also join our discord '}
-        <a href="https://discord.com/invite/AvjrTqnqEx">here</a>!
-      </p>
+      {/* MAVERICK EDIT END */}
       <DateDropdown
         dates={dates}
         selectedDate={selectedDate}
