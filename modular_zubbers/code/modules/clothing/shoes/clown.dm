@@ -1,5 +1,5 @@
 /obj/item/clothing/shoes/clown_shoes/bubber
-	name = "official bubberstation chat mod shoes"
+	name = "official chat mod shoes" // MAVERICK EDIT - no upstream in-jokes
 	desc = "Finally, you can be an unpaid Discord moderator in space. Clean it up Jannie!"
 	icon = 'modular_zubbers/icons/obj/clothing/feet/feet.dmi'
 	worn_icon = 'modular_zubbers/icons/mob/clothing/feet/feet.dmi'

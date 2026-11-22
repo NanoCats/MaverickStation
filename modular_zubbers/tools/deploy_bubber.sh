@@ -30,3 +30,7 @@ do
     mkdir -p $1/$icondir
 	cp -r $icondir/* $1/$icondir/
 done
+
+# MAVERICK EDIT BEGIN - Call our deploy too
+source modular_maverick/tools/deploy_maverick.sh
+# MAVERICK EDIT END
