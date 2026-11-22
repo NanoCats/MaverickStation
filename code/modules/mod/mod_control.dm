@@ -323,6 +323,12 @@
 			balloon_alert(user, "unit active!")
 			return ITEM_INTERACT_BLOCKING
 		if(LAZYACCESS(modifiers, RIGHT_CLICK)) // Right click
+			// MAVERICK EDIT BEGIN - MODsuit GAGS
+			if(get_gags_skin())
+				// Opened after the click is done, like the spray can menu. Opening it during the click could leave its window stuck hidden.
+				INVOKE_ASYNC(paint_kit, TYPE_PROC_REF(/obj/item/mod/paint, open_gags_menu), src, user)
+				return ITEM_INTERACT_SUCCESS
+			// MAVERICK EDIT END
 			if(paint_kit.editing_mod == src)
 				return ITEM_INTERACT_BLOCKING
 			paint_kit.editing_mod = src
@@ -770,7 +776,13 @@
 	balloon_alert(wearer, "no power!")
 	toggle_activate(wearer, force_deactivate = TRUE)
 
-/obj/item/mod/control/proc/set_mod_color(new_color)
+/obj/item/mod/control/proc/set_mod_color(new_color, force = FALSE) // MAVERICK EDIT - MODsuit GAGS - Original: /obj/item/mod/control/proc/set_mod_color(new_color)
+	// MAVERICK EDIT BEGIN - MODsuit GAGS: suits with greyscale paint ignore tints like speed potions
+	if(!force && get_gags_skin())
+		remove_mod_tints()
+		wearer?.regenerate_icons()
+		return
+	// MAVERICK EDIT END
 	for(var/obj/item/part as anything in get_parts(all = TRUE))
 		part.remove_atom_colour(WASHABLE_COLOUR_PRIORITY)
 		part.add_atom_colour(new_color, FIXED_COLOUR_PRIORITY)

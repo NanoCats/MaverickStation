@@ -78,7 +78,7 @@
 	ReadColorsFromString(starting_colors || atom_target?.greyscale_colors)
 
 	if(target)
-		RegisterSignal(target, COMSIG_QDELETING, PROC_REF(ui_close))
+		RegisterSignal(target, COMSIG_QDELETING, PROC_REF(on_target_deleted)) // MAVERICK EDIT - Close the window too - Original: RegisterSignal(target, COMSIG_QDELETING, PROC_REF(ui_close))
 
 	refresh_preview()
 
@@ -103,6 +103,10 @@
 
 /datum/greyscale_modify_menu/ui_data(mob/user)
 	var/list/data = list()
+	// MAVERICK EDIT BEGIN - A deleted menu has no config, so do not send data for it
+	if(isnull(config))
+		return data
+	// MAVERICK EDIT END
 	data["greyscale_config"] = "[config.name]"
 	data["full_color_string"] = split_colors?.Join("") //BUBBER ADDITION
 
