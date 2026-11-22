@@ -53,6 +53,8 @@
 	var/maverick_desktop_state
 	/// Round ID for which this client already saw the "You have been assigned a STATION" popup.
 	var/maverick_assigned_round
+	/// Whether this connection got fresh copies of the lobby files yet
+	var/maverick_lobby_assets_sent = FALSE
 	COOLDOWN_DECLARE(maverick_honk_cooldown)
 	/// Separate from the honk cooldown so clicking the Clown.exe icon never mutes the honks right after it.
 	COOLDOWN_DECLARE(maverick_icon_honk_cooldown)
@@ -83,12 +85,28 @@
 /mob/dead/new_player/proc/maverick_update_title_screen()
 	if(!CONFIG_GET(flag/maverick_lobby_desktop) || !client)
 		return FALSE
-	var/datum/asset/assets = get_asset_datum(/datum/asset/simple/maverick_lobby)
-	assets.send(client)
+	INVOKE_ASYNC(src, PROC_REF(maverick_send_title_screen))
+	return TRUE
+
+/**
+ * Sends the lobby files, then the page. On 516 the page can load before freshly sent
+ * files arrive, which leaves a blank white lobby, so wait for them first when any were sent.
+ */
+/mob/dead/new_player/proc/maverick_send_title_screen()
+	var/datum/asset/simple/maverick_lobby/assets = get_asset_datum(/datum/asset/simple/maverick_lobby)
+	// The client's saved "files I already have" list can outlive the files themselves.
+	// Send the lobby files fresh once per connection instead of trusting it.
+	if(!client.maverick_lobby_assets_sent)
+		client.maverick_lobby_assets_sent = TRUE
+		for(var/asset_name in assets.assets)
+			client.sent_assets -= asset_name
+	if(assets.send(client))
+		client?.browse_queue_flush()
+	if(!client)
+		return
 	src << browse(maverick_title_html(), "window=title_browser")
 	if(SSticker.current_state == GAME_STATE_STARTUP)
 		maverick_broadcast_humans()
-	return TRUE
 
 /// Builds the lobby page: an empty stage, the settings object, and the desktop script.
 /mob/dead/new_player/proc/maverick_title_html()
