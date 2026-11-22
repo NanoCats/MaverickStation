@@ -109,7 +109,10 @@
 
 /datum/mod_theme/frontline/surplus/set_skin(obj/item/mod/control/mod, skin)
 	. = ..()
-	mod.set_mod_color("#888888", FIXED_COLOUR_PRIORITY)
+	// MAVERICK EDIT BEGIN - MODsuit GAGS: GAGS skins get darker default paint instead of a grey tint
+	if(!mod.get_gags_skin())
+		mod.set_mod_color("#888888", force = TRUE)
+	// MAVERICK EDIT END
 
 /datum/armor/mod_theme_frontline/surplus
 	melee = 30
