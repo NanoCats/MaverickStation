@@ -125,7 +125,7 @@
 		/datum/design/nitrogen_tank,
 		///datum/design/nitrogen_tank_belt, | Uncomment in case nitrogen internal tanks get refactored to no longer be 25L
 		/datum/design/anesthetic_tank,
-		/datum/design/wall_mounted_space_heater,
+		/datum/design/heat_pump,
 	)
 
 /datum/techweb_node/construction/New()

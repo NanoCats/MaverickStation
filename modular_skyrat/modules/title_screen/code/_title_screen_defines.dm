@@ -1,7 +1,7 @@
 #define DEFAULT_TITLE_MAP_LOADTIME (150 SECONDS)
 
-#define DEFAULT_TITLE_SCREEN_IMAGE 'modular_skyrat/modules/title_screen/icons/skyrat_title_screen.png'
-#define DEFAULT_TITLE_LOADING_SCREEN 'modular_skyrat/modules/title_screen/icons/loading_screen.gif'
+#define DEFAULT_TITLE_SCREEN_IMAGE 'modular_maverick/icons/title/maverick_title.png' // MAVERICK EDIT - our title image for the plain lobby
+#define DEFAULT_TITLE_LOADING_SCREEN 'modular_maverick/icons/title/maverick_loading.gif' // MAVERICK EDIT - our loading image for the plain lobby
 
 #define TITLE_PROGRESS_CACHE_FILE "data/progress_cache.json"
 #define TITLE_PROGRESS_CACHE_VERSION "2"

@@ -3,6 +3,8 @@
 			<meta http-equiv="X-UA-Compatible" content="IE=edge">
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 			<style type='text/css'>
+				/* MAVERICK EDIT - restyled to match the MaverickStation desktop: retro OS windows,
+				   a sunken white progress box with blue blocks, and station.exe's dark menu. */
 				@font-face {
 					font-family: "Ubuntu";
 					font-style: normal;
@@ -20,7 +22,7 @@
 					overflow: hidden;
 					font-family: "Fixedsys";
 					text-align: center;
-					background-color: #000000;
+					background-color: #0612a8;
 					padding-top: 5vmin;
 					-ms-user-select: none;
 					cursor: default;
@@ -44,24 +46,27 @@
 
 				.container_terminal {
 					position: absolute;
-					top: calc(90% - 3vmin);
+					top: calc(90% - 3.6vmin);
 					left: calc(50% - 450px);
-					height: 3vmin;
+					height: 3.6vmin;
 					width: 900px;
 					overflow: clip;
 					box-sizing: border-box;
 					z-index: 1;
+					background: #dcdcdc;
+					padding: 0.3vmin 1vmin;
+					box-shadow: inset 2px 2px 0 #fff, inset -2px 0 0 #404040;
 				}
 
 				.terminal_text {
-					font-family: "Ubuntu";
+					font-family: "Fixedsys";
 					font-weight: 500;
 					src: url("Ubuntu-Medium.ttf");
 					display: inline-block;
 					text-decoration: none;
 					width: 100%;
 					text-align: left;
-					color:#00FF99;
+					color: #101028;
 					margin-right: 0%;
 					margin-top: 0px;
 					font-size: 2vmin;
@@ -72,22 +77,23 @@
 					box-sizing: border-box;
 					top: 90%;
 					left: calc(50% - 450px);
-					height: 72px;
+					height: 48px;
 					width: 900px;
-					border-top: 4px solid #00FF99;
-					border-bottom: 4px solid #00FF99;
-					border-left: 4px solid #00FF99;
-					border-right: 4px solid #00FF99;
-					padding: 4px;
-					background-color: #000000;
+					padding: 8px;
+					background-color: #dcdcdc;
+					box-shadow: inset 2px 0 0 #fff, inset -2px -2px 0 #404040, inset -4px -4px 0 #808080;
 				}
 
 				.progress_bar {
 					width: 0%;
 					height: 100%;
-					background-image: url("https://wiki.bubberstation.org/images/bubbermoff_prog_900px.gif");
-					background-position: center right;
-					background-color: #000000;
+					background-image: repeating-linear-gradient(90deg, #0a24a8 0 18px, transparent 18px 24px);
+					background-position: left center;
+					background-clip: content-box;
+					padding: 4px;
+					box-sizing: border-box;
+					background-color: #ffffff;
+					box-shadow: inset 2px 2px 0 #808080, inset -2px -2px 0 #fff, inset 4px 4px 0 #404040;
 				}
 
 				@keyframes fade_out {
@@ -109,16 +115,31 @@
 					left:50%;
 					transform: translate(-50%, -50%);
 					z-index: 1;
-					border: 2px solid white;
-					border-radius: 4px;
-					box-shadow: 2px 2px #333, inset 1px 1px #333;
-					background: linear-gradient(to bottom, rgba(0, 179, 107, 0.4), rgba(0, 56, 34, 0.4));
+					border: 4px solid #dcdcdc;
+					border-top-width: 4.6vmin;
+					box-shadow: 0 0 0 2px #101028, 6px 6px 0 2px rgba(0, 0, 40, 0.35);
+					background: #05081a;
 					padding: 1em;
+				}
+
+				.container_nav::before {
+					content: "station.exe";
+					position: absolute;
+					left: -4px;
+					right: -4px;
+					top: calc(-4.6vmin + 4px);
+					height: 3.6vmin;
+					line-height: 3.6vmin;
+					padding-left: 1vmin;
+					text-align: left;
+					font-size: 2.6vmin;
+					color: #fff;
+					background: linear-gradient(90deg, #0a24a8, #3a78e0);
 				}
 
 				.container_nav hr {
 					height: 2px;
-					background-color: #CDEEE1;
+					background-color: #cde;
 					border: none;
 					box-shadow: 2px 2px black;
 				}
@@ -134,7 +155,7 @@
 					line-height: 4vmin;
 					width: 100%;
 					text-align: left;
-					color: #CDEEE1;
+					color: #cde;
 					height: 4vmin;
 					padding-left: 5vmin;
 					letter-spacing: 1px;
@@ -145,7 +166,7 @@
 
 				.menu_button:hover {
 					padding-left: 0px;
-					color: yellow;
+					color: #ffe066;
 				}
 
 				.menu_button:active {
@@ -173,7 +194,7 @@
 				}
 
 				@keyframes pollsbox {
-					0% {color: #CDEEE1;}
+					0% {color: #cde;}
 					50% {color: #f80;}
 				}
 
