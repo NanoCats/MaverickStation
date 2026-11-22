@@ -23,15 +23,15 @@
 GLOBAL_LIST_EMPTY(maverick_startup_heard)
 
 /client
-	/// Keeps clicks and error chimes from stacking up when someone mashes the mouse
-	COOLDOWN_DECLARE(maverick_desktop_sfx_cooldown)
+	/// When each desktop sound may play again, by kind, so mashing the mouse doesn't stack them
+	var/list/maverick_sfx_next
 
 /client/proc/maverick_desktop_sound_mode()
 	return prefs?.read_preference(/datum/preference/choiced/maverick_desktop_sounds) || LOBBY_DESKTOP_SOUNDS_ALL
 
-/// TRUE if this player should hear the startup sound when their desktop comes up.
+/// TRUE until this player's first desktop of the round has come up.
 /client/proc/maverick_startup_due()
-	return maverick_desktop_sound_mode() == LOBBY_DESKTOP_SOUNDS_ALL && !GLOB.maverick_startup_heard[ckey]
+	return !GLOB.maverick_startup_heard[ckey]
 
 /**
  * Plays one desktop sound for this player only. kind: click, error, startup or shutdown.
@@ -41,37 +41,45 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 /mob/dead/new_player/proc/maverick_desktop_sfx(kind)
 	if(!client)
 		return FALSE
-	var/mode = client.maverick_desktop_sound_mode()
-	if(mode == LOBBY_DESKTOP_SOUNDS_OFF)
-		return FALSE
-	var/volume = client.prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
-	if(!volume)
-		return FALSE
 	var/static/list/sounds = list(
 		"click" = 'modular_maverick/sound/lobby_desktop/desktop_click.ogg',
 		"error" = 'modular_maverick/sound/lobby_desktop/desktop_error.ogg',
 		"startup" = 'modular_maverick/sound/lobby_desktop/desktop_startup.ogg',
 		"shutdown" = 'modular_maverick/sound/lobby_desktop/desktop_shutdown.ogg',
 	)
+	var/static/list/gaps = list("click" = 0.05 SECONDS, "error" = 0.15 SECONDS)
 	var/file = sounds[kind]
 	if(!file)
 		return FALSE
-	switch(kind)
-		if("click", "error")
-			if(!COOLDOWN_FINISHED(client, maverick_desktop_sfx_cooldown))
-				return FALSE
-			COOLDOWN_START(client, maverick_desktop_sfx_cooldown, 0.15 SECONDS)
-		if("startup")
-			if(!client.maverick_startup_due())
-				return FALSE
-			GLOB.maverick_startup_heard[client.ckey] = TRUE
-		if("shutdown")
-			if(mode != LOBBY_DESKTOP_SOUNDS_ALL)
-				return FALSE
+	// The first desktop of the round uses up the startup sound, even when it is muted,
+	// so it never turns up later in the round on a refresh or a reconnect.
+	if(kind == "startup")
+		if(!client.maverick_startup_due())
+			return FALSE
+		GLOB.maverick_startup_heard[client.ckey] = TRUE
+	var/mode = client.maverick_desktop_sound_mode()
+	if(mode == LOBBY_DESKTOP_SOUNDS_OFF)
+		return FALSE
+	if((kind == "startup" || kind == "shutdown") && mode != LOBBY_DESKTOP_SOUNDS_ALL)
+		return FALSE
+	var/volume = client.prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
+	if(!volume)
+		return FALSE
+	if(gaps[kind])
+		LAZYINITLIST(client.maverick_sfx_next)
+		if(world.time < client.maverick_sfx_next[kind])
+			return FALSE
+		client.maverick_sfx_next[kind] = world.time + gaps[kind]
 	var/sound/played = sound(file, volume = volume)
 	played.environment = LOBBY_DESKTOP_DRY_ENVIRONMENT
 	SEND_SOUND(src, played)
 	return TRUE
+
+/// The old lobby menu's button sound. The desktop plays its own clicks, so this only clicks for the old menu.
+/mob/dead/new_player/proc/maverick_lobby_button_sound()
+	if(CONFIG_GET(flag/maverick_lobby_desktop))
+		return
+	maverick_desktop_sfx("click")
 
 /// Start menu > Sounds. Steps to the next setting and saves it.
 /mob/dead/new_player/proc/maverick_cycle_desktop_sounds()

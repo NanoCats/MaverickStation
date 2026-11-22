@@ -197,7 +197,7 @@
 		winset(client, "status_bar", "is-visible=true")
 
 /mob/dead/new_player/proc/play_lobby_button_sound()
-	maverick_desktop_sfx("click") // MAVERICK EDIT - desktop click instead of the old menu sound, follows the desktop sound setting
+	maverick_lobby_button_sound() // MAVERICK EDIT - desktop click instead of the old menu sound, follows the desktop sound setting
 
 /**
  * Allows the player to select a server to join from any loaded servers.

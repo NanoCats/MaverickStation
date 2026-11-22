@@ -71,16 +71,28 @@
 		return sfx_mode;
 	}
 
-	// The desktop is up: startup sound if it's due this round, and the music after it
+	// The desktop is up. The first desktop of the round always tells the server, which
+	// uses up the startup sound even when sounds are off, so it can't turn up later in
+	// the round. If it does play, the music waits for it.
 	function desktop_ready() {
-		if (C.startup_due && sfx_mode === "All") {
+		if (C.startup_due) {
 			C.startup_due = false;
-			sfx("startup");
-			after(STARTUP_MS, music_hello);
-			return;
+			byond("lobby_sfx=startup");
+			if (sfx_mode === "All") {
+				after(STARTUP_MS, music_hello);
+				return;
+			}
 		}
 		music_hello();
 	}
+
+	// Buttons click too: dialog buttons, title bar buttons, the taskbar, SpaceAmp
+	var CLICKY = ".btn, .tbtn, .mbtn, #startbtn, .task, .amp_btn, .amp_tog, .amp_list div, .filelist div";
+	document.addEventListener("mousedown", function (e) {
+		if (e.button === 0 && e.target.closest && e.target.closest(CLICKY)) {
+			sfx("click");
+		}
+	}, true);
 
 	function el(tag, cls, parent, text) {
 		var e = document.createElement(tag);
