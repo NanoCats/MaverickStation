@@ -8,3 +8,6 @@
 #
 # This file is read on server start. Admins can also change entries live with
 # View Variables on the config datum.
+
+## Uncomment to turn AMAS off entirely. No watchdogs run and no automatons are dispatched.
+#MAVERICK_AMAS_DISABLED

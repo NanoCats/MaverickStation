@@ -16,7 +16,7 @@ SUBSYSTEM_DEF(amas)
 	var/list/mob/living/carbon/human/automatons = list()
 
 /datum/controller/subsystem/amas/Initialize()
-	if(CONFIG_GET(flag/amas_disabled))
+	if(CONFIG_GET(flag/maverick_amas_disabled))
 		can_fire = FALSE
 		return SS_INIT_NO_NEED
 

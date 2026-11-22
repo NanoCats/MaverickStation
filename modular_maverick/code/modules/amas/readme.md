@@ -26,4 +26,4 @@ Rules the module follows:
 
 ### Config
 
-- `AMAS_DISABLED` turns the whole module off.
+- `MAVERICK_AMAS_DISABLED` turns the whole module off.
