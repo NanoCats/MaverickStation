@@ -5,6 +5,9 @@
 /// Where on the wallpaper the CRT sits, as x, y, width, height in wallpaper pixels. Double-clicking it opens station.exe.
 #define LOBBY_DESKTOP_CRT_HOTSPOT list(100, 105, 92, 96)
 
+/// Whether this lobby mob already sent its client the lobby files
+/mob/dead/new_player/var/maverick_lobby_files_sent = FALSE
+
 /// Every file the lobby page loads, by the name the page asks for.
 GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	"mav_lobby.css" = 'modular_maverick/html/lobby_desktop/mav_lobby.css',
@@ -51,8 +54,6 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	var/maverick_desktop_state
 	/// Round ID for which this client already saw the "You have been assigned a STATION" popup.
 	var/maverick_assigned_round
-	/// Whether this connection got the lobby files yet
-	var/maverick_lobby_files_sent = FALSE
 	COOLDOWN_DECLARE(maverick_honk_cooldown)
 	/// Separate from the honk cooldown so clicking the Clown.exe icon never mutes the honks right after it.
 	COOLDOWN_DECLARE(maverick_icon_honk_cooldown)
@@ -85,8 +86,9 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 		return FALSE
 	// browse() with file= puts each file in the client's browser cache under its own name,
 	// the same way the old lobby sends its title image. browse_rsc assets did not reach the page.
-	if(!client.maverick_lobby_files_sent)
-		client.maverick_lobby_files_sent = TRUE
+	// Once per lobby mob, so a player coming back to the lobby (respawn, reconnect) gets them again.
+	if(!maverick_lobby_files_sent)
+		maverick_lobby_files_sent = TRUE
 		for(var/file_name in GLOB.maverick_lobby_files)
 			src << browse(GLOB.maverick_lobby_files[file_name], "file=[file_name];display=0")
 	src << browse(maverick_title_html(), "window=title_browser")

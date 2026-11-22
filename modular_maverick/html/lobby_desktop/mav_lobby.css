@@ -108,6 +108,7 @@ img { image-rendering: pixelated; border: none; }
 }
 .mbtn:hover { padding-left: 0; color: #ffe066; }
 .mbtn:hover::before { content: "\261E"; display: inline-block; width: 9px; }
+.mbtn:active { position: relative; left: 1px; top: 1px; color: #fff; text-shadow: none; }
 .mbtn.newpoll { animation: pollblink 2s step-start infinite; }
 @keyframes pollblink { 50% { color: #f80; } }
 .station_body hr { border: none; height: 1px; background: #cde; margin: 3px 0; box-shadow: 1px 1px #000; }
@@ -231,8 +232,8 @@ img { image-rendering: pixelated; border: none; }
 .crt_layer { position: fixed; inset: 0; pointer-events: none; z-index: 2000; }
 .crt_scan {
 	background: repeating-linear-gradient(to bottom,
-		rgba(0,0,0,0) 0, rgba(0,0,0,0) calc(100vh / 270 * 0.55),
-		rgba(0,0,0,0.28) calc(100vh / 270 * 0.55), rgba(0,0,0,0.28) calc(100vh / 270));
+		rgba(0,0,0,0) 0, rgba(0,0,0,0) calc(var(--art_px, calc(100vh / 270)) * 0.55),
+		rgba(0,0,0,0.28) calc(var(--art_px, calc(100vh / 270)) * 0.55), rgba(0,0,0,0.28) var(--art_px, calc(100vh / 270)));
 }
 .crt_grille { background: repeating-linear-gradient(90deg,
 	rgba(255,40,90,0.06) 0 1px, rgba(40,255,140,0.04) 1px 2px, rgba(60,100,255,0.06) 2px 3px); }

@@ -52,19 +52,40 @@
 	}
 
 	var stage = document.getElementById("stage");
-	var stage_w = 480;
+	// The desktop is designed for at least 480 x 270 art pixels. Wider windows get more
+	// width; narrower (taller) windows get more sky above the wallpaper instead of cropping.
+	var MIN_W = 480;
+	var WALL_H = 270;
+	var stage_w = MIN_W;
+	var stage_h = WALL_H;
+	var wall_y = 0;
 	var scale = 1;
 
 	function layout() {
 		var vw = window.innerWidth;
 		var vh = window.innerHeight;
-		scale = vh / 270;
-		stage_w = Math.max(360, Math.round(270 * vw / vh));
+		if (vw / vh >= MIN_W / WALL_H) {
+			scale = vh / WALL_H;
+			stage_w = Math.round(vw / scale);
+			stage_h = WALL_H;
+		} else {
+			scale = vw / MIN_W;
+			stage_w = MIN_W;
+			stage_h = Math.round(vh / scale);
+		}
+		wall_y = stage_h - WALL_H;
 		stage.style.width = stage_w + "px";
+		stage.style.height = stage_h + "px";
 		stage.style.transform = "scale(" + scale + ")";
+		document.documentElement.style.setProperty("--art_px", scale + "px");
 		var wall = document.getElementById("wall");
 		if (wall) {
 			wall.style.left = Math.round((stage_w - 640) / 2) + "px";
+			wall.style.top = wall_y + "px";
+		}
+		var sky = document.getElementById("sky");
+		if (sky) {
+			sky.style.top = wall_y + "px";
 		}
 		place_icons();
 		clamp_windows();
@@ -90,6 +111,8 @@
 	var wall_front = 0;
 	var current_slot = null;
 
+	var SKY_TOP = { night: "#03041a", dawn: "#1a2a8a", day: "#0612a8", dusk: "#120c3a" };
+
 	function build_wall(parent) {
 		var wall = el("div", null, parent);
 		wall.id = "wall";
@@ -107,6 +130,8 @@
 		}
 		current_slot = slot;
 		var src = "mav_wall_" + slot + ".png";
+		// the sky above a tall window's wallpaper matches the wallpaper's top row
+		stage.style.background = SKY_TOP[slot];
 		if (instant === true) {
 			wall_imgs[0].src = src;
 			return;
@@ -361,7 +386,7 @@
 
 	function clamp_one(w) {
 		var x = Math.min(Math.max(w.offsetLeft, -w.offsetWidth + 30), stage_w - 30);
-		var y = Math.min(Math.max(w.offsetTop, 0), 270 - 30);
+		var y = Math.min(Math.max(w.offsetTop, 0), stage_h - 30);
 		w.style.left = x + "px";
 		w.style.top = y + "px";
 	}
@@ -774,7 +799,7 @@
 		body.classList.add("amp_body");
 		var M = C.music;
 		if (!M.enabled) {
-			el("div", "amp_off", body, "Lobby music is disabled on this server. SpaceAmp is sad.");
+			el("div", "amp_off", body, "Lobby music is switched off in this server's config. SpaceAmp is sad.");
 			return;
 		}
 		var lcd = el("div", "amp_lcd", body);
@@ -962,11 +987,13 @@
 			ic.addEventListener("mousedown", function (e) {
 				e.stopPropagation();
 				select_icon(d.id);
+			});
+			ic.addEventListener("dblclick", function () {
 				if (d.id === "clown") {
 					clown_icon_honk();
 				}
+				d.open();
 			});
-			ic.addEventListener("dblclick", function () { d.open(); });
 			icon_refs[d.id] = ic;
 			icon_list.push(ic);
 		});
@@ -987,7 +1014,7 @@
 	var ICON_H = 46;
 
 	function place_icons() {
-		var rows = Math.floor((270 - 16 - 4) / ICON_H);
+		var rows = Math.floor((stage_h - 16 - 4) / ICON_H);
 		icon_list.forEach(function (ic, i) {
 			var col = Math.floor(i / rows);
 			var row = i % rows;
@@ -1101,7 +1128,7 @@
 
 	var last_icon_honk = 0;
 
-	// Clicking the Clown.exe icon plays the clown rift honks. No shake: it's not asking for attention.
+	// Opening the Clown.exe icon plays the clown rift honks. No shake: it's not asking for attention.
 	function clown_icon_honk() {
 		var now = Date.now();
 		if (now - last_icon_honk < 1200) {
@@ -1149,6 +1176,7 @@
 						x: 40 + i * 12, y: 20 + i * 11,
 						text: "HONK!",
 						buttons: [{ label: "HONK", fn: function (close) { close(); last_honk = 0; honk(); } }],
+						on_x: function (close) { close(); last_honk = 0; honk(); },
 					}));
 				});
 			})(i);
@@ -1449,7 +1477,7 @@
 		var place_hot = function () {
 			var left = Math.round((stage_w - 640) / 2);
 			hot.style.left = (left + hs[0]) + "px";
-			hot.style.top = hs[1] + "px";
+			hot.style.top = (wall_y + hs[1]) + "px";
 			hot.style.width = hs[2] + "px";
 			hot.style.height = hs[3] + "px";
 		};
