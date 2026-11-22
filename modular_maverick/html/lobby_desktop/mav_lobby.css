@@ -194,7 +194,7 @@ img { image-rendering: pixelated; border: none; }
 .task.on { background: #eee; box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff; }
 #tray { height: 12px; display: flex; align-items: center; gap: 3px; padding: 0 5px;
 	box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff; }
-#tray img { cursor: pointer; width: 10px; height: 10px; margin: 0 5px 0 -1px; position: relative; top: 1px; }
+#tray img { cursor: pointer; width: 8px; height: 8px; margin: 0 5px 0 0; image-rendering: pixelated; }
 #startmenu {
 	position: absolute; left: 2px; bottom: 16px; width: 120px; background: #dcdcdc; display: none; z-index: 950;
 	box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #404040, 0 0 0 1px #101028; padding: 2px 2px 2px 16px;
