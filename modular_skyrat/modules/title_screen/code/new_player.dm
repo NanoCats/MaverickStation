@@ -197,7 +197,7 @@
 		winset(client, "status_bar", "is-visible=true")
 
 /mob/dead/new_player/proc/play_lobby_button_sound()
-	SEND_SOUND(src, sound('modular_skyrat/master_files/sound/effects/save.ogg'))
+	maverick_lobby_button_sound() // MAVERICK EDIT - desktop click instead of the old menu sound, follows the desktop sound setting
 
 /**
  * Allows the player to select a server to join from any loaded servers.

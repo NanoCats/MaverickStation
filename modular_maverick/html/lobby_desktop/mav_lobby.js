@@ -17,26 +17,82 @@
 	// Links to the server wait until the page has finished loading. Following a link
 	// while the page still loads can stop the rest of it from loading.
 	var byond_queue = [];
+	// Every link to the server goes through one queue, one at a time with a short gap.
+	// Two links sent close together cancel each other in the browser, and only the last
+	// one arrives. That was eating the desktop click sounds.
+	var LINK_GAP_MS = 60;
+	var link_busy = false;
+
 	function byond(query) {
+		byond_queue.push(query);
+		pump_links();
+	}
+
+	function pump_links() {
+		if (link_busy || !byond_queue.length || document.readyState === "loading") {
+			return;
+		}
+		link_busy = true;
+		var query = byond_queue.shift();
 		if (C.preview) {
 			C.preview(query);
-			return;
+		} else {
+			location.href = "byond://?src=" + C.ref + ";" + query;
 		}
-		if (document.readyState === "loading") {
-			byond_queue.push(query);
-			return;
-		}
-		location.href = "byond://?src=" + C.ref + ";" + query;
+		setTimeout(function () {
+			link_busy = false;
+			pump_links();
+		}, LINK_GAP_MS);
 	}
-	document.addEventListener("DOMContentLoaded", function () {
-		// one link per tick; several in one go can drop all but the last
-		(function next() {
-			if (byond_queue.length) {
-				byond(byond_queue.shift());
-				setTimeout(next, 30);
+	document.addEventListener("DOMContentLoaded", pump_links);
+
+	// ------------------------------------------------------------- desktop sounds
+
+	// Like an old OS: a click when something opens, a chime on error boxes, a startup
+	// sound once per round and a shutdown sound. The server checks the player's setting
+	// too; checking here just saves sending links for nothing.
+	var SFX_MODES = ["All", "Clicks only", "Off"];
+	var sfx_mode = C.sfx || "All";
+	var STARTUP_MS = 4300;
+
+	function sfx(kind) {
+		if (sfx_mode === "Off") {
+			return;
+		}
+		if ((kind === "startup" || kind === "shutdown") && sfx_mode !== "All") {
+			return;
+		}
+		byond("lobby_sfx=" + kind);
+	}
+
+	function cycle_sfx_mode() {
+		sfx_mode = SFX_MODES[(SFX_MODES.indexOf(sfx_mode) + 1) % SFX_MODES.length];
+		byond("lobby_sfx_mode=1");
+		return sfx_mode;
+	}
+
+	// The desktop is up. The first desktop of the round always tells the server, which
+	// uses up the startup sound even when sounds are off, so it can't turn up later in
+	// the round. If it does play, the music waits for it.
+	function desktop_ready() {
+		if (C.startup_due) {
+			C.startup_due = false;
+			byond("lobby_sfx=startup");
+			if (sfx_mode === "All") {
+				after(STARTUP_MS, music_hello);
+				return;
 			}
-		})();
-	});
+		}
+		music_hello();
+	}
+
+	// Buttons click too: dialog buttons, title bar buttons, the taskbar, SpaceAmp
+	var CLICKY = ".btn, .tbtn, .mbtn, #startbtn, .task, .amp_btn, .amp_tog, .amp_list div, .filelist div";
+	document.addEventListener("mousedown", function (e) {
+		if (e.button === 0 && e.target.closest && e.target.closest(CLICKY)) {
+			sfx("click");
+		}
+	}, true);
 
 	function el(tag, cls, parent, text) {
 		var e = document.createElement(tag);
@@ -52,12 +108,113 @@
 		return e;
 	}
 
+	// Pictures the page carries itself, as data URIs (see maverick_inline_images)
+	var INLINE = C.inline || {};
+
 	function img(src, cls, parent) {
 		var e = el("img", cls, parent);
+		src = INLINE[src] || src;
+		e.dataset.src = src;
 		e.src = src;
 		e.draggable = false;
 		return e;
 	}
+
+	// ------------------------------------------------------------- late files
+
+	// The server sends the pictures in the background, so a picture can be asked for
+	// before it has arrived and show as a broken image. Broken pictures try again a few
+	// times, and again whenever the server says it has sent everything.
+	var IMG_RETRIES = 8;
+	var broken_imgs = [];
+
+	function retry_img(e) {
+		var name = e.dataset.src;
+		if (!name) {
+			return;
+		}
+		e.removeAttribute("src");
+		e.src = name;
+	}
+
+	document.addEventListener("error", function (ev) {
+		var e = ev.target;
+		if (!e || e.tagName !== "IMG" || !e.dataset.src) {
+			return;
+		}
+		var tries = +(e.dataset.tries || 0);
+		if (broken_imgs.indexOf(e) < 0) {
+			broken_imgs.push(e);
+		}
+		if (tries >= IMG_RETRIES) {
+			return;
+		}
+		e.dataset.tries = tries + 1;
+		after(300 * (tries + 1), function () { retry_img(e); });
+	}, true);
+
+	document.addEventListener("load", function (ev) {
+		var i = broken_imgs.indexOf(ev.target);
+		if (i >= 0) {
+			broken_imgs.splice(i, 1);
+		}
+	}, true);
+
+	// Pictures the stylesheet uses can't report an error, so each one is fetched on the
+	// side. The browser remembers a stylesheet picture that failed and won't look again
+	// at the same address, so one that turns up late goes back in with a new address.
+	var CSS_IMAGES = ["mav_id_parts.png", "mav_tray_sound.png", "mav_sky_glyphs.png", "mav_starfield.png", "mav_paint_tools.png", "mav_amp_glyphs.png"];
+	var css_missing = {};
+	var css_fixed = {};
+
+	function probe_css_image(name, tries) {
+		var url = css_missing[name] ? name + "?v=" + (tries + 1) : name;
+		var probe = new Image();
+		probe.onload = function () {
+			if (css_missing[name]) {
+				delete css_missing[name];
+				css_fixed[name] = url;
+				reload_styles();
+			}
+		};
+		probe.onerror = function () {
+			css_missing[name] = true;
+			if (tries < IMG_RETRIES) {
+				after(300 * (tries + 1), function () { probe_css_image(name, tries + 1); });
+			}
+		};
+		probe.src = url;
+	}
+
+	function reload_styles() {
+		var old = document.querySelector("head style");
+		if (!old) {
+			return;
+		}
+		var text = old.textContent;
+		Object.keys(css_fixed).forEach(function (name) {
+			text = text.split('url("' + name + '")').join('url("' + css_fixed[name] + '")');
+		});
+		if (text !== old.textContent) {
+			old.textContent = text;
+		}
+	}
+
+	CSS_IMAGES.forEach(function (name) { probe_css_image(name, 0); });
+
+	// The title bar buttons show on the boot screens, so their picture comes with the page too
+	if (INLINE["mav_tbtn_glyphs.png"]) {
+		el("style", null, document.head, '.tbtn { background-image: url("' + INLINE["mav_tbtn_glyphs.png"] + '"), none; }');
+	}
+
+	// The server calls this once every lobby file is on its way.
+	window.lobby_files_sent = function () {
+		broken_imgs.slice().forEach(function (e) {
+			e.dataset.tries = 0;
+			retry_img(e);
+		});
+		Object.keys(css_missing).forEach(function (name) { probe_css_image(name, 0); });
+	};
 
 	function pick(list) {
 		return list[Math.floor(Math.random() * list.length)];
@@ -149,10 +306,12 @@
 		// the sky above a tall window's wallpaper matches the wallpaper's top row
 		stage.style.background = SKY_TOP[slot];
 		if (instant === true) {
+			wall_imgs[0].dataset.src = src;
 			wall_imgs[0].src = src;
 			return;
 		}
 		var back = 1 - wall_front;
+		wall_imgs[back].dataset.src = src;
 		wall_imgs[back].src = src;
 		wall_imgs[back].style.opacity = 1;
 		wall_imgs[wall_front].style.opacity = 0;
@@ -574,6 +733,9 @@
 		var body = el("div", "body", w);
 		if (opts.icon === "err") {
 			img("mav_icon_err.png", "err_x", body);
+			if (!opts.silent) {
+				sfx("error");
+			}
 		} else if (opts.icon) {
 			img(opts.icon, "dicon", body);
 		}
@@ -702,14 +864,18 @@
 		"This terminal is Nanotrasen property. Your use of it is logged, reviewed and occasionally laughed at.",
 		"",
 		"KNOWN ISSUES",
-		"- Clown.exe is not Nanotrasen software. It was here when we got the machine. Do not run it.",
-		"- SpaceAmp may play music you did not approve of. This is a feature.",
-		"- The clock shows YOUR time, not station time. Station time is someone else's problem.",
+		"",
+		"* Clown.exe is not authorized Nanotrasen software. Do not run it. Do not attempt to remove it either. I have no fucking idea who put this here, but when I deleted it the computer wouldn't start. We tried downloading an antivirus and it just screamed and deleted itself(?) Words cannot describe my fucking confusion.",
+		"* SpaceAmp music is provided by a third party. We have no control over the playlist or its apparent ability to predict station events. Please stop asking.",
+		"* The clock shows your local time, not station time.",
+		"* The presence of games and recreational software does not constitute permission to use them during working hours.",
 		"",
 		"SUPPORT",
-		"Contact your Head of Personnel. If your Head of Personnel is the problem, contact the Captain. If the Captain is the problem, good luck.",
 		"",
-		"(C) 2566 Aeri Consultations and Services, under license to Nanotrasen. All rights reserved, most of them by the clown.",
+		"For technical assistance, contact your Head of Personnel. If your Head of Personnel is the problem, contact the Captain. If the Captain is the problem, please submit form 690-L (Formal deathsquad request) and associates will arrive shortly to \"solve\" the problem.",
+		"If your issue concerns clown.exe, we already know god damn it.",
+		"",
+		"(C) 2566 Aeri Consultations and Services, under license to Nanotrasen. All rights reserved.",
 	].join("\n");
 
 	function build_readme(body) {
@@ -929,6 +1095,34 @@
 
 	var amp = null;
 
+	// The track clock and the repeat mode live outside the SpaceAmp window, so the
+	// playlist keeps going and repeat keeps its setting while the window is closed.
+	var amp_clock = { elapsed: C.music.elapsed || 0, last: Date.now(), ended_sent: false };
+	var amp_repeat = "all";
+	var REPEAT_LABEL = { all: "RPT ALL", one: "RPT ONE", off: "RPT OFF" };
+	var REPEAT_TIP = {
+		all: "Repeat: the whole playlist. Click to repeat this song.",
+		one: "Repeat: this song. Click to turn repeat off.",
+		off: "Repeat: off, music stops after this song. Click to repeat the playlist.",
+	};
+
+	function music_clock_tick() {
+		var M = C.music;
+		var now = Date.now();
+		// the clock waits for the desktop, since the music does too
+		if (music_live && M.playing && !M.paused) {
+			amp_clock.elapsed += (now - amp_clock.last) / 1000;
+		}
+		amp_clock.last = now;
+		if (music_live && M.playing && !M.paused && M.len && amp_clock.elapsed >= M.len && !amp_clock.ended_sent) {
+			amp_clock.ended_sent = true;
+			byond("music=ended;repeat=" + amp_repeat);
+		}
+	}
+	if (C.music.enabled) {
+		setInterval(music_clock_tick, 100);
+	}
+
 	function fmt_time(s) {
 		s = Math.max(0, Math.floor(s));
 		var m = Math.floor(s / 60);
@@ -968,20 +1162,21 @@
 		var vol = el("div", "amp_vol", row);
 		var vol_fill = el("i", null, vol);
 		var vol_knob = el("b", null, vol);
-		var rpt = el("div", "amp_tog", row, "RPT");
+		var rpt = el("div", "amp_tog", row, REPEAT_LABEL[amp_repeat]);
+		rpt.title = REPEAT_TIP[amp_repeat];
 		var list = el("div", "amp_list", body);
 
 		amp = {
-			repeat: "all", elapsed: M.elapsed || 0, last_tick: Date.now(),
 			time: time, marquee_text: marquee_text, seek_fill: seek_fill, vol_fill: vol_fill, vol_knob: vol_knob,
-			btns: btns, list: list, rpt: rpt, spec: spec, ended_sent: false,
+			btns: btns, list: list, rpt: rpt, spec: spec,
 		};
 
-		rpt.classList.add("on");
+		rpt.classList.toggle("on", amp_repeat !== "off");
 		rpt.addEventListener("click", function () {
-			amp.repeat = { all: "one", one: "off", off: "all" }[amp.repeat];
-			rpt.textContent = { all: "RPT", one: "RPT1", off: "OFF" }[amp.repeat];
-			rpt.classList.toggle("on", amp.repeat !== "off");
+			amp_repeat = { all: "one", one: "off", off: "all" }[amp_repeat];
+			rpt.textContent = REPEAT_LABEL[amp_repeat];
+			rpt.title = REPEAT_TIP[amp_repeat];
+			rpt.classList.toggle("on", amp_repeat !== "off");
 		});
 		seek.addEventListener("click", function (e) {
 			if (!M.len) {
@@ -1069,17 +1264,9 @@
 		}
 		var M = C.music;
 		var now = Date.now();
-		if (M.playing && !M.paused) {
-			amp.elapsed += (now - amp.last_tick) / 1000;
-		}
-		amp.last_tick = now;
-		var shown = M.len ? Math.min(amp.elapsed, M.len) : amp.elapsed;
+		var shown = M.len ? Math.min(amp_clock.elapsed, M.len) : amp_clock.elapsed;
 		amp.time.textContent = M.playing ? fmt_time(shown) : "00:00";
 		amp.seek_fill.style.width = M.len && M.playing ? (100 * shown / M.len) + "%" : "0%";
-		if (M.playing && !M.paused && M.len && amp.elapsed >= M.len && !amp.ended_sent) {
-			amp.ended_sent = true;
-			byond("music=ended;repeat=" + amp.repeat);
-		}
 		// fake spectrum, it just needs to look busy
 		var ctx = amp.spec.getContext("2d");
 		ctx.clearRect(0, 0, 38, 14);
@@ -1145,6 +1332,8 @@
 			ic.addEventListener("dblclick", function () {
 				if (d.id === "clown") {
 					clown_icon_honk();
+				} else {
+					sfx("click");
 				}
 				d.open();
 			});
@@ -1160,23 +1349,98 @@
 
 	// Setup Character is a chameleon ID card. Every ten seconds or so it glitches for a
 	// moment, then settles on a new random station card back and job trim.
-	// mav_id_parts.png: row 0 is the card backs, row 1 is the trims, 32px cells.
-	// Backs: every card with the standard station shape. Trims: every job, CentCom, Syndicate
-	// and prisoner trim. Prisoner number trims only go on the prisoner card back.
-	var ID_BACKS = 11;
+	// mav_id_parts.png, 32px cells. Row 0: the card backs. Row 1: the job icons.
+	// Row 2: the department box, the head of staff box and the stripe, all white.
+	// Backs: every advanced card with the standard station shape. Basic cards like the
+	// retro one can't hold a trim in game, so they stay out. Trims: every job, CentCom,
+	// Syndicate and prisoner trim. Prisoner number trims only go on the prisoner card back.
+	var ID_BACKS = 10;
 	var ID_PRISONER_BACK = 6;
-	var ID_TRIMS = 45;
 	var ID_PRISONER_TRIMS = [33, 34, 35, 36, 37, 38, 39];
+	var ID_MASK_DEPT = 0;
+	var ID_MASK_HEAD = 1;
+	var ID_MASK_STRIPE = 2;
+
+	// Every trim the game draws with these icons: [icon, box color, stripe color, head of staff]
+	var ID_LOOKS = [
+		[0, "#FF3300", "#FF3300"],
+		[1, "#6E6E6E", "#828163"],
+		[1, "#1B67A5", "#1B67A5"],
+		[2, "#58C800", "#58C800"],
+		[3, "#B18644", "#B18644"],
+		[4, "#58C800", "#58C800"],
+		[5, "#58C800", "#CB0000"],
+		[6, "#58C800", "#58C800"],
+		[7, "#58C800", "#58C800"],
+		[8, "#58C800", "#58C800"],
+		[9, "#58C800", "#58C800"],
+		[10, "#FF00FF", "#FF00FF"],
+		[11, "#C0C0C0", "#FFFFFF"],
+		[12, "#B18644", "#B18644"],
+		[12, "#1B67A5", "#B18644", true],
+		[13, "#B18644", "#C96DBF"],
+		[14, "#FFA62B", "#FFA62B"],
+		[15, "#FFA62B", "#FFA62B"],
+		[15, "#1B67A5", "#FFA62B", true],
+		[16, "#5B97BC", "#5B97BC"],
+		[17, "#5B97BC", "#5B97BC"],
+		[18, "#58C800", "#5B97BC"],
+		[19, "#5B97BC", "#5B97BC"],
+		[19, "#1B67A5", "#5B97BC", true],
+		[20, "#5B97BC", "#58C800"],
+		[21, "#C96DBF", "#C96DBF"],
+		[22, "#C96DBF", "#C96DBF"],
+		[22, "#1B67A5", "#C96DBF", true],
+		[23, "#C96DBF", "#C96DBF"],
+		[24, "#CB0000", "#CB0000"],
+		[25, "#CB0000", "#CB0000"],
+		[26, "#CB0000", "#CB0000"],
+		[26, "#1B67A5", "#CB0000", true],
+		[27, "#CB0000", "#1B67A5"],
+		[28, "#1B67A5", "#58C800", true],
+		[29, "#1B67A5", "#1B67A5", true],
+		[30, "#134975", "#134975"],
+		[31, "#134975", "#134975"],
+		[32, "#134975", "#134975"],
+		[33, "#292929", "#292929"],
+		[34, "#292929", "#292929"],
+		[35, "#292929", "#292929"],
+		[36, "#292929", "#292929"],
+		[37, "#292929", "#292929"],
+		[38, "#292929", "#292929"],
+		[39, "#292929", "#292929"],
+		[40, "#F10303", "#F10303"],
+		[41, "#000000", "#008000"],
+		[42, "#75A2BB", "#555CC2"],
+		[43, "#58C800", "#58C800"],
+	];
+
+	// It is a chameleon card, so about half the time it gets the colors wrong on purpose.
+	function random_id_color() {
+		return "hsl(" + Math.floor(Math.random() * 360) + ", " + (45 + Math.floor(Math.random() * 45)) + "%, " + (35 + Math.floor(Math.random() * 30)) + "%)";
+	}
 
 	function id_face(parent) {
 		var face = el("div", "idface", parent);
 		var back = el("i", "idback", face);
+		var box = el("i", "idtint", face);
+		var stripe = el("i", "idtint", face);
 		var trim = el("i", "idtrim", face);
+		function cell(part, col, row) {
+			var pos = (-col * 32) + "px " + (-row * 32) + "px";
+			part.style.backgroundPosition = pos;
+			part.style.webkitMaskPosition = pos;
+			part.style.maskPosition = pos;
+		}
 		return {
 			el: face,
-			set: function (b, t) {
-				back.style.backgroundPosition = (-b * 32) + "px 0";
-				trim.style.backgroundPosition = (-t * 32) + "px -32px";
+			set: function (look) {
+				cell(back, look.back, 0);
+				cell(trim, look.icon, 1);
+				cell(box, look.head ? ID_MASK_HEAD : ID_MASK_DEPT, 2);
+				cell(stripe, ID_MASK_STRIPE, 2);
+				box.style.backgroundColor = look.box;
+				stripe.style.backgroundColor = look.stripe;
 			},
 		};
 	}
@@ -1186,28 +1450,28 @@
 		var box = el("div", "cham", ic);
 		var faces = [id_face(box), id_face(box)];
 		var shown = 0;
-		var cur = [0, 0];
-		function random_combo() {
+		var cur = null;
+		function random_look() {
 			var next;
 			do {
 				var b = Math.floor(Math.random() * ID_BACKS);
-				var t;
-				if (b === ID_PRISONER_BACK) {
-					t = pick(ID_PRISONER_TRIMS);
-				} else {
-					do {
-						t = Math.floor(Math.random() * ID_TRIMS);
-					} while (ID_PRISONER_TRIMS.indexOf(t) >= 0);
+				var looks = ID_LOOKS.filter(function (l) {
+					return (b === ID_PRISONER_BACK) === (ID_PRISONER_TRIMS.indexOf(l[0]) >= 0);
+				});
+				var l = pick(looks);
+				next = { back: b, icon: l[0], box: l[1], stripe: l[2], head: !!l[3] };
+				if (Math.random() < 0.5) {
+					next.box = random_id_color();
+					next.stripe = Math.random() < 0.5 ? next.box : random_id_color();
 				}
-				next = [b, t];
-			} while (next[0] === cur[0] && next[1] === cur[1]);
+			} while (cur && next.back === cur.back && next.icon === cur.icon);
 			return next;
 		}
-		cur = random_combo();
-		faces[0].set(cur[0], cur[1]);
+		cur = random_look();
+		faces[0].set(cur);
 		faces[1].el.style.opacity = 0;
 		function change() {
-			var next = random_combo();
+			var next = random_look();
 			var glitch = faces[shown];
 			// two quick frames of the current card jittering a pixel...
 			var g = 0;
@@ -1221,7 +1485,7 @@
 				box.style.left = "10px";
 				// ...then fade over to the new card
 				var other = faces[1 - shown];
-				other.set(next[0], next[1]);
+				other.set(next);
 				other.el.style.opacity = 1;
 				glitch.el.style.opacity = 0;
 				shown = 1 - shown;
@@ -1271,6 +1535,16 @@
 		var horn = img("mav_tray_horn.png", null, tray);
 		horn.title = "Honk";
 		horn.addEventListener("click", function () { honk(); });
+		var snd = el("span", "snd", tray);
+		var show_snd = function () {
+			snd.className = "snd snd_" + ["all", "clicks", "off"][SFX_MODES.indexOf(sfx_mode)];
+			snd.title = "Sounds: " + sfx_mode;
+		};
+		show_snd();
+		snd.addEventListener("click", function () {
+			cycle_sfx_mode();
+			show_snd();
+		});
 		var clock = el("span", null, tray);
 		clock.id = "clock";
 		function tick() {
@@ -1292,8 +1566,12 @@
 			it.addEventListener("click", function () {
 				menu.style.display = "none";
 				start.classList.remove("on");
+				if (fn !== shut_down) {
+					sfx("click");
+				}
 				fn();
 			});
+			return it;
 		}
 		item("station", "station.exe", function () { open_window("station"); });
 		item("music", "SpaceAmp", function () { open_window("amp"); });
@@ -1351,7 +1629,8 @@
 		var s = document.getElementById("shutdown");
 		s.style.display = "block";
 		s.textContent = "AeriOS is shutting down...";
-		after(1200, function () { s.textContent = "It's now safe to turn off your station."; });
+		// with the shutdown sound on, the server lets the sound finish before it lets go of you
+		after(sfx_mode === "All" ? 3200 : 1200, function () { s.textContent = "It's now safe to turn off your station."; });
 		byond("lobby_shutdown=1");
 	}
 
@@ -1402,7 +1681,7 @@
 				after(i * 110, function () {
 					byond("lobby_honk=" + CLOWN_NOISES[i]);
 					spam.push(dialog({
-						title: "clown.exe", icon: "err", w: 120, big: true,
+						title: "clown.exe", icon: "err", w: 120, big: true, silent: true,
 						x: 40 + i * 12, y: 20 + i * 11,
 						text: "HONK!",
 						buttons: [{ label: "HONK", fn: function (close) { close(); last_honk = 0; honk(); } }],
@@ -1433,9 +1712,8 @@
 		}
 		pts.push(path[path.length - 1]);
 		c.style.display = "block";
-		c.style.transition = "left 0.07s linear, top 0.07s linear";
+		c.style.transition = "left " + CLOWN_STEP_MS + "ms linear, top " + CLOWN_STEP_MS + "ms linear";
 		var i = 0;
-		var bob = 0;
 		var honked_again = false;
 		var mover = setInterval(function () {
 			if (i >= pts.length) {
@@ -1457,10 +1735,13 @@
 			var pt = pts[i];
 			var prev = pts[Math.max(0, i - 1)];
 			var dir = pt[0] > prev[0] ? "E" : (pt[0] < prev[0] ? "W" : "S");
-			c.src = "mav_clown_" + dir + ".png";
-			bob = 1 - bob;
+			c.dataset.src = "mav_clown_" + dir + ".png";
+			c.src = c.dataset.src;
 			c.style.left = pt[0] + "px";
-			c.style.top = (pt[1] - bob) + "px";
+			c.style.top = pt[1] + "px";
+			clown_waddle(c);
+			// real clown shoes squeak every other step; this one is in a hurry
+			byond("lobby_honk=step");
 			// knock over icons and fling error boxes we run through
 			icon_list.forEach(function (ic, k) {
 				if (Math.abs(ic.offsetLeft + 6 - pt[0]) < 26 && Math.abs(ic.offsetTop - pt[1]) < 26) {
@@ -1485,7 +1766,18 @@
 				honk();
 			}
 			i++;
-		}, 70);
+		}, CLOWN_STEP_MS);
+	}
+
+	// How long the clown takes per tile, about a clown's walking pace in game
+	var CLOWN_STEP_MS = 180;
+
+	// The same waddle the game gives clowns: hop up 4 pixels, then settle back down
+	// with a random tilt left, right or none, then snap upright for the next step.
+	function clown_waddle(c) {
+		c.style.animation = "none";
+		void c.offsetWidth;
+		c.style.animation = "waddle_" + pick(["l", "n", "r"]) + " " + Math.round(CLOWN_STEP_MS * 0.9) + "ms linear";
 	}
 
 	// ------------------------------------------------------------- CRT
@@ -1603,7 +1895,7 @@
 		splash_refs.bar = el("i", null, bar);
 		var boom = line(s, B.explode_line || "TOUCH ANY BUTTON TO EXPLODE", "hi blink");
 		boom.style.marginTop = "6px";
-		var drills = ["...relax. that was a drill.", "ok that one was a joke. stop touching things.", "you're lucky it's a test server.", "BOOM. (it didn't explode. we lied.)"];
+		var drills = ["...relax. that was a drill.", "ok that one was a joke. stop touching things.", "good thing the station is insured.", "BOOM. (it didn't explode. we lied.)"];
 		function kaboom() {
 			if (!splash_live) {
 				return;
@@ -1804,7 +2096,7 @@
 
 	function show_notice() {
 		dialog({
-			title: "IMPORTANT.txt - Notepad", icon: "err", w: 200, y: 30,
+			title: "IMPORTANT.txt - Notepad", icon: "err", w: 200, y: 30, silent: true,
 			html: "<div class='notice_text'></div>",
 		});
 		var boxes = document.querySelectorAll(".notice_text");
@@ -1813,7 +2105,10 @@
 
 	// Once per session, tell the server the player's clock so it can pick
 	// time- or date-limited lobby tracks (see config/title_music/names.txt).
+	var music_live = false;
+
 	function music_hello() {
+		music_live = true;
 		if (!C.music.enabled || !C.music.needs_hello) {
 			return;
 		}
@@ -1846,17 +2141,18 @@
 		if (C.mode === "startup") {
 			build_splash(root);
 		} else if (C.intro && !C.classic) {
-			// a quick boot screen on the first page of a connection, then the desktop
-			music_hello();
+			// a quick boot screen on the first page of a connection, then the desktop.
+			// The music waits for the desktop too.
 			build_splash(root, function () {
 				root.innerHTML = "";
 				splash_refs = {};
 				build_lobby(root);
 				layout();
+				desktop_ready();
 			});
 		} else {
 			build_lobby(root);
-			music_hello();
+			desktop_ready();
 		}
 		add_crt();
 		if (C.intro) {
@@ -1914,15 +2210,16 @@
 		}
 		var track_changed = s.index !== C.music.index || s.started;
 		Object.keys(s).forEach(function (k) { C.music[k] = s[k]; });
+		if (track_changed) {
+			amp_clock.elapsed = s.offset || 0;
+			amp_clock.ended_sent = false;
+		}
+		if (s.offset !== undefined) {
+			amp_clock.elapsed = s.offset;
+			amp_clock.ended_sent = false;
+		}
+		amp_clock.last = Date.now();
 		if (amp) {
-			if (track_changed) {
-				amp.elapsed = s.offset || 0;
-				amp.ended_sent = false;
-			}
-			if (s.offset !== undefined) {
-				amp.elapsed = s.offset;
-				amp.ended_sent = false;
-			}
 			draw_amp(true);
 		}
 	};
