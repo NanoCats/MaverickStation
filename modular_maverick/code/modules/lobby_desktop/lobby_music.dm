@@ -4,7 +4,8 @@ GLOBAL_LIST_INIT(maverick_track_names, list(
 	"sound/music/lobby_music/title1.mod" = "Flip-flap - X-Ceed",
 	"sound/music/lobby_music/title2.ogg" = "Robocop Theme (gameboy) - Eric Schumacker",
 	"sound/music/lobby_music/title3.ogg" = "Tintin On The Moon - Cuboos",
-	"sound/music/lobby_music/clown.ogg" = "clown.ogg (you know what this is)",
+	// Admiral Hippie's remix of Cboyardee's remix of the original by Jonathan Dunn
+	"sound/music/lobby_music/clown.ogg" = "Clown.wmv - Admiral Hippie",
 ))
 
 /// Every lobby track SpaceAmp can play, as file paths.
