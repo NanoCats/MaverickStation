@@ -14,13 +14,29 @@
 
 	// ------------------------------------------------------------- helpers
 
+	// Links to the server wait until the page has finished loading. Following a link
+	// while the page still loads can stop the rest of it from loading.
+	var byond_queue = [];
 	function byond(query) {
 		if (C.preview) {
 			C.preview(query);
 			return;
 		}
+		if (document.readyState === "loading") {
+			byond_queue.push(query);
+			return;
+		}
 		location.href = "byond://?src=" + C.ref + ";" + query;
 	}
+	document.addEventListener("DOMContentLoaded", function () {
+		// one link per tick; several in one go can drop all but the last
+		(function next() {
+			if (byond_queue.length) {
+				byond(byond_queue.shift());
+				setTimeout(next, 30);
+			}
+		})();
+	});
 
 	function el(tag, cls, parent, text) {
 		var e = document.createElement(tag);
@@ -187,11 +203,52 @@
 		});
 	}
 
+	// Now and then a tiny clown tumbles across a sky, far away. size is the sprite's size in px.
+	function fly_clown(sky, size, seconds) {
+		var w = sky.clientWidth;
+		var h = sky.clientHeight;
+		if (!w || !h) {
+			return;
+		}
+		var c = img("mav_clown_S.png", "clown_fly", sky);
+		c.style.width = size + "px";
+		c.style.height = size + "px";
+		var ltr = Math.random() < 0.5;
+		var y0 = Math.random() * h * 0.6;
+		var y1 = y0 + (Math.random() - 0.3) * h * 0.4;
+		c.style.left = (ltr ? -size : w) + "px";
+		c.style.top = Math.round(y0) + "px";
+		c.style.animationDirection = ltr ? "normal" : "reverse";
+		c.style.transition = "left " + seconds + "s linear, top " + seconds + "s linear";
+		after(30, function () {
+			c.style.left = (ltr ? w : -size) + "px";
+			c.style.top = Math.round(y1) + "px";
+		});
+		after(seconds * 1000 + 200, function () { c.remove(); });
+	}
+
+	// Rolls for a flying clown every so often, while the sky is still on the page.
+	function clown_sky_rolls(sky, size, seconds, chance, min_wait, max_wait) {
+		(function roll() {
+			after(min_wait + Math.random() * (max_wait - min_wait), function () {
+				if (!sky.isConnected) {
+					return;
+				}
+				if (!document.hidden && Math.random() < chance) {
+					fly_clown(sky, size, seconds);
+				}
+				roll();
+			});
+		})();
+	}
+
 	// The neon shapes drift slowly across the sky, behind the windows, so some always peek out.
 	function build_sky(parent) {
 		var sky = el("div", null, parent);
 		sky.id = "sky";
 		build_stars(sky);
+		// a distant clown, about one roll in eight, every half minute or so
+		clown_sky_rolls(sky, 10, 5, 0.12, 20000, 40000);
 		var order = [0, 1, 2, 3, 8, 10, 4, 5, 6, 7, 9, 4, 6, 9];
 		for (var i = 0; i < order.length; i++) {
 			var f = SKY_FRAMES[order[i]];
@@ -598,7 +655,10 @@
 				st.classList.add("big");
 			}
 		}
-		img("mav_station.png", "station_drift", bg);
+		var drift = img("mav_station.png", "station_drift", bg);
+		// start partway along its path so it is already on screen when the window opens
+		drift.style.animationDelay = "-" + (19 + Math.random() * 31).toFixed(1) + "s, 0s";
+		clown_sky_rolls(bg, 12, 3.5, 0.15, 10000, 20000);
 		[[9, 18, 70], [4, 150, 96], [6, 40, 150], [10, 128, 40], [5, 88, 128]].forEach(function (g, i) {
 			var f = SKY_FRAMES[g[0]];
 			var e = el("div", "station_glint", bg);
@@ -1159,18 +1219,15 @@
 		function change() {
 			var next = random_combo();
 			var glitch = faces[shown];
-			// two quick glitch frames with a pixel of jitter...
+			// two quick frames of the current card jittering a pixel...
 			var g = 0;
 			var timer = setInterval(function () {
 				if (g < 2) {
-					var c = random_combo();
-					glitch.set(c[0], c[1]);
 					box.style.left = (10 + (g % 2 ? 1 : -1)) + "px";
 					g++;
 					return;
 				}
 				clearInterval(timer);
-				glitch.set(cur[0], cur[1]);
 				box.style.left = "10px";
 				// ...then fade over to the new card
 				var other = faces[1 - shown];
@@ -1394,7 +1451,12 @@
 			if (i >= pts.length) {
 				clearInterval(mover);
 				c.style.display = "none";
-				spam.forEach(function (d) { d.close(); });
+				// the ones it knocked flying are gone; the rest stay for the player to close
+				spam.forEach(function (d) {
+					if (d.el.classList.contains("flung")) {
+						d.close();
+					}
+				});
 				open_window("paint");
 				after(3000, function () {
 					icon_list.forEach(function (ic) { ic.classList.remove("knocked", "knocked2"); });
@@ -1772,9 +1834,8 @@
 		try {
 			init_desktop();
 		} catch (e) {
-			var fb = document.getElementById("mav_fallback");
-			if (fb) {
-				fb.style.display = "block";
+			if (window.MAV_FAIL) {
+				window.MAV_FAIL(e && e.message ? e.message : String(e));
 			}
 			throw e;
 		}
@@ -1810,6 +1871,10 @@
 		if (C.intro) {
 			byond("lobby_intro_seen=1");
 		}
+		if (C.ready_ping) {
+			byond("title_is_ready=1");
+		}
+		byond("lobby_alive=1");
 		// the server's plain fallback menu stays hidden as long as this flag gets set
 		window.MAV_OK = true;
 		window.addEventListener("resize", layout);
@@ -1871,8 +1936,7 @@
 		}
 	};
 
-	document.addEventListener("DOMContentLoaded", init);
-	if (document.readyState !== "loading") {
-		init();
-	}
+	// The script sits after everything it builds on, so it starts right away instead of
+	// waiting for the page's load event, which a stray link can stop from ever firing.
+	init();
 })();

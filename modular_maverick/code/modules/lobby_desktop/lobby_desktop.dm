@@ -5,10 +5,33 @@
 /// Where on the wallpaper the CRT sits, as x, y, width, height in wallpaper pixels. Double-clicking it opens station.exe.
 #define LOBBY_DESKTOP_CRT_HOTSPOT list(100, 105, 92, 96)
 
-/// Whether this lobby mob already sent its client the lobby files
-/mob/dead/new_player/var/maverick_lobby_files_sent = FALSE
-/// Counts title screen updates, so only the newest one sends its page
-/mob/dead/new_player/var/maverick_title_sends = 0
+/// How far a lobby mob got sending its client the lobby files
+#define LOBBY_FILES_NONE 0
+#define LOBBY_FILES_BOOT 1
+#define LOBBY_FILES_ALL 2
+/// A send that started this long ago is treated as stuck, so a new one can go ahead.
+#define LOBBY_SEND_TIMEOUT (30 SECONDS)
+
+/// Which lobby files this mob sent its client: LOBBY_FILES_NONE, LOBBY_FILES_BOOT or LOBBY_FILES_ALL
+/mob/dead/new_player/var/maverick_lobby_files_sent = LOBBY_FILES_NONE
+/// world.time a page send started, while it waits for files. Null when no send is running.
+/mob/dead/new_player/var/maverick_title_sending
+/// What the last page sent was built for. A refresh for the same thing keeps the page as it is.
+/mob/dead/new_player/var/maverick_page_key
+/// The last page sent told us it started. Until then a refresh always sends a new page.
+/mob/dead/new_player/var/maverick_page_alive = FALSE
+
+/// The files the boot screens need. They go first, so a boot screen can show while the rest load.
+GLOBAL_LIST_INIT(maverick_boot_files, list(
+	"FixedsysExcelsior3.01Regular.ttf",
+	"Pixellari.ttf",
+	"Grand9K_Pixel.ttf",
+	"TinyUnicode.ttf",
+	"mav_blinds.png",
+	"mav_chevron.png",
+	"mav_clown_small.png",
+	"mav_icon_join.png",
+))
 
 /// Every file the lobby page loads, by the name the page asks for.
 GLOBAL_LIST_INIT(maverick_lobby_files, list(
@@ -88,34 +111,81 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
  *
  * Called from update_title_screen(). Returns FALSE when the desktop is switched
  * off, so the old lobby menu runs instead.
+ *
+ * A refresh for the same kind of page (still starting, still in the lobby, and so on)
+ * leaves a working page alone. Sending a new page resets the desktop, so things like
+ * backing out of Observe should not do it.
  */
 /mob/dead/new_player/proc/maverick_update_title_screen()
 	if(!CONFIG_GET(flag/maverick_lobby_desktop) || !client)
 		return FALSE
-	INVOKE_ASYNC(src, PROC_REF(maverick_send_title_screen), ++maverick_title_sends)
+	var/key = maverick_page_kind()
+	if(maverick_page_alive && key == maverick_page_key)
+		return TRUE
+	maverick_page_key = key
+	maverick_page_alive = FALSE
+	INVOKE_ASYNC(src, PROC_REF(maverick_send_title_screen))
 	return TRUE
 
+/// What kind of page this player should have. A new page is only needed when this changes.
+/mob/dead/new_player/proc/maverick_page_kind()
+	var/list/parts = list(
+		SSticker.current_state == GAME_STATE_STARTUP ? "startup" : "lobby",
+		SSticker.current_state > GAME_STATE_PREGAME,
+		SSticker.current_state == GAME_STATE_PLAYING && client.maverick_assigned_round != GLOB.round_id,
+		!!client.prefs?.read_preference(/datum/preference/toggle/maverick_classic_lobby),
+		SStitle.current_notice,
+	)
+	return jointext(parts, "|")
+
 /**
- * Sends the pictures and fonts, waits until the client has them, then sends the page.
+ * Sends the files the page needs, waits until the client has them, then sends the page.
+ *
  * The page's own script and styles are written into the page itself, so they can never
  * arrive late. Pictures and fonts go in the browser cache by name with browse(file=),
  * the way the old lobby sends its title image.
+ *
+ * While the server starts, only the boot screen files go before the page, so the boot
+ * screen shows quickly. The rest follow right after it.
+ *
+ * Only one send runs at a time. A refresh that comes in while one waits for files does
+ * nothing more, because the running send builds its page after the wait and so picks up
+ * the change.
  */
-/mob/dead/new_player/proc/maverick_send_title_screen(send_number)
+/mob/dead/new_player/proc/maverick_send_title_screen()
 	if(!client)
 		return
-	// Once per lobby mob, so a player coming back to the lobby (respawn, reconnect) gets them again.
-	if(!maverick_lobby_files_sent)
-		maverick_lobby_files_sent = TRUE
-		for(var/file_name in GLOB.maverick_lobby_files)
+	if(maverick_title_sending && world.time - maverick_title_sending < LOBBY_SEND_TIMEOUT)
+		return
+	maverick_title_sending = world.time
+	var/startup = SSticker.current_state == GAME_STATE_STARTUP
+	// Per lobby mob, so a player coming back to the lobby (respawn, reconnect) gets them again.
+	if(maverick_lobby_files_sent < LOBBY_FILES_BOOT)
+		for(var/file_name in GLOB.maverick_boot_files)
 			src << browse(GLOB.maverick_lobby_files[file_name], "file=[file_name];display=0")
-		client.browse_queue_flush()
-	// A newer update came in while we waited, and it will send its own page.
-	if(!client || send_number != maverick_title_sends)
+		maverick_lobby_files_sent = LOBBY_FILES_BOOT
+		client?.browse_queue_flush()
+	if(!startup && maverick_lobby_files_sent < LOBBY_FILES_ALL)
+		maverick_send_other_lobby_files()
+		client?.browse_queue_flush()
+	maverick_title_sending = null
+	if(!client)
 		return
 	src << browse(maverick_title_html(), "window=title_browser")
-	if(SSticker.current_state == GAME_STATE_STARTUP)
+	if(startup)
+		// the desktop files can load while the boot screen shows
+		maverick_send_other_lobby_files()
 		maverick_broadcast_humans()
+
+/// Sends every lobby file the boot screens did not already need.
+/mob/dead/new_player/proc/maverick_send_other_lobby_files()
+	if(maverick_lobby_files_sent >= LOBBY_FILES_ALL)
+		return
+	maverick_lobby_files_sent = LOBBY_FILES_ALL
+	for(var/file_name in GLOB.maverick_lobby_files)
+		if(file_name in GLOB.maverick_boot_files)
+			continue
+		src << browse(GLOB.maverick_lobby_files[file_name], "file=[file_name];display=0")
 
 /// Builds the lobby page: an empty stage, the settings object, and the desktop script.
 /mob/dead/new_player/proc/maverick_title_html()
@@ -146,6 +216,9 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	// everyone sees the same boot screen while the server starts; later intros pick their own
 	if(startup)
 		settings["splash"] = SStitle.maverick_splash
+	// Skyrat's page tells the server it loaded with a link that runs while the page is
+	// still loading, which can stop the page. Ours sends it once it has finished loading.
+	settings["ready_ping"] = !title_screen_is_ready
 
 	// Every "<" in the data becomes \u003c, so nothing a player types (a character name,
 	// a notice) can close the script tag or open a new one. JSON reads it back as "<".
@@ -160,20 +233,53 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 <body>
 <div id="screen" class="screen_root"><div id="stage"></div></div>
 [maverick_fallback_menu()]
+<script>[maverick_fallback_script()]</script>
 <script>window.MAV = [settings_json];</script>
 <script>[maverick_lobby_code("js")]</script>
-<script>
-setTimeout(function () {
-	if (!window.MAV_OK) {
-		document.getElementById("mav_fallback").style.display = "block";
-	}
-}, 8000);
-</script>
-"}
-	if(!title_screen_is_ready)
-		dat += {"<script>location.href = "byond://?src=[text_ref(src)];title_is_ready=1";</script>"}
-	dat += "</body></html>"
+</body>
+</html>"}
 	return dat
+
+/**
+ * Shows the plain fallback menu if the desktop script fails or never starts.
+ * Errors show on the fallback menu and go to the server log, once per page.
+ */
+/mob/dead/new_player/proc/maverick_fallback_script()
+	return {"(function () {
+	var reported = false;
+	window.MAV_FAIL = function (message) {
+		var fb = document.getElementById("mav_fallback");
+		if (fb) {
+			fb.style.display = "block";
+			var why = document.getElementById("mav_fallback_why");
+			if (why && message && !why.textContent) {
+				why.textContent = "Error: " + message;
+			}
+		}
+		if (!reported && message) {
+			reported = true;
+			var send = function () {
+				location.href = "byond://?src=[text_ref(src)];lobby_js_error=" + encodeURIComponent(String(message).slice(0, 300));
+			};
+			// a link followed while the page still loads can stop it, so wait for the load
+			if (document.readyState === "loading") {
+				document.addEventListener("DOMContentLoaded", send);
+			} else {
+				send();
+			}
+		}
+	};
+	window.onerror = function (message, source, line) {
+		if (!window.MAV_OK) {
+			window.MAV_FAIL(message + " (line " + line + ")");
+		}
+	};
+	setTimeout(function () {
+		if (!window.MAV_OK) {
+			window.MAV_FAIL("the desktop script did not start");
+		}
+	}, 8000);
+})();"}
 
 /// The desktop's stylesheet or script, read once from the compiled-in files.
 /proc/maverick_lobby_code(kind)
@@ -206,6 +312,7 @@ setTimeout(function () {
 <div style="font-size:22px;margin-bottom:6px;">MaverickStation</div>
 <div style="margin-bottom:14px;">The lobby desktop did not load. Here is the plain menu.</div>
 [replacetext(jointext(links, ""), "<a ", "<a style='[link_style]' ")]
+<div id="mav_fallback_why" style="margin-top:18px;color:#7a86a8;font-size:12px;"></div>
 </div>"}
 
 /// Real numbers for the boot screens.
@@ -239,3 +346,7 @@ setTimeout(function () {
 			player.client << output("[count]", "title_browser:update_humans")
 
 #undef LOBBY_DESKTOP_CRT_HOTSPOT
+#undef LOBBY_FILES_NONE
+#undef LOBBY_FILES_BOOT
+#undef LOBBY_FILES_ALL
+#undef LOBBY_SEND_TIMEOUT

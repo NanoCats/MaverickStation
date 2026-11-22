@@ -110,6 +110,9 @@ img { image-rendering: pixelated; border: none; }
 .err_x { width: 24px; height: 24px; flex: 0 0 24px; margin: 2px; image-rendering: pixelated; }
 .big_dlg .dtext { font-family: "Pixellari"; font-size: 16px; line-height: 14px; }
 .notice_text { color: #c01010; font-family: "Pixellari"; font-size: 16px; line-height: 14px; }
+.clown_fly { position: absolute; image-rendering: pixelated; pointer-events: none; opacity: 0.85;
+	animation: clown_spin 0.5s steps(8) infinite; }
+@keyframes clown_spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .flung { transition: transform 1.2s cubic-bezier(.4, -0.3, .9, .6), opacity 1.2s; opacity: 0; }
 
 /* station.exe */

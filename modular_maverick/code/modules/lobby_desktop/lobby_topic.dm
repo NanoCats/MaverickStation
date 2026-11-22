@@ -52,6 +52,15 @@
 		return TRUE
 
 	// Remember that this connection already saw the boot screens and the CRT power-on.
+	if(href_list["lobby_alive"])
+		maverick_page_alive = TRUE
+		return TRUE
+
+	if(href_list["lobby_js_error"])
+		// once per page, and the page caps the text; the cap here is for anyone sending it by hand
+		log_runtime("Lobby desktop page failed for [key_name(src)]: [copytext(href_list["lobby_js_error"], 1, 301)]")
+		return TRUE
+
 	if(href_list["lobby_intro_seen"])
 		client.maverick_intro_seen = TRUE
 		return TRUE
