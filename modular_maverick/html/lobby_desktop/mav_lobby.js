@@ -52,8 +52,12 @@
 		return e;
 	}
 
+	// Pictures the page carries itself, as data URIs (see maverick_inline_images)
+	var INLINE = C.inline || {};
+
 	function img(src, cls, parent) {
 		var e = el("img", cls, parent);
+		src = INLINE[src] || src;
 		e.dataset.src = src;
 		e.src = src;
 		e.draggable = false;
@@ -103,7 +107,7 @@
 	// Pictures the stylesheet uses can't report an error, so each one is fetched on the
 	// side. The browser remembers a stylesheet picture that failed and won't look again
 	// at the same address, so one that turns up late goes back in with a new address.
-	var CSS_IMAGES = ["mav_tbtn_glyphs.png", "mav_id_parts.png", "mav_sky_glyphs.png", "mav_starfield.png", "mav_paint_tools.png", "mav_amp_glyphs.png"];
+	var CSS_IMAGES = ["mav_id_parts.png", "mav_sky_glyphs.png", "mav_starfield.png", "mav_paint_tools.png", "mav_amp_glyphs.png"];
 	var css_missing = {};
 	var css_fixed = {};
 
@@ -141,6 +145,11 @@
 	}
 
 	CSS_IMAGES.forEach(function (name) { probe_css_image(name, 0); });
+
+	// The title bar buttons show on the boot screens, so their picture comes with the page too
+	if (INLINE["mav_tbtn_glyphs.png"]) {
+		el("style", null, document.head, '.tbtn { background-image: url("' + INLINE["mav_tbtn_glyphs.png"] + '"), none; }');
+	}
 
 	// The server calls this once every lobby file is on its way.
 	window.lobby_files_sent = function () {
@@ -1023,6 +1032,34 @@
 
 	var amp = null;
 
+	// The track clock and the repeat mode live outside the SpaceAmp window, so the
+	// playlist keeps going and repeat keeps its setting while the window is closed.
+	var amp_clock = { elapsed: C.music.elapsed || 0, last: Date.now(), ended_sent: false };
+	var amp_repeat = "all";
+	var REPEAT_LABEL = { all: "RPT ALL", one: "RPT ONE", off: "RPT OFF" };
+	var REPEAT_TIP = {
+		all: "Repeat: the whole playlist. Click to repeat this song.",
+		one: "Repeat: this song. Click to turn repeat off.",
+		off: "Repeat: off, music stops after this song. Click to repeat the playlist.",
+	};
+
+	function music_clock_tick() {
+		var M = C.music;
+		var now = Date.now();
+		// the clock waits for the desktop, since the music does too
+		if (music_live && M.playing && !M.paused) {
+			amp_clock.elapsed += (now - amp_clock.last) / 1000;
+		}
+		amp_clock.last = now;
+		if (music_live && M.playing && !M.paused && M.len && amp_clock.elapsed >= M.len && !amp_clock.ended_sent) {
+			amp_clock.ended_sent = true;
+			byond("music=ended;repeat=" + amp_repeat);
+		}
+	}
+	if (C.music.enabled) {
+		setInterval(music_clock_tick, 100);
+	}
+
 	function fmt_time(s) {
 		s = Math.max(0, Math.floor(s));
 		var m = Math.floor(s / 60);
@@ -1062,20 +1099,21 @@
 		var vol = el("div", "amp_vol", row);
 		var vol_fill = el("i", null, vol);
 		var vol_knob = el("b", null, vol);
-		var rpt = el("div", "amp_tog", row, "RPT");
+		var rpt = el("div", "amp_tog", row, REPEAT_LABEL[amp_repeat]);
+		rpt.title = REPEAT_TIP[amp_repeat];
 		var list = el("div", "amp_list", body);
 
 		amp = {
-			repeat: "all", elapsed: M.elapsed || 0, last_tick: Date.now(),
 			time: time, marquee_text: marquee_text, seek_fill: seek_fill, vol_fill: vol_fill, vol_knob: vol_knob,
-			btns: btns, list: list, rpt: rpt, spec: spec, ended_sent: false,
+			btns: btns, list: list, rpt: rpt, spec: spec,
 		};
 
-		rpt.classList.add("on");
+		rpt.classList.toggle("on", amp_repeat !== "off");
 		rpt.addEventListener("click", function () {
-			amp.repeat = { all: "one", one: "off", off: "all" }[amp.repeat];
-			rpt.textContent = { all: "RPT", one: "RPT1", off: "OFF" }[amp.repeat];
-			rpt.classList.toggle("on", amp.repeat !== "off");
+			amp_repeat = { all: "one", one: "off", off: "all" }[amp_repeat];
+			rpt.textContent = REPEAT_LABEL[amp_repeat];
+			rpt.title = REPEAT_TIP[amp_repeat];
+			rpt.classList.toggle("on", amp_repeat !== "off");
 		});
 		seek.addEventListener("click", function (e) {
 			if (!M.len) {
@@ -1163,17 +1201,9 @@
 		}
 		var M = C.music;
 		var now = Date.now();
-		if (M.playing && !M.paused) {
-			amp.elapsed += (now - amp.last_tick) / 1000;
-		}
-		amp.last_tick = now;
-		var shown = M.len ? Math.min(amp.elapsed, M.len) : amp.elapsed;
+		var shown = M.len ? Math.min(amp_clock.elapsed, M.len) : amp_clock.elapsed;
 		amp.time.textContent = M.playing ? fmt_time(shown) : "00:00";
 		amp.seek_fill.style.width = M.len && M.playing ? (100 * shown / M.len) + "%" : "0%";
-		if (M.playing && !M.paused && M.len && amp.elapsed >= M.len && !amp.ended_sent) {
-			amp.ended_sent = true;
-			byond("music=ended;repeat=" + amp.repeat);
-		}
 		// fake spectrum, it just needs to look busy
 		var ctx = amp.spec.getContext("2d");
 		ctx.clearRect(0, 0, 38, 14);
@@ -1318,7 +1348,6 @@
 		[41, "#000000", "#008000"],
 		[42, "#75A2BB", "#555CC2"],
 		[43, "#58C800", "#58C800"],
-		[44, "#6E6E6E", "#828163"],
 	];
 
 	// It is a chameleon card, so about half the time it gets the colors wrong on purpose.
@@ -1996,7 +2025,10 @@
 
 	// Once per session, tell the server the player's clock so it can pick
 	// time- or date-limited lobby tracks (see config/title_music/names.txt).
+	var music_live = false;
+
 	function music_hello() {
+		music_live = true;
 		if (!C.music.enabled || !C.music.needs_hello) {
 			return;
 		}
@@ -2029,13 +2061,14 @@
 		if (C.mode === "startup") {
 			build_splash(root);
 		} else if (C.intro && !C.classic) {
-			// a quick boot screen on the first page of a connection, then the desktop
-			music_hello();
+			// a quick boot screen on the first page of a connection, then the desktop.
+			// The music waits for the desktop too.
 			build_splash(root, function () {
 				root.innerHTML = "";
 				splash_refs = {};
 				build_lobby(root);
 				layout();
+				music_hello();
 			});
 		} else {
 			build_lobby(root);
@@ -2097,15 +2130,16 @@
 		}
 		var track_changed = s.index !== C.music.index || s.started;
 		Object.keys(s).forEach(function (k) { C.music[k] = s[k]; });
+		if (track_changed) {
+			amp_clock.elapsed = s.offset || 0;
+			amp_clock.ended_sent = false;
+		}
+		if (s.offset !== undefined) {
+			amp_clock.elapsed = s.offset;
+			amp_clock.ended_sent = false;
+		}
+		amp_clock.last = Date.now();
 		if (amp) {
-			if (track_changed) {
-				amp.elapsed = s.offset || 0;
-				amp.ended_sent = false;
-			}
-			if (s.offset !== undefined) {
-				amp.elapsed = s.offset;
-				amp.ended_sent = false;
-			}
 			draw_amp(true);
 		}
 	};
