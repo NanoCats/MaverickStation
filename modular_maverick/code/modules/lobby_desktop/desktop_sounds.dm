@@ -92,6 +92,7 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 	var/static/list/order = list(LOBBY_DESKTOP_SOUNDS_ALL, LOBBY_DESKTOP_SOUNDS_QUIET, LOBBY_DESKTOP_SOUNDS_OFF)
 	var/next = order[(order.Find(client.maverick_desktop_sound_mode()) % length(order)) + 1]
 	client.prefs.write_preference(GLOB.preference_entries[/datum/preference/choiced/maverick_desktop_sounds], next)
+	client.prefs.save_preferences() // write_preference only changes the copy in memory
 
 /**
  * BYOND keeps the last reverb a client heard until a sound changes it. A ghost that

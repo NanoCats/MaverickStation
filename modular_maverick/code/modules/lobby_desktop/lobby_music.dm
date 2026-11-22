@@ -553,6 +553,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		// Pressing play with the volume at zero means "I want music". Don't restart it through the pref's own hook.
 		volume = 50
 		prefs.write_preference(volume_pref, volume)
+		prefs.save_preferences() // write_preference only changes the copy in memory
 	var/sound/music = sound(path, repeat = 0, wait = 0, volume = volume, channel = CHANNEL_LOBBYMUSIC)
 	music.offset = offset
 	music.environment = LOBBY_DESKTOP_DRY_ENVIRONMENT // no leftover echo from the round
@@ -624,6 +625,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 				return
 			volume = clamp(round(volume), 0, 100)
 			prefs.write_preference(GLOB.preference_entries[/datum/preference/numeric/volume/sound_lobby_volume], volume)
+			prefs.save_preferences() // write_preference only changes the copy in memory
 			mob.set_sound_channel_volume(CHANNEL_LOBBYMUSIC, volume)
 			maverick_music_push()
 		if("ended")

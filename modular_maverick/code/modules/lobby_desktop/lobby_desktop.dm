@@ -242,9 +242,10 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	if(startup || !client.maverick_intro_seen)
 		SStitle.maverick_pick_boot_gags()
 		settings["boot"] = maverick_boot_info()
-	// everyone sees the same boot screen while the server starts; later intros pick their own
-	if(startup)
-		settings["splash"] = SStitle.maverick_splash
+	// One boot screen per server start, so the page never switches to a different one
+	// partway through, for example when the server reloads it after startup
+	SStitle.maverick_pick_boot_gags()
+	settings["splash"] = SStitle.maverick_splash
 	// Skyrat's page tells the server it loaded with a link that runs while the page is
 	// still loading, which can stop the page. Ours sends it once it has finished loading.
 	settings["ready_ping"] = !title_screen_is_ready

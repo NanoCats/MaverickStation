@@ -1935,6 +1935,12 @@
 		progress_tick();
 	}
 
+	/// Width of one progress bar block with its gap, in pixels
+	var BAR_BLOCK = 8;
+	/// How long a status line stays up before the next one replaces it
+	var STATUS_MIN_MS = 600;
+	var status_shown_at = 0;
+
 	function progress_ratio() {
 		return progress.cur / Math.max(1, progress.total);
 	}
@@ -1951,13 +1957,23 @@
 			r = Math.min(r, 0.99);
 		}
 		if (splash_refs.bar) {
-			splash_refs.bar.style.width = Math.min(100, r * 100) + "%";
+			// whole blocks only: a block is 6px plus a 2px gap, so a part block never shows
+			var holder = splash_refs.bar.parentNode;
+			var pad = getComputedStyle(holder);
+			var track = holder.clientWidth - parseFloat(pad.paddingLeft) - parseFloat(pad.paddingRight);
+			var blocks = Math.floor(Math.min(1, r) * (track + 2) / BAR_BLOCK);
+			splash_refs.bar.style.width = Math.max(0, blocks * BAR_BLOCK - 2) + "px";
 		}
 		if (splash_refs.pct) {
 			splash_refs.pct.textContent = Math.floor(r * 100) + "% complete";
 		}
-		if (splash_refs.status) {
-			splash_refs.status.textContent = latest_line ? latest_line : "Waking up the hamsters...";
+		// a new status line waits until the last one was up long enough to read
+		if (splash_refs.status && now - status_shown_at >= STATUS_MIN_MS) {
+			var shown = latest_line ? latest_line : "Waking up the hamsters...";
+			if (splash_refs.status.textContent !== shown) {
+				splash_refs.status.textContent = shown;
+				status_shown_at = now;
+			}
 		}
 		if (splash_refs.humans) {
 			splash_refs.humans.textContent = String(C.boot.humans || 0);
