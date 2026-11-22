@@ -1,4 +1,13 @@
-## MaverickStation settings
+# MaverickStation options
+#
+# Switches for features MaverickStation adds. Each feature that can be turned
+# off gets an entry here, next to a short note on what it does.
+#
+# Flags: write the name to turn it on. Put a # in front to turn it off.
+# Other entries: write the name, a space, then the value.
+#
+# This file is read on server start. Admins can also change entries live with
+# View Variables on the config datum.
 
 ## Ask new players for their date of birth and ban anyone under the minimum age. Set to 0 to turn it off.
 AGE_GATE 1

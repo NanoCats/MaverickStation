@@ -9,7 +9,7 @@ $include skyrat/skyrat_config.txt
 $include bubbers/bubbers_config.txt
 $include bubbers/vore_config.txt
 $include bubbers/storyteller.txt
-# MAVERICK EDIT - Maverick config
+# MAVERICK EDIT - MaverickStation options
 $include maverick/maverick_config.txt
 $include interviews.txt
 $include lua.txt
