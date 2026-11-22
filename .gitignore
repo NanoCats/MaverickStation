@@ -214,6 +214,7 @@ Temporary Items
 !/config/jukebox_music/sounds/exclude
 /config/title_music/sounds/*
 !/config/title_music/sounds/exclude
+/config/title_music/names_local.txt
 /config/title_screens/images/*
 !/config/title_screens/images/exclude
 
