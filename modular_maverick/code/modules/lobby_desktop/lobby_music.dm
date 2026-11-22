@@ -401,16 +401,16 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	if(maverick_music_greeted)
 		return
 	maverick_music_greeted = TRUE
-	if(!isnum(hour) || !isnum(minute) || !isnum(month) || !isnum(day))
-		return
-	maverick_music_clock = list(clamp(hour, 0, 23) * 60 + clamp(minute, 0, 59), month * 100 + day, world.realtime)
 	if(!maverick_music_may_autoplay())
 		return
+	// Nothing plays before this point (see playtitlemusic below), so every path here starts a track.
+	if(isnum(hour) && isnum(minute) && isnum(month) && isnum(day))
+		maverick_music_clock = list(clamp(hour, 0, 23) * 60 + clamp(minute, 0, 59), month * 100 + day, world.realtime)
 
 	var/list/exclusive = maverick_open_exclusive_tracks()
 	if(length(exclusive))
-		if(!(maverick_current_track() in exclusive))
-			maverick_music_play(pick(exclusive))
+		var/current_track = maverick_current_track()
+		maverick_music_play((current_track in exclusive) ? current_track : pick(exclusive))
 		return
 
 	var/list/open_specials = list()
@@ -425,7 +425,24 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 
 	var/current = maverick_current_track()
 	if(current && !maverick_track_open(current) && length(regulars))
-		maverick_music_play(pick(regulars))
+		current = pick(regulars)
+	maverick_music_play(current)
+
+/**
+ * With the desktop lobby on, the stock lobby music waits for the desktop: nothing plays on login
+ * until the page loads and says hello. After that, anything that would restart the stock track
+ * (coming back to the lobby, changing the lobby volume, an admin changing the lobby song)
+ * replays SpaceAmp's own track instead, so the two stay in sync.
+ */
+/client/playtitlemusic(volume_multiplier = 1)
+	if(!CONFIG_GET(flag/maverick_lobby_desktop) || !isnewplayer(mob))
+		return ..()
+	if(!maverick_music_greeted)
+		return
+	if(!maverick_music_may_autoplay())
+		SEND_SOUND(src, sound(null, channel = CHANNEL_LOBBYMUSIC))
+		return
+	maverick_music_play(maverick_current_track())
 
 /**
  * The station alert changed. An exclusive track that just opened takes over, even over the player's own pick,
