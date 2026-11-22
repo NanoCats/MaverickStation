@@ -718,19 +718,9 @@
 		box.textContent = README;
 	}
 
-	var MANIFESTO = [
-		"THE SHOTGUN MANIFESTO",
-		"",
-		"1. Every problem on this station is a shotgun problem.",
-		"2. If it isn't, you are not using enough shotgun.",
-		"3. Slugs for doors. Buckshot for feelings.",
-		"4. The Warden's shotgun is not a decoration. It is a promise.",
-		"5. A shotgun leg is not a joke. It is a lifestyle.",
-		"6. Beanbags count. Rubbershot counts. Throwing the shotgun at them counts, once, if you meant it.",
-		"7. Never trust anyone who says \"it's a bit much\". It is exactly enough.",
-		"",
-		"Deleted by: HR. Restored by: me. Deleted again by: HR.",
-	].join("\n");
+	// The Shotgun Manifesto: an old ban appeal the community never let die. Not endorsed
+	// conduct, which is why it lives in the recycle bin. Kept word for word.
+	var MANIFESTO = "I used the shotgun. You know why? Cause the shot gun doesn\u2019t miss: and unlike the shitty hybrid taser it stops a criminal in their tracks in two hits. Bang: bang: and they\u2019re fucking done. I use four shots just to make damn sure. Because: once again: I\u2019m not there to coddle a buncha criminal scum sucking *******: I\u2019m there to 1) Survive the fucking round. 2) Guard the armory. So you can absolutely get fucked. If I get unbanned: which I won\u2019t: you can guarantee I will continue to use the shotgun to apprehend criminals. Because it\u2019s quick: clean and effective as fuck. Why in the seven hells would I fuck around with the disabler shots: which take half a clip just to bring someone down: or with the tazer bolts which are slow as balls: impossible to aim and do about next to jack shit: fuck all. The shotgun is the superior law enforcement weapon. Because it stops crime. And it stops crime by reducing the number of criminals roaming the fucking halls.";
 
 	var BIN = [
 		["Shotgun_manifesto.txt", "4 KB", MANIFESTO],
