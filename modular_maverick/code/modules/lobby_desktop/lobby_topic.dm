@@ -62,7 +62,18 @@
 
 	return FALSE
 
+/**
+ * Start > Shut Down. You clicked Shut Down, so the game closes. What did you think would happen?
+ * The client quits itself, which closes the game window. If that somehow doesn't take,
+ * the server drops the connection a moment later instead.
+ */
 /mob/dead/new_player/proc/maverick_shutdown_kick()
+	if(!client)
+		return
+	winset(client, null, "command=.quit")
+	addtimer(CALLBACK(src, PROC_REF(maverick_shutdown_drop)), 1 SECONDS)
+
+/mob/dead/new_player/proc/maverick_shutdown_drop()
 	if(client)
 		qdel(client)
 
