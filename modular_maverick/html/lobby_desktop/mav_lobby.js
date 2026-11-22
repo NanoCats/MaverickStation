@@ -1397,10 +1397,10 @@
 	var latest_line = "";
 	var splash_refs = {};
 
+	// Text only. DOMParser builds an inert document: no scripts run and no images load.
 	function strip(html) {
-		var d = document.createElement("div");
-		d.innerHTML = html;
-		return (d.textContent || "").trim();
+		var doc = new DOMParser().parseFromString(String(html), "text/html");
+		return (doc.body.textContent || "").trim();
 	}
 
 	var splash_live = false;
@@ -1689,6 +1689,18 @@
 	}
 
 	function init() {
+		try {
+			init_desktop();
+		} catch (e) {
+			var fb = document.getElementById("mav_fallback");
+			if (fb) {
+				fb.style.display = "block";
+			}
+			throw e;
+		}
+	}
+
+	function init_desktop() {
 		if (started) {
 			return;
 		}
@@ -1718,6 +1730,8 @@
 		if (C.intro) {
 			byond("lobby_intro_seen=1");
 		}
+		// the server's plain fallback menu stays hidden as long as this flag gets set
+		window.MAV_OK = true;
 		window.addEventListener("resize", layout);
 		layout();
 	}

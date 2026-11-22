@@ -133,8 +133,9 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	if(startup)
 		settings["splash"] = SStitle.maverick_splash
 
-	// "</" would close the script tag early if it showed up in a name or notice.
-	var/settings_json = replacetext(json_encode(settings), "</", "<\\/")
+	// Every "<" in the data becomes \u003c, so nothing a player types (a character name,
+	// a notice) can close the script tag or open a new one. JSON reads it back as "<".
+	var/settings_json = replacetext(json_encode(settings), "<", "\\u003c")
 	var/dat = {"<!DOCTYPE html>
 <html>
 <head>
@@ -144,13 +145,46 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 </head>
 <body>
 <div id="screen" class="screen_root"><div id="stage"></div></div>
+[maverick_fallback_menu()]
 <script>window.MAV = [settings_json];</script>
 <script src="mav_lobby.js"></script>
+<script>
+setTimeout(function () {
+	if (!window.MAV_OK) {
+		document.getElementById("mav_fallback").style.display = "block";
+	}
+}, 4000);
+</script>
 "}
 	if(!title_screen_is_ready)
 		dat += {"<script>location.href = "byond://?src=[text_ref(src)];title_is_ready=1";</script>"}
 	dat += "</body></html>"
 	return dat
+
+/**
+ * A plain menu with the lobby actions that matter, as ordinary links with inline styles.
+ * It stays hidden while the desktop works. If the desktop's script or styles fail to load,
+ * or the script breaks while building the desktop, it appears after a few seconds, so
+ * nobody is stuck in the lobby unable to join, observe or set up a character.
+ */
+/mob/dead/new_player/proc/maverick_fallback_menu()
+	var/ref = text_ref(src)
+	var/list/links = list()
+	if(SSticker.current_state > GAME_STATE_PREGAME)
+		links += "<a href='byond://?src=[ref];late_join=1'>Join Game</a>"
+		links += "<a href='byond://?src=[ref];view_manifest=1'>Crew Manifest</a>"
+	else
+		links += "<a href='byond://?src=[ref];toggle_ready=1'>Toggle Ready</a>"
+	links += "<a href='byond://?src=[ref];observe=1'>Observe</a>"
+	links += "<a href='byond://?src=[ref];character_setup=1'>Setup Character</a>"
+	links += "<a href='byond://?src=[ref];game_options=1'>Game Options</a>"
+	links += "<a href='byond://?src=[ref];character_directory=1'>Character Directory</a>"
+	var/link_style = "display:block;color:#ffe066;margin:6px 0;font-size:18px;"
+	return {"<div id="mav_fallback" style="display:none;position:fixed;inset:0;z-index:5000;background:#05081a;color:#cde;font-family:sans-serif;padding:24px;">
+<div style="font-size:22px;margin-bottom:6px;">MaverickStation</div>
+<div style="margin-bottom:14px;">The lobby desktop did not load. Here is the plain menu.</div>
+[replacetext(jointext(links, ""), "<a ", "<a style='[link_style]' ")]
+</div>"}
 
 /// Real numbers for the boot screens.
 /mob/dead/new_player/proc/maverick_boot_info()
