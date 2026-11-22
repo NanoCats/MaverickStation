@@ -23,6 +23,7 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	"mav_amp_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_amp_glyphs.png',
 	"mav_tray_horn.png" = 'modular_maverick/html/lobby_desktop/mav_tray_horn.png',
 	"mav_icon_power.png" = 'modular_maverick/html/lobby_desktop/mav_icon_power.png',
+	"mav_icon_err.png" = 'modular_maverick/html/lobby_desktop/mav_icon_err.png',
 	"mav_tbtn_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_tbtn_glyphs.png',
 	"mav_station.png" = 'modular_maverick/html/lobby_desktop/mav_station.png',
 	"mav_id_parts.png" = 'modular_maverick/html/lobby_desktop/mav_id_parts.png',

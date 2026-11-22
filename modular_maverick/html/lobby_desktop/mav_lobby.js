@@ -516,7 +516,7 @@
 		});
 		var body = el("div", "body", w);
 		if (opts.icon === "err") {
-			el("div", "err_x", body, "x");
+			img("mav_icon_err.png", "err_x", body);
 		} else if (opts.icon) {
 			img(opts.icon, "dicon", body);
 		}

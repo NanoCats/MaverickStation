@@ -107,11 +107,7 @@ img { image-rendering: pixelated; border: none; }
 .dlg .dtext { flex: 1; line-height: 10px; }
 .dlg .dbtns { text-align: center; padding: 4px 0 2px; }
 .dlg .dbtns .btn { margin: 0 3px; }
-.err_x {
-	width: 24px; height: 24px; border-radius: 50%; background: #e03a3a; color: #fff; flex: 0 0 24px;
-	font-family: "Pixellari"; font-size: 16px; line-height: 24px; text-align: center; margin: 2px;
-	box-shadow: inset -2px -2px 0 #a02020, 0 0 0 1px #101028;
-}
+.err_x { width: 24px; height: 24px; flex: 0 0 24px; margin: 2px; image-rendering: pixelated; }
 .big_dlg .dtext { font-family: "Pixellari"; font-size: 16px; line-height: 14px; }
 .notice_text { color: #c01010; font-family: "Pixellari"; font-size: 16px; line-height: 14px; }
 .flung { transition: transform 1.2s cubic-bezier(.4, -0.3, .9, .6), opacity 1.2s; opacity: 0; }
