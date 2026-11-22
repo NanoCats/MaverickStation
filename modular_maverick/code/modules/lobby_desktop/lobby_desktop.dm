@@ -5,56 +5,54 @@
 /// Where on the wallpaper the CRT sits, as x, y, width, height in wallpaper pixels. Double-clicking it opens station.exe.
 #define LOBBY_DESKTOP_CRT_HOTSPOT list(100, 105, 92, 96)
 
-/datum/asset/simple/maverick_lobby
-	// The page asks for these files by name, so they can't be renamed to their hash.
-	keep_local_name = TRUE
-	assets = list(
-		"mav_lobby.css" = 'modular_maverick/html/lobby_desktop/mav_lobby.css',
-		"mav_lobby.js" = 'modular_maverick/html/lobby_desktop/mav_lobby.js',
-		"FixedsysExcelsior3.01Regular.ttf" = 'html/browser/FixedsysExcelsior3.01Regular.ttf',
-		"Pixellari.ttf" = 'interface/fonts/Pixellari.ttf',
-		"Grand9K_Pixel.ttf" = 'interface/fonts/Grand9K_Pixel.ttf',
-		"TinyUnicode.ttf" = 'interface/fonts/TinyUnicode.ttf',
-		"mav_wall_night.png" = 'modular_maverick/html/lobby_desktop/mav_wall_night.png',
-		"mav_wall_dawn.png" = 'modular_maverick/html/lobby_desktop/mav_wall_dawn.png',
-		"mav_wall_day.png" = 'modular_maverick/html/lobby_desktop/mav_wall_day.png',
-		"mav_wall_dusk.png" = 'modular_maverick/html/lobby_desktop/mav_wall_dusk.png',
-		"mav_amp_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_amp_glyphs.png',
-		"mav_sky_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_sky_glyphs.png',
-		"mav_blinds.png" = 'modular_maverick/html/lobby_desktop/mav_blinds.png',
-		"mav_chevron.png" = 'modular_maverick/html/lobby_desktop/mav_chevron.png',
-		"mav_clown_E.png" = 'modular_maverick/html/lobby_desktop/mav_clown_E.png',
-		"mav_clown_S.png" = 'modular_maverick/html/lobby_desktop/mav_clown_S.png',
-		"mav_clown_W.png" = 'modular_maverick/html/lobby_desktop/mav_clown_W.png',
-		"mav_clown_small.png" = 'modular_maverick/html/lobby_desktop/mav_clown_small.png',
-		"mav_paint_tools.png" = 'modular_maverick/html/lobby_desktop/mav_paint_tools.png',
-		"mav_starfield.png" = 'modular_maverick/html/lobby_desktop/mav_starfield.png',
-		"mav_wordmark.png" = 'modular_maverick/html/lobby_desktop/mav_wordmark.png',
-		"mav_icon_clown.png" = 'modular_maverick/html/lobby_desktop/mav_icon_clown.png',
-		"mav_icon_directory.png" = 'modular_maverick/html/lobby_desktop/mav_icon_directory.png',
-		"mav_icon_horn.png" = 'modular_maverick/html/lobby_desktop/mav_icon_horn.png',
-		"mav_icon_join.png" = 'modular_maverick/html/lobby_desktop/mav_icon_join.png',
-		"mav_icon_manifest.png" = 'modular_maverick/html/lobby_desktop/mav_icon_manifest.png',
-		"mav_icon_music.png" = 'modular_maverick/html/lobby_desktop/mav_icon_music.png',
-		"mav_icon_observe.png" = 'modular_maverick/html/lobby_desktop/mav_icon_observe.png',
-		"mav_icon_options.png" = 'modular_maverick/html/lobby_desktop/mav_icon_options.png',
-		"mav_icon_paint.png" = 'modular_maverick/html/lobby_desktop/mav_icon_paint.png',
-		"mav_icon_polls.png" = 'modular_maverick/html/lobby_desktop/mav_icon_polls.png',
-		"mav_icon_readme.png" = 'modular_maverick/html/lobby_desktop/mav_icon_readme.png',
-		"mav_icon_recycle.png" = 'modular_maverick/html/lobby_desktop/mav_icon_recycle.png',
-		"mav_icon_servers.png" = 'modular_maverick/html/lobby_desktop/mav_icon_servers.png',
-		"mav_icon_setup.png" = 'modular_maverick/html/lobby_desktop/mav_icon_setup.png',
-		"mav_icon_station.png" = 'modular_maverick/html/lobby_desktop/mav_icon_station.png',
-		"mav_icon_traits.png" = 'modular_maverick/html/lobby_desktop/mav_icon_traits.png',
-	)
+/// Every file the lobby page loads, by the name the page asks for.
+GLOBAL_LIST_INIT(maverick_lobby_files, list(
+	"mav_lobby.css" = 'modular_maverick/html/lobby_desktop/mav_lobby.css',
+	"mav_lobby.js" = 'modular_maverick/html/lobby_desktop/mav_lobby.js',
+	"FixedsysExcelsior3.01Regular.ttf" = 'html/browser/FixedsysExcelsior3.01Regular.ttf',
+	"Pixellari.ttf" = 'interface/fonts/Pixellari.ttf',
+	"Grand9K_Pixel.ttf" = 'interface/fonts/Grand9K_Pixel.ttf',
+	"TinyUnicode.ttf" = 'interface/fonts/TinyUnicode.ttf',
+	"mav_wall_night.png" = 'modular_maverick/html/lobby_desktop/mav_wall_night.png',
+	"mav_wall_dawn.png" = 'modular_maverick/html/lobby_desktop/mav_wall_dawn.png',
+	"mav_wall_day.png" = 'modular_maverick/html/lobby_desktop/mav_wall_day.png',
+	"mav_wall_dusk.png" = 'modular_maverick/html/lobby_desktop/mav_wall_dusk.png',
+	"mav_amp_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_amp_glyphs.png',
+	"mav_sky_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_sky_glyphs.png',
+	"mav_blinds.png" = 'modular_maverick/html/lobby_desktop/mav_blinds.png',
+	"mav_chevron.png" = 'modular_maverick/html/lobby_desktop/mav_chevron.png',
+	"mav_clown_E.png" = 'modular_maverick/html/lobby_desktop/mav_clown_E.png',
+	"mav_clown_S.png" = 'modular_maverick/html/lobby_desktop/mav_clown_S.png',
+	"mav_clown_W.png" = 'modular_maverick/html/lobby_desktop/mav_clown_W.png',
+	"mav_clown_small.png" = 'modular_maverick/html/lobby_desktop/mav_clown_small.png',
+	"mav_paint_tools.png" = 'modular_maverick/html/lobby_desktop/mav_paint_tools.png',
+	"mav_starfield.png" = 'modular_maverick/html/lobby_desktop/mav_starfield.png',
+	"mav_wordmark.png" = 'modular_maverick/html/lobby_desktop/mav_wordmark.png',
+	"mav_icon_clown.png" = 'modular_maverick/html/lobby_desktop/mav_icon_clown.png',
+	"mav_icon_directory.png" = 'modular_maverick/html/lobby_desktop/mav_icon_directory.png',
+	"mav_icon_horn.png" = 'modular_maverick/html/lobby_desktop/mav_icon_horn.png',
+	"mav_icon_join.png" = 'modular_maverick/html/lobby_desktop/mav_icon_join.png',
+	"mav_icon_manifest.png" = 'modular_maverick/html/lobby_desktop/mav_icon_manifest.png',
+	"mav_icon_music.png" = 'modular_maverick/html/lobby_desktop/mav_icon_music.png',
+	"mav_icon_observe.png" = 'modular_maverick/html/lobby_desktop/mav_icon_observe.png',
+	"mav_icon_options.png" = 'modular_maverick/html/lobby_desktop/mav_icon_options.png',
+	"mav_icon_paint.png" = 'modular_maverick/html/lobby_desktop/mav_icon_paint.png',
+	"mav_icon_polls.png" = 'modular_maverick/html/lobby_desktop/mav_icon_polls.png',
+	"mav_icon_readme.png" = 'modular_maverick/html/lobby_desktop/mav_icon_readme.png',
+	"mav_icon_recycle.png" = 'modular_maverick/html/lobby_desktop/mav_icon_recycle.png',
+	"mav_icon_servers.png" = 'modular_maverick/html/lobby_desktop/mav_icon_servers.png',
+	"mav_icon_setup.png" = 'modular_maverick/html/lobby_desktop/mav_icon_setup.png',
+	"mav_icon_station.png" = 'modular_maverick/html/lobby_desktop/mav_icon_station.png',
+	"mav_icon_traits.png" = 'modular_maverick/html/lobby_desktop/mav_icon_traits.png',
+))
 
 /client
 	/// The player's desktop window layout, as the JSON string the page sent us. Kept for the session.
 	var/maverick_desktop_state
 	/// Round ID for which this client already saw the "You have been assigned a STATION" popup.
 	var/maverick_assigned_round
-	/// Whether this connection got fresh copies of the lobby files yet
-	var/maverick_lobby_assets_sent = FALSE
+	/// Whether this connection got the lobby files yet
+	var/maverick_lobby_files_sent = FALSE
 	COOLDOWN_DECLARE(maverick_honk_cooldown)
 	/// Separate from the honk cooldown so clicking the Clown.exe icon never mutes the honks right after it.
 	COOLDOWN_DECLARE(maverick_icon_honk_cooldown)
@@ -85,28 +83,16 @@
 /mob/dead/new_player/proc/maverick_update_title_screen()
 	if(!CONFIG_GET(flag/maverick_lobby_desktop) || !client)
 		return FALSE
-	INVOKE_ASYNC(src, PROC_REF(maverick_send_title_screen))
-	return TRUE
-
-/**
- * Sends the lobby files, then the page. On 516 the page can load before freshly sent
- * files arrive, which leaves a blank white lobby, so wait for them first when any were sent.
- */
-/mob/dead/new_player/proc/maverick_send_title_screen()
-	var/datum/asset/simple/maverick_lobby/assets = get_asset_datum(/datum/asset/simple/maverick_lobby)
-	// The client's saved "files I already have" list can outlive the files themselves.
-	// Send the lobby files fresh once per connection instead of trusting it.
-	if(!client.maverick_lobby_assets_sent)
-		client.maverick_lobby_assets_sent = TRUE
-		for(var/asset_name in assets.assets)
-			client.sent_assets -= asset_name
-	if(assets.send(client))
-		client?.browse_queue_flush()
-	if(!client)
-		return
+	// browse() with file= puts each file in the client's browser cache under its own name,
+	// the same way the old lobby sends its title image. browse_rsc assets did not reach the page.
+	if(!client.maverick_lobby_files_sent)
+		client.maverick_lobby_files_sent = TRUE
+		for(var/file_name in GLOB.maverick_lobby_files)
+			src << browse(GLOB.maverick_lobby_files[file_name], "file=[file_name];display=0")
 	src << browse(maverick_title_html(), "window=title_browser")
 	if(SSticker.current_state == GAME_STATE_STARTUP)
 		maverick_broadcast_humans()
+	return TRUE
 
 /// Builds the lobby page: an empty stage, the settings object, and the desktop script.
 /mob/dead/new_player/proc/maverick_title_html()
