@@ -515,11 +515,15 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		titles += list(list("title" = maverick_track_name(track)))
 	var/enabled = !CONFIG_GET(flag/disallow_title_music) && length(tracks)
 	var/volume = prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
-	// The lobby starts the round track on login; treat our first look as its start.
-	if(isnull(maverick_music_started))
-		maverick_music_started = world.time
 	var/playing = enabled && !maverick_music_stopped && volume > 0
-	var/elapsed = ((maverick_music_paused ? maverick_music_paused_at : world.time) - maverick_music_started) / 10
+	// Nothing plays until the desktop says hello (after the boot screen and the startup
+	// sound), so until then the track sits at 0:00. Starting the clock any earlier made
+	// SpaceAmp open partway into the song, then jump back to the start.
+	var/elapsed = 0
+	if(maverick_music_greeted)
+		if(isnull(maverick_music_started))
+			maverick_music_started = world.time
+		elapsed = ((maverick_music_paused ? maverick_music_paused_at : world.time) - maverick_music_started) / 10
 	return list(
 		"enabled" = enabled,
 		"tracks" = titles,
