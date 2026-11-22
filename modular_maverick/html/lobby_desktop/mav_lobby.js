@@ -17,26 +17,34 @@
 	// Links to the server wait until the page has finished loading. Following a link
 	// while the page still loads can stop the rest of it from loading.
 	var byond_queue = [];
+	// Every link to the server goes through one queue, one at a time with a short gap.
+	// Two links sent close together cancel each other in the browser, and only the last
+	// one arrives. That was eating the desktop click sounds.
+	var LINK_GAP_MS = 60;
+	var link_busy = false;
+
 	function byond(query) {
+		byond_queue.push(query);
+		pump_links();
+	}
+
+	function pump_links() {
+		if (link_busy || !byond_queue.length || document.readyState === "loading") {
+			return;
+		}
+		link_busy = true;
+		var query = byond_queue.shift();
 		if (C.preview) {
 			C.preview(query);
-			return;
+		} else {
+			location.href = "byond://?src=" + C.ref + ";" + query;
 		}
-		if (document.readyState === "loading") {
-			byond_queue.push(query);
-			return;
-		}
-		location.href = "byond://?src=" + C.ref + ";" + query;
+		setTimeout(function () {
+			link_busy = false;
+			pump_links();
+		}, LINK_GAP_MS);
 	}
-	document.addEventListener("DOMContentLoaded", function () {
-		// one link per tick; several in one go can drop all but the last
-		(function next() {
-			if (byond_queue.length) {
-				byond(byond_queue.shift());
-				setTimeout(next, 30);
-			}
-		})();
-	});
+	document.addEventListener("DOMContentLoaded", pump_links);
 
 	// ------------------------------------------------------------- desktop sounds
 
@@ -54,8 +62,7 @@
 		if ((kind === "startup" || kind === "shutdown") && sfx_mode !== "All") {
 			return;
 		}
-		// a moment later, so it never lands in the same tick as the link for the action itself
-		setTimeout(function () { byond("lobby_sfx=" + kind); }, 40);
+		byond("lobby_sfx=" + kind);
 	}
 
 	function cycle_sfx_mode() {
@@ -144,7 +151,7 @@
 	// Pictures the stylesheet uses can't report an error, so each one is fetched on the
 	// side. The browser remembers a stylesheet picture that failed and won't look again
 	// at the same address, so one that turns up late goes back in with a new address.
-	var CSS_IMAGES = ["mav_id_parts.png", "mav_sky_glyphs.png", "mav_starfield.png", "mav_paint_tools.png", "mav_amp_glyphs.png"];
+	var CSS_IMAGES = ["mav_id_parts.png", "mav_tray_sound.png", "mav_sky_glyphs.png", "mav_starfield.png", "mav_paint_tools.png", "mav_amp_glyphs.png"];
 	var css_missing = {};
 	var css_fixed = {};
 
@@ -845,14 +852,18 @@
 		"This terminal is Nanotrasen property. Your use of it is logged, reviewed and occasionally laughed at.",
 		"",
 		"KNOWN ISSUES",
-		"- Clown.exe is not Nanotrasen software. It was here when we got the machine. Do not run it.",
-		"- SpaceAmp may play music you did not approve of. This is a feature.",
-		"- The clock shows YOUR time, not station time. Station time is someone else's problem.",
+		"",
+		"* Clown.exe is not authorized Nanotrasen software. Do not run it. Do not attempt to remove it either. I have no fucking idea who put this here, but when I deleted it the computer wouldn't start. We tried downloading an antivirus and it just screamed and deleted itself(?) Words cannot describe my fucking confusion.",
+		"* SpaceAmp music is provided by a third party. We have no control over the playlist or its apparent ability to predict station events. Please stop asking.",
+		"* The clock shows your local time, not station time.",
+		"* The presence of games and recreational software does not constitute permission to use them during working hours.",
 		"",
 		"SUPPORT",
-		"Contact your Head of Personnel. If your Head of Personnel is the problem, contact the Captain. If the Captain is the problem, good luck.",
 		"",
-		"(C) 2566 Aeri Consultations and Services, under license to Nanotrasen. All rights reserved, most of them by the clown.",
+		"For technical assistance, contact your Head of Personnel. If your Head of Personnel is the problem, contact the Captain. If the Captain is the problem, please submit form 690-L (Formal deathsquad request) and associates will arrive shortly to \"solve\" the problem.",
+		"If your issue concerns clown.exe, we already know god damn it.",
+		"",
+		"(C) 2566 Aeri Consultations and Services, under license to Nanotrasen. All rights reserved.",
 	].join("\n");
 
 	function build_readme(body) {
@@ -1512,6 +1523,16 @@
 		var horn = img("mav_tray_horn.png", null, tray);
 		horn.title = "Honk";
 		horn.addEventListener("click", function () { honk(); });
+		var snd = el("span", "snd", tray);
+		var show_snd = function () {
+			snd.className = "snd snd_" + ["all", "clicks", "off"][SFX_MODES.indexOf(sfx_mode)];
+			snd.title = "Sounds: " + sfx_mode;
+		};
+		show_snd();
+		snd.addEventListener("click", function () {
+			cycle_sfx_mode();
+			show_snd();
+		});
 		var clock = el("span", null, tray);
 		clock.id = "clock";
 		function tick() {
@@ -1553,9 +1574,6 @@
 			item("servers", "Swap Servers", ACTIONS.servers);
 		}
 		el("div", "sep", menu);
-		var snd = item("options", "Sounds: " + sfx_mode, function () {
-			snd.querySelector("span").textContent = "Sounds: " + cycle_sfx_mode();
-		});
 		item("power", "Shut Down...", shut_down);
 		start.addEventListener("click", function (e) {
 			e.stopPropagation();

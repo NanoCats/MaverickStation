@@ -551,6 +551,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		prefs.write_preference(volume_pref, volume)
 	var/sound/music = sound(path, repeat = 0, wait = 0, volume = volume, channel = CHANNEL_LOBBYMUSIC)
 	music.offset = offset
+	music.environment = LOBBY_DESKTOP_DRY_ENVIRONMENT // no leftover echo from the round
 	SEND_SOUND(src, music)
 	maverick_music_track = path
 	maverick_music_base = SSticker.login_music

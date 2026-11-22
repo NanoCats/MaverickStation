@@ -90,6 +90,9 @@ img { image-rendering: pixelated; border: none; }
 .tbtn_min:active { background-position: 1px 1px, 0 0; }
 .tbtn_max:active { background-position: -8px 1px, 0 0; }
 .tbtn_close:active { background-position: -17px 1px, 0 0; }
+/* a maximized window shows the restore glyph, two windows */
+.win.max .tbtn_max { background-position: -27px 0, 0 0; }
+.win.max .tbtn_max:active { background-position: -26px 1px, 0 0; }
 .menubar { height: 10px; flex: 0 0 10px; line-height: 10px; display: flex; gap: 6px; padding: 1px 3px 0; color: #101028; }
 .body { flex: 1; position: relative; overflow: hidden; margin-top: 2px; }
 .sunken {
@@ -197,6 +200,10 @@ img { image-rendering: pixelated; border: none; }
 #tray { height: 12px; display: flex; align-items: center; gap: 3px; padding: 0 5px;
 	box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff; }
 #tray img { cursor: pointer; width: 8px; height: 8px; margin: 0 5px 0 0; image-rendering: pixelated; }
+#tray .snd { cursor: pointer; width: 8px; height: 8px; margin: 0 5px 0 0; image-rendering: pixelated; background: url("mav_tray_sound.png") no-repeat; }
+#tray .snd_all { background-position: 0 0; }
+#tray .snd_clicks { background-position: -8px 0; }
+#tray .snd_off { background-position: -16px 0; }
 #startmenu {
 	position: absolute; left: 2px; bottom: 16px; width: 120px; background: #dcdcdc; display: none; z-index: 950;
 	box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #404040, 0 0 0 1px #101028; padding: 2px 2px 2px 16px;

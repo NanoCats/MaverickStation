@@ -1,6 +1,8 @@
 #define LOBBY_DESKTOP_SOUNDS_ALL "All"
 #define LOBBY_DESKTOP_SOUNDS_QUIET "Clicks only"
 #define LOBBY_DESKTOP_SOUNDS_OFF "Off"
+/// Reverb switched off: room, reflections and reverb all at their minimum
+#define LOBBY_DESKTOP_DRY_ENVIRONMENT list(1.8, 0.5, -10000, -4000, 0, 5, 0.1, 1, -10000, 0.007, -10000, 0.05, 0.25, 1, 1.18, 0.348, -5, 2000, 250, 0, 3, 100, 63)
 
 /// Which lobby desktop sounds a player hears: all of them, clicks and errors only, or none.
 /datum/preference/choiced/maverick_desktop_sounds
@@ -58,7 +60,7 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 		if("click", "error")
 			if(!COOLDOWN_FINISHED(client, maverick_desktop_sfx_cooldown))
 				return FALSE
-			COOLDOWN_START(client, maverick_desktop_sfx_cooldown, 0.08 SECONDS)
+			COOLDOWN_START(client, maverick_desktop_sfx_cooldown, 0.15 SECONDS)
 		if("startup")
 			if(!client.maverick_startup_due())
 				return FALSE
@@ -66,7 +68,9 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 		if("shutdown")
 			if(mode != LOBBY_DESKTOP_SOUNDS_ALL)
 				return FALSE
-	SEND_SOUND(src, sound(file, volume = volume))
+	var/sound/played = sound(file, volume = volume)
+	played.environment = LOBBY_DESKTOP_DRY_ENVIRONMENT
+	SEND_SOUND(src, played)
 	return TRUE
 
 /// Start menu > Sounds. Steps to the next setting and saves it.
@@ -76,3 +80,17 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 	var/static/list/order = list(LOBBY_DESKTOP_SOUNDS_ALL, LOBBY_DESKTOP_SOUNDS_QUIET, LOBBY_DESKTOP_SOUNDS_OFF)
 	var/next = order[(order.Find(client.maverick_desktop_sound_mode()) % length(order)) + 1]
 	client.prefs.write_preference(GLOB.preference_entries[/datum/preference/choiced/maverick_desktop_sounds], next)
+
+/**
+ * BYOND keeps the last reverb a client heard until a sound changes it. A ghost that
+ * respawns back to the lobby kept echoing like whatever room it left, so the lobby
+ * switches the reverb off when a player arrives.
+ */
+/mob/dead/new_player/proc/maverick_dry_sound()
+	var/sound/dry = sound(null)
+	dry.environment = LOBBY_DESKTOP_DRY_ENVIRONMENT
+	SEND_SOUND(src, dry)
+
+/mob/dead/new_player/Login()
+	. = ..()
+	maverick_dry_sound()
