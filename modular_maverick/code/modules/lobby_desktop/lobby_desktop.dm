@@ -21,17 +21,37 @@
 /// The last page sent told us it started. Until then a refresh always sends a new page.
 /mob/dead/new_player/var/maverick_page_alive = FALSE
 
-/// The files the boot screens need. They go first, so a boot screen can show while the rest load.
+/// The fonts the boot screens need. They go first, so a boot screen can show while the rest load.
 GLOBAL_LIST_INIT(maverick_boot_files, list(
 	"FixedsysExcelsior3.01Regular.ttf",
 	"Pixellari.ttf",
 	"Grand9K_Pixel.ttf",
 	"TinyUnicode.ttf",
-	"mav_blinds.png",
-	"mav_chevron.png",
-	"mav_clown_small.png",
-	"mav_icon_join.png",
 ))
+
+/**
+ * Pictures the boot screens use, written into the page itself.
+ * While the server starts it is too busy to send files quickly, and these
+ * showed as broken images for a while. They are small, so the page carries them.
+ */
+GLOBAL_LIST_INIT(maverick_inline_images, list(
+	"mav_blinds.png" = 'modular_maverick/html/lobby_desktop/mav_blinds.png',
+	"mav_chevron.png" = 'modular_maverick/html/lobby_desktop/mav_chevron.png',
+	"mav_clown_small.png" = 'modular_maverick/html/lobby_desktop/mav_clown_small.png',
+	"mav_icon_join.png" = 'modular_maverick/html/lobby_desktop/mav_icon_join.png',
+	"mav_icon_station.png" = 'modular_maverick/html/lobby_desktop/mav_icon_station.png',
+	"mav_icon_err.png" = 'modular_maverick/html/lobby_desktop/mav_icon_err.png',
+	"mav_tbtn_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_tbtn_glyphs.png',
+))
+
+/// The inline pictures as data URIs, by the name the page asks for. Built once.
+/proc/maverick_inline_image_data()
+	var/static/list/data
+	if(!data)
+		data = list()
+		for(var/file_name in GLOB.maverick_inline_images)
+			data[file_name] = "data:image/png;base64,[icon2base64(GLOB.maverick_inline_images[file_name])]"
+	return data
 
 /// Every file the lobby page loads, by the name the page asks for.
 GLOBAL_LIST_INIT(maverick_lobby_files, list(
@@ -45,25 +65,20 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	"mav_wall_dusk.png" = 'modular_maverick/html/lobby_desktop/mav_wall_dusk.png',
 	"mav_amp_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_amp_glyphs.png',
 	"mav_tray_horn.png" = 'modular_maverick/html/lobby_desktop/mav_tray_horn.png',
+	"mav_tray_sound.png" = 'modular_maverick/html/lobby_desktop/mav_tray_sound.png',
 	"mav_icon_power.png" = 'modular_maverick/html/lobby_desktop/mav_icon_power.png',
-	"mav_icon_err.png" = 'modular_maverick/html/lobby_desktop/mav_icon_err.png',
-	"mav_tbtn_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_tbtn_glyphs.png',
 	"mav_station.png" = 'modular_maverick/html/lobby_desktop/mav_station.png',
 	"mav_id_parts.png" = 'modular_maverick/html/lobby_desktop/mav_id_parts.png',
 	"mav_sky_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_sky_glyphs.png',
-	"mav_blinds.png" = 'modular_maverick/html/lobby_desktop/mav_blinds.png',
-	"mav_chevron.png" = 'modular_maverick/html/lobby_desktop/mav_chevron.png',
 	"mav_clown_E.png" = 'modular_maverick/html/lobby_desktop/mav_clown_E.png',
 	"mav_clown_S.png" = 'modular_maverick/html/lobby_desktop/mav_clown_S.png',
 	"mav_clown_W.png" = 'modular_maverick/html/lobby_desktop/mav_clown_W.png',
-	"mav_clown_small.png" = 'modular_maverick/html/lobby_desktop/mav_clown_small.png',
 	"mav_paint_tools.png" = 'modular_maverick/html/lobby_desktop/mav_paint_tools.png',
 	"mav_starfield.png" = 'modular_maverick/html/lobby_desktop/mav_starfield.png',
 	"mav_wordmark.png" = 'modular_maverick/html/lobby_desktop/mav_wordmark.png',
 	"mav_icon_clown.png" = 'modular_maverick/html/lobby_desktop/mav_icon_clown.png',
 	"mav_icon_directory.png" = 'modular_maverick/html/lobby_desktop/mav_icon_directory.png',
 	"mav_icon_horn.png" = 'modular_maverick/html/lobby_desktop/mav_icon_horn.png',
-	"mav_icon_join.png" = 'modular_maverick/html/lobby_desktop/mav_icon_join.png',
 	"mav_icon_manifest.png" = 'modular_maverick/html/lobby_desktop/mav_icon_manifest.png',
 	"mav_icon_music.png" = 'modular_maverick/html/lobby_desktop/mav_icon_music.png',
 	"mav_icon_observe.png" = 'modular_maverick/html/lobby_desktop/mav_icon_observe.png',
@@ -74,7 +89,6 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	"mav_icon_recycle.png" = 'modular_maverick/html/lobby_desktop/mav_icon_recycle.png',
 	"mav_icon_servers.png" = 'modular_maverick/html/lobby_desktop/mav_icon_servers.png',
 	"mav_icon_setup.png" = 'modular_maverick/html/lobby_desktop/mav_icon_setup.png',
-	"mav_icon_station.png" = 'modular_maverick/html/lobby_desktop/mav_icon_station.png',
 	"mav_icon_traits.png" = 'modular_maverick/html/lobby_desktop/mav_icon_traits.png',
 ))
 
@@ -88,6 +102,8 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	COOLDOWN_DECLARE(maverick_honk_cooldown)
 	/// Separate from the honk cooldown so clicking the Clown.exe icon never mutes the honks right after it.
 	COOLDOWN_DECLARE(maverick_icon_honk_cooldown)
+	/// The Clown.exe clown's footsteps, kept apart so they never eat a honk
+	COOLDOWN_DECLARE(maverick_clown_step_cooldown)
 
 /datum/controller/subsystem/title
 	/// Which boot screen this server start shows: "bios", "setup" or "bsod".
@@ -176,6 +192,10 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 		// the desktop files can load while the boot screen shows
 		maverick_send_other_lobby_files()
 		maverick_broadcast_humans()
+	// Once the client has every file, the page tries any picture that came up broken again
+	if(!client?.browse_queue_flush())
+		return
+	client << output("", "title_browser:lobby_files_sent")
 
 /// Sends every lobby file the boot screens did not already need.
 /mob/dead/new_player/proc/maverick_send_other_lobby_files()
@@ -205,6 +225,9 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	settings["traits"] = length(GLOB.lobby_station_traits) > 0
 	settings["polls"] = maverick_poll_state()
 	settings["crt_hotspot"] = LOBBY_DESKTOP_CRT_HOTSPOT
+	settings["inline"] = maverick_inline_image_data()
+	settings["sfx"] = client.maverick_desktop_sound_mode()
+	settings["startup_due"] = client.maverick_startup_due()
 	settings["desktop"] = client.maverick_desktop_state
 	settings["music"] = client.maverick_music_state()
 	// A player's first page this connection plays the CRT power-on and a boot screen.
