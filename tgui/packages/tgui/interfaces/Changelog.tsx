@@ -203,7 +203,8 @@ export class ChangelogContent extends Component<any, ChangelogState> {
 
     const header = (
       <Section>
-        <h1>Bubberstation 13</h1>
+        {/* MAVERICK EDIT - our name, with the upstreams credited below */}
+        <h1>MaverickStation 13</h1>
         <p>
           <b>Thanks to: </b>
           /tg/ Station, Skyrat Space Station 13, Traditional Games 13,
