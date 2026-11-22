@@ -54,7 +54,10 @@ GLOBAL_LIST_INIT(vv_export_redacted_vars, list(
 	html += "<a href='[VV_HREF_TARGET_INTERNAL(src, VV_HK_EXPORT_VV)]'>Refresh</a> "
 	html += "<span style='opacity:0.7;'>([line_count] lines)</span>"
 	html += "</div>"
-	html += "<textarea id='vv_export' readonly wrap='off' style='width:100%; height:90%; font-family:monospace; font-size:11px; box-sizing:border-box;'>[html_encode(export_text)]</textarea>"
+	// The window's content area has no set height, so a percent height collapsed the box to one line.
+	// The box fills from its top to the bottom of the window instead, and follows resizes.
+	html += "<textarea id='vv_export' readonly wrap='off' style='width:100%; height:calc(100vh - 120px); font-family:monospace; font-size:11px; box-sizing:border-box;'>[html_encode(export_text)]</textarea>"
+	html += "<script>(function () { var box = document.getElementById('vv_export'); function fit() { box.style.height = Math.max(100, window.innerHeight - box.getBoundingClientRect().top - 16) + 'px'; } window.addEventListener('resize', fit); fit(); })();</script>"
 
 	var/datum/browser/popup = new(user, "vv_export", "Export VV: [type]", 720, 640)
 	popup.set_content(jointext(html, ""))
