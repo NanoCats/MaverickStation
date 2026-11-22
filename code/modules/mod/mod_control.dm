@@ -325,7 +325,8 @@
 		if(LAZYACCESS(modifiers, RIGHT_CLICK)) // Right click
 			// MAVERICK EDIT BEGIN - MODsuit GAGS
 			if(get_gags_skin())
-				paint_kit.open_gags_menu(src, user)
+				// Opened after the click is done, like the spray can menu. Opening it during the click could leave its window stuck hidden.
+				INVOKE_ASYNC(paint_kit, TYPE_PROC_REF(/obj/item/mod/paint, open_gags_menu), src, user)
 				return ITEM_INTERACT_SUCCESS
 			// MAVERICK EDIT END
 			if(paint_kit.editing_mod == src)

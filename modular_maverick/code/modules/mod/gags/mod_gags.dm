@@ -188,10 +188,17 @@ GLOBAL_LIST_INIT(mod_gags_skins, init_mod_gags_skins())
 	if(gags_menu == source)
 		gags_menu = null
 
-/// Opens the GAGS color menu for a suit that supports it
+/// Opens the GAGS color menu for a suit that supports it. Can sleep, so call it async.
 /obj/item/mod/paint/proc/open_gags_menu(obj/item/mod/control/mod, mob/user)
+	if(mod.gags_menu)
+		mod.close_gags_menu()
+		// Let the old window finish closing, so the new menu does not reuse it while it is still shutting
+		sleep(0.1 SECONDS)
+		if(QDELETED(src) || QDELETED(mod) || QDELETED(user) || !user.client)
+			return
 	var/datum/mod_gags_skin/entry = mod.get_gags_skin()
-	mod.close_gags_menu()
+	if(!entry || !check_menu(mod, user))
+		return
 	var/datum/greyscale_modify_menu/menu = new(
 		mod,
 		user.client,
