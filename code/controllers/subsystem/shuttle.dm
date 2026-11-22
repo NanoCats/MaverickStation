@@ -473,7 +473,7 @@ SUBSYSTEM_DEF(shuttle)
 	if(isnull(emergency) || emergency.mode != SHUTTLE_CALL)
 		return FALSE
 
-	var/is_admin = !!user.client?.holder
+	var/is_admin = !!user?.client?.holder // MAVERICK EDIT - The emergency shuttle checks with no user every tick - Original: var/is_admin = !!user.client?.holder
 	if(is_admin)
 		return admin_recall(user)
 

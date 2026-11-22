@@ -53,6 +53,11 @@
 	if(client.interviewee)
 		return FALSE
 
+	// MAVERICK EDIT BEGIN - Desktop lobby links, see modular_maverick/code/modules/lobby_desktop
+	if(maverick_lobby_topic(href_list))
+		return
+	// MAVERICK EDIT END
+
 	if(href_list["observe"])
 		play_lobby_button_sound()
 		if(!unvetted_notified && !trigger_unvetted_warning())
@@ -169,6 +174,10 @@
  * Hard updates the title screen HTML, it causes visual glitches if used.
  */
 /mob/dead/new_player/proc/update_title_screen()
+	// MAVERICK EDIT BEGIN - Desktop lobby, see modular_maverick/code/modules/lobby_desktop
+	if(maverick_update_title_screen())
+		return
+	// MAVERICK EDIT END
 	var/dat = get_title_html()
 
 	src << browse(SStitle.current_title_screen, "file=loading_screen.gif;display=0")
