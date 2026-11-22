@@ -225,6 +225,8 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	settings["polls"] = maverick_poll_state()
 	settings["crt_hotspot"] = LOBBY_DESKTOP_CRT_HOTSPOT
 	settings["inline"] = maverick_inline_image_data()
+	settings["sfx"] = client.maverick_desktop_sound_mode()
+	settings["startup_due"] = client.maverick_startup_due()
 	settings["desktop"] = client.maverick_desktop_state
 	settings["music"] = client.maverick_music_state()
 	// A player's first page this connection plays the CRT power-on and a boot screen.

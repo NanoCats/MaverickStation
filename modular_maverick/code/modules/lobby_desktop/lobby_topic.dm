@@ -60,9 +60,21 @@
 		return TRUE
 
 	// Start > Shut Down. It really does shut down. Rejoining is one click.
+	// With the shutdown sound on, the kick waits for the sound to finish.
 	if(href_list["lobby_shutdown"])
 		log_game("[key_name(src)] shut down their lobby desktop and was disconnected.")
-		addtimer(CALLBACK(src, PROC_REF(maverick_shutdown_kick)), 2 SECONDS)
+		var/played = maverick_desktop_sfx("shutdown")
+		addtimer(CALLBACK(src, PROC_REF(maverick_shutdown_kick)), played ? 4.6 SECONDS : 2 SECONDS)
+		return TRUE
+
+	// Desktop clicks, error chimes and the startup sound
+	if(href_list["lobby_sfx"])
+		maverick_desktop_sfx(href_list["lobby_sfx"])
+		return TRUE
+
+	// Start > Sounds
+	if(href_list["lobby_sfx_mode"])
+		maverick_cycle_desktop_sounds()
 		return TRUE
 
 	// Remember that this connection already saw the boot screens and the CRT power-on.

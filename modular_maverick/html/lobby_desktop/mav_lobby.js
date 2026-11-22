@@ -38,6 +38,43 @@
 		})();
 	});
 
+	// ------------------------------------------------------------- desktop sounds
+
+	// Like an old OS: a click when something opens, a chime on error boxes, a startup
+	// sound once per round and a shutdown sound. The server checks the player's setting
+	// too; checking here just saves sending links for nothing.
+	var SFX_MODES = ["All", "Clicks only", "Off"];
+	var sfx_mode = C.sfx || "All";
+	var STARTUP_MS = 4300;
+
+	function sfx(kind) {
+		if (sfx_mode === "Off") {
+			return;
+		}
+		if ((kind === "startup" || kind === "shutdown") && sfx_mode !== "All") {
+			return;
+		}
+		// a moment later, so it never lands in the same tick as the link for the action itself
+		setTimeout(function () { byond("lobby_sfx=" + kind); }, 40);
+	}
+
+	function cycle_sfx_mode() {
+		sfx_mode = SFX_MODES[(SFX_MODES.indexOf(sfx_mode) + 1) % SFX_MODES.length];
+		byond("lobby_sfx_mode=1");
+		return sfx_mode;
+	}
+
+	// The desktop is up: startup sound if it's due this round, and the music after it
+	function desktop_ready() {
+		if (C.startup_due && sfx_mode === "All") {
+			C.startup_due = false;
+			sfx("startup");
+			after(STARTUP_MS, music_hello);
+			return;
+		}
+		music_hello();
+	}
+
 	function el(tag, cls, parent, text) {
 		var e = document.createElement(tag);
 		if (cls) {
@@ -677,6 +714,9 @@
 		var body = el("div", "body", w);
 		if (opts.icon === "err") {
 			img("mav_icon_err.png", "err_x", body);
+			if (!opts.silent) {
+				sfx("error");
+			}
 		} else if (opts.icon) {
 			img(opts.icon, "dicon", body);
 		}
@@ -1269,6 +1309,8 @@
 			ic.addEventListener("dblclick", function () {
 				if (d.id === "clown") {
 					clown_icon_honk();
+				} else {
+					sfx("click");
 				}
 				d.open();
 			});
@@ -1491,8 +1533,12 @@
 			it.addEventListener("click", function () {
 				menu.style.display = "none";
 				start.classList.remove("on");
+				if (fn !== shut_down) {
+					sfx("click");
+				}
 				fn();
 			});
+			return it;
 		}
 		item("station", "station.exe", function () { open_window("station"); });
 		item("music", "SpaceAmp", function () { open_window("amp"); });
@@ -1507,6 +1553,9 @@
 			item("servers", "Swap Servers", ACTIONS.servers);
 		}
 		el("div", "sep", menu);
+		var snd = item("options", "Sounds: " + sfx_mode, function () {
+			snd.querySelector("span").textContent = "Sounds: " + cycle_sfx_mode();
+		});
 		item("power", "Shut Down...", shut_down);
 		start.addEventListener("click", function (e) {
 			e.stopPropagation();
@@ -1550,7 +1599,8 @@
 		var s = document.getElementById("shutdown");
 		s.style.display = "block";
 		s.textContent = "AeriOS is shutting down...";
-		after(1200, function () { s.textContent = "It's now safe to turn off your station."; });
+		// with the shutdown sound on, the server lets the sound finish before it lets go of you
+		after(sfx_mode === "All" ? 3200 : 1200, function () { s.textContent = "It's now safe to turn off your station."; });
 		byond("lobby_shutdown=1");
 	}
 
@@ -1601,7 +1651,7 @@
 				after(i * 110, function () {
 					byond("lobby_honk=" + CLOWN_NOISES[i]);
 					spam.push(dialog({
-						title: "clown.exe", icon: "err", w: 120, big: true,
+						title: "clown.exe", icon: "err", w: 120, big: true, silent: true,
 						x: 40 + i * 12, y: 20 + i * 11,
 						text: "HONK!",
 						buttons: [{ label: "HONK", fn: function (close) { close(); last_honk = 0; honk(); } }],
@@ -2016,7 +2066,7 @@
 
 	function show_notice() {
 		dialog({
-			title: "IMPORTANT.txt - Notepad", icon: "err", w: 200, y: 30,
+			title: "IMPORTANT.txt - Notepad", icon: "err", w: 200, y: 30, silent: true,
 			html: "<div class='notice_text'></div>",
 		});
 		var boxes = document.querySelectorAll(".notice_text");
@@ -2068,11 +2118,11 @@
 				splash_refs = {};
 				build_lobby(root);
 				layout();
-				music_hello();
+				desktop_ready();
 			});
 		} else {
 			build_lobby(root);
-			music_hello();
+			desktop_ready();
 		}
 		add_crt();
 		if (C.intro) {
