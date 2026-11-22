@@ -315,16 +315,17 @@ export const BubberChangelog = (props) => {
 
   const header = (
     <Section>
-      <h1>Bubberstation 13</h1>
+      {/* MAVERICK EDIT - our name, with the upstreams credited below */}
+      <h1>MaverickStation 13</h1>
       <p>
         <b>Thanks to: </b>
-        /tg/station 13, Effigy, Stellar Haven, Baystation 12, /vg/station,
+        Bubberstation, Skyrat Space Station 13, /tg/station 13, Effigy, Stellar Haven, Baystation 12, /vg/station,
         NTstation, CDK Station devs, FacepunchStation, GoonStation devs, the
         original Space Station 13 developers, and the countless others who have
         contributed to the game.
       </p>
       <p>
-        {'Current organization members can be found '}
+        {"Bubberstation's organization members can be found "}
         <a href="https://github.com/orgs/Bubberstation/people">here</a>
         {', recent GitHub contributors can be found '}
         <a href="https://github.com/Bubberstation/Bubberstation/pulse/monthly">
