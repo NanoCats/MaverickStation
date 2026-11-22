@@ -30,9 +30,11 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 /**
  * Plays one desktop sound for this player only. kind: click, error, startup or shutdown.
  * The desktop sounds follow the lobby music volume, so the one slider sets both.
+ * The desktop page plays its sounds itself and only comes here when one failed to load.
+ * record_only: the page played it, so only use up the startup sound.
  * Returns TRUE if a sound played.
  */
-/mob/dead/new_player/proc/maverick_desktop_sfx(kind)
+/mob/dead/new_player/proc/maverick_desktop_sfx(kind, record_only = FALSE)
 	if(!client)
 		return FALSE
 	var/static/list/sounds = list(
@@ -51,6 +53,8 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 		if(!client.maverick_startup_due())
 			return FALSE
 		GLOB.maverick_startup_heard[client.ckey] = TRUE
+	if(record_only)
+		return FALSE
 	var/mode = client.maverick_desktop_sound_mode()
 	if(mode == LOBBY_DESKTOP_SOUNDS_OFF)
 		return FALSE
@@ -68,6 +72,12 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 	played.environment = LOBBY_DESKTOP_DRY_ENVIRONMENT
 	SEND_SOUND(src, played)
 	return TRUE
+
+/// TRUE if this player hears the shutdown sound
+/mob/dead/new_player/proc/maverick_shutdown_audible()
+	if(!client || client.maverick_desktop_sound_mode() != LOBBY_DESKTOP_SOUNDS_ALL)
+		return FALSE
+	return !!client.prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
 
 /// The old lobby menu's button sound. The desktop plays its own clicks, so this only clicks for the old menu.
 /mob/dead/new_player/proc/maverick_lobby_button_sound()

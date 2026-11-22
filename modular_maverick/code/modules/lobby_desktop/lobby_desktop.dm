@@ -59,6 +59,10 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	"Pixellari.ttf" = 'interface/fonts/Pixellari.ttf',
 	"Grand9K_Pixel.ttf" = 'interface/fonts/Grand9K_Pixel.ttf',
 	"TinyUnicode.ttf" = 'interface/fonts/TinyUnicode.ttf',
+	"desktop_click.ogg" = 'modular_maverick/sound/lobby_desktop/desktop_click.ogg',
+	"desktop_error.ogg" = 'modular_maverick/sound/lobby_desktop/desktop_error.ogg',
+	"desktop_startup.ogg" = 'modular_maverick/sound/lobby_desktop/desktop_startup.ogg',
+	"desktop_shutdown.ogg" = 'modular_maverick/sound/lobby_desktop/desktop_shutdown.ogg',
 	"mav_wall_night.png" = 'modular_maverick/html/lobby_desktop/mav_wall_night.png',
 	"mav_wall_dawn.png" = 'modular_maverick/html/lobby_desktop/mav_wall_dawn.png',
 	"mav_wall_day.png" = 'modular_maverick/html/lobby_desktop/mav_wall_day.png',
@@ -227,6 +231,8 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	settings["crt_hotspot"] = LOBBY_DESKTOP_CRT_HOTSPOT
 	settings["inline"] = maverick_inline_image_data()
 	settings["sfx"] = client.maverick_desktop_sound_mode()
+	// The page plays the desktop sounds itself, at the lobby music volume
+	settings["sfx_vol"] = client.prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume) || 0
 	settings["startup_due"] = client.maverick_startup_due()
 	settings["desktop"] = client.maverick_desktop_state
 	settings["music"] = client.maverick_music_state()

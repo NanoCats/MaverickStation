@@ -55,14 +55,79 @@
 	var sfx_mode = C.sfx || "All";
 	var STARTUP_MS = 4300;
 
-	function sfx(kind) {
+	// The page plays its own sounds, so a click sounds the moment it happens and the
+	// boot screen can wait until they are loaded. The server sends the files with the
+	// other lobby files. A sound that never loads is played by the server instead.
+	var SFX_FILES = {
+		click: "desktop_click.ogg",
+		error: "desktop_error.ogg",
+		startup: "desktop_startup.ogg",
+		shutdown: "desktop_shutdown.ogg",
+	};
+	var SFX_RETRIES = 10;
+	var sfx_audio = {};
+	var sfx_loaded = {};
+	var sfx_vol = +C.sfx_vol || 0;
+
+	function load_sfx(kind, tries) {
+		if (sfx_loaded[kind]) {
+			return;
+		}
+		var a = new Audio();
+		a.preload = "auto";
+		a.addEventListener("canplaythrough", function () {
+			sfx_loaded[kind] = true;
+		});
+		a.addEventListener("error", function () {
+			if (tries < SFX_RETRIES) {
+				after(400 * (tries + 1), function () { load_sfx(kind, tries + 1); });
+			}
+		});
+		a.src = SFX_FILES[kind];
+		a.load();
+		sfx_audio[kind] = a;
+	}
+	Object.keys(SFX_FILES).forEach(function (kind) { load_sfx(kind, 0); });
+
+	// The sounds this player's setting lets through
+	function sfx_kinds() {
 		if (sfx_mode === "Off") {
+			return [];
+		}
+		if (sfx_mode !== "All") {
+			return ["click", "error"];
+		}
+		return Object.keys(SFX_FILES);
+	}
+
+	function sfx_ready() {
+		return sfx_kinds().every(function (kind) { return sfx_loaded[kind]; });
+	}
+
+	// Plays a sound here. Returns false if this page could not play it.
+	function play_local(kind) {
+		if (!sfx_loaded[kind]) {
+			return false;
+		}
+		if (sfx_vol <= 0) {
+			return true;
+		}
+		var a = sfx_audio[kind].cloneNode();
+		a.volume = Math.min(1, sfx_vol / 100);
+		var started = a.play();
+		if (started && started.catch) {
+			started.catch(function () {});
+		}
+		return true;
+	}
+
+	function sfx(kind) {
+		if (sfx_kinds().indexOf(kind) < 0) {
 			return;
 		}
-		if ((kind === "startup" || kind === "shutdown") && sfx_mode !== "All") {
-			return;
+		if (!play_local(kind)) {
+			byond("lobby_sfx=" + kind);
 		}
-		byond("lobby_sfx=" + kind);
 	}
 
 	function cycle_sfx_mode() {
@@ -77,7 +142,11 @@
 	function desktop_ready() {
 		if (C.startup_due) {
 			C.startup_due = false;
-			byond("lobby_sfx=startup");
+			if (sfx_mode === "All" && play_local("startup")) {
+				byond("lobby_sfx=startup;record=1");
+			} else {
+				byond("lobby_sfx=startup");
+			}
 			if (sfx_mode === "All") {
 				after(STARTUP_MS, music_hello);
 				return;
@@ -214,6 +283,7 @@
 			retry_img(e);
 		});
 		Object.keys(css_missing).forEach(function (name) { probe_css_image(name, 0); });
+		Object.keys(SFX_FILES).forEach(function (kind) { load_sfx(kind, 0); });
 	};
 
 	function pick(list) {
@@ -1219,6 +1289,15 @@
 
 	function amp_cmd(b) {
 		var M = C.music;
+		// Pressing SpaceAmp during the startup sound asks for this player's track first.
+		// Waiting let the play start the default track, which then switched by itself.
+		if (!music_live) {
+			music_hello();
+			// the hello starts a track by itself unless the music is off
+			if (b === "play" && C.music.playing) {
+				return;
+			}
+		}
 		if (b === "play") {
 			byond(M.paused ? "music=resume" : "music=play");
 		} else if (b === "pause") {
@@ -1631,7 +1710,12 @@
 		s.textContent = "AeriOS is shutting down...";
 		// with the shutdown sound on, the server lets the sound finish before it lets go of you
 		after(sfx_mode === "All" ? 3200 : 1200, function () { s.textContent = "It's now safe to turn off your station."; });
-		byond("lobby_shutdown=1");
+		// "local" tells the server this page played the shutdown sound itself
+		if (sfx_mode === "All" && play_local("shutdown")) {
+			byond("lobby_shutdown=1;local=1");
+		} else {
+			byond("lobby_shutdown=1");
+		}
 	}
 
 	// ------------------------------------------------------------- clown.exe
@@ -1809,14 +1893,24 @@
 
 	var splash_live = false;
 
+	// The boot screen only gives way to the desktop once the desktop can work: its sounds
+	// have loaded. If they never do, it gives up waiting after READY_TIMEOUT_MS.
+	var READY_TIMEOUT_MS = 20000;
+	var page_start = Date.now();
+
+	function lobby_ready() {
+		return sfx_ready() || Date.now() - page_start > READY_TIMEOUT_MS;
+	}
+
 	// done: set for the quick boot screen a player sees on connecting to a running server.
 	// Without it, the splash shows the server's real startup until the server reloads the page.
-	function build_splash(root, done) {
+	// quick: start the bar near the end, for a page that already sat through a boot screen.
+	function build_splash(root, done, quick) {
 		var B = C.boot || {};
 		splash_live = true;
 		if (done) {
-			progress.cur = 0;
 			progress.total = 75;
+			progress.cur = quick ? 65 : 0;
 		} else {
 			progress.cur = +B.progress_time || 0;
 			progress.total = +B.progress_total || 1500;
@@ -1832,7 +1926,7 @@
 		}
 		var ticker = setInterval(function () {
 			progress_tick();
-			if (done && progress_ratio() >= 1) {
+			if (done && progress_ratio() >= 1 && lobby_ready()) {
 				clearInterval(ticker);
 				splash_live = false;
 				after(450, done);
@@ -1852,6 +1946,10 @@
 		}
 		progress.last = now;
 		var r = progress_ratio();
+		// the bar holds just short of the end until the desktop is ready
+		if (!lobby_ready()) {
+			r = Math.min(r, 0.99);
+		}
 		if (splash_refs.bar) {
 			splash_refs.bar.style.width = Math.min(100, r * 100) + "%";
 		}
@@ -2108,6 +2206,9 @@
 	var music_live = false;
 
 	function music_hello() {
+		if (music_live) {
+			return;
+		}
 		music_live = true;
 		if (!C.music.enabled || !C.music.needs_hello) {
 			return;
@@ -2140,16 +2241,17 @@
 		antag = !!C.antag;
 		if (C.mode === "startup") {
 			build_splash(root);
-		} else if (C.intro && !C.classic) {
+		} else if ((C.intro || (C.startup_due && !lobby_ready())) && !C.classic) {
 			// a quick boot screen on the first page of a connection, then the desktop.
-			// The music waits for the desktop too.
+			// The first desktop of the round waits behind one too, so its startup sound and
+			// clicks are loaded when it shows. The music waits for the desktop too.
 			build_splash(root, function () {
 				root.innerHTML = "";
 				splash_refs = {};
 				build_lobby(root);
 				layout();
 				desktop_ready();
-			});
+			}, !C.intro);
 		} else {
 			build_lobby(root);
 			desktop_ready();
@@ -2210,6 +2312,9 @@
 		}
 		var track_changed = s.index !== C.music.index || s.started;
 		Object.keys(s).forEach(function (k) { C.music[k] = s[k]; });
+		if (s.vol !== undefined) {
+			sfx_vol = +s.vol || 0;
+		}
 		if (track_changed) {
 			amp_clock.elapsed = s.offset || 0;
 			amp_clock.ended_sent = false;

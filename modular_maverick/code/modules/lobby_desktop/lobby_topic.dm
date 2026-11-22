@@ -61,13 +61,14 @@
 	// With the shutdown sound on, the kick waits for the sound to finish.
 	if(href_list["lobby_shutdown"])
 		log_game("[key_name(src)] shut down their lobby desktop and was disconnected.")
-		var/played = maverick_desktop_sfx("shutdown")
+		// the page plays the shutdown sound itself when it has it, and says so with "local"
+		var/played = href_list["local"] ? maverick_shutdown_audible() : maverick_desktop_sfx("shutdown")
 		addtimer(CALLBACK(src, PROC_REF(maverick_shutdown_kick)), played ? 4.6 SECONDS : 2 SECONDS)
 		return TRUE
 
 	// Desktop clicks, error chimes and the startup sound
 	if(href_list["lobby_sfx"])
-		maverick_desktop_sfx(href_list["lobby_sfx"])
+		maverick_desktop_sfx(href_list["lobby_sfx"], record_only = !!href_list["record"])
 		return TRUE
 
 	// Start > Sounds
