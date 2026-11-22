@@ -69,7 +69,7 @@ GLOBAL_LIST_INIT(vv_export_redacted_vars, list(
 	var/tmp_path = "tmp/vv_export_[user.ckey].txt"
 	fdel(tmp_path)
 	rustg_file_write(build_vv_export(), tmp_path)
-	DIRECT_OUTPUT(user, ftp(file(tmp_path), "vv_[short_type]_round_[GLOB.round_id].txt"))
+	DIRECT_OUTPUT(user, ftp(file(tmp_path), "vv_[short_type]_round_[GLOB.round_id || "local"].txt"))
 	fdel(tmp_path)
 
 /// Builds the plain text dump of this datum.
@@ -93,7 +93,7 @@ GLOBAL_LIST_INIT(vv_export_redacted_vars, list(
 				current = current.loc
 			if(length(chain))
 				lines += "Inside: [jointext(chain, " -> ")]"
-	lines += "Round: [GLOB.round_id], round clock [gameTimestamp()], world.time [world.time]"
+	lines += "Round: [GLOB.round_id || "none"], round clock [gameTimestamp()], world.time [world.time]"
 	lines += ""
 
 	var/list/var_lines = list()
@@ -153,7 +153,7 @@ GLOBAL_LIST_INIT(vv_export_redacted_vars, list(
 /proc/vv_export_datum_line(datum/thing)
 	. = "[thing.type] [REF(thing)]"
 	if(("name" in thing.vars) && istext(thing.vars["name"]))
-		. += " \"[thing.vars["name"]]\""
+		. += " [vv_export_value(thing.vars["name"])]"
 	if(QDELETED(thing))
 		. += " (QDELETED)"
 
