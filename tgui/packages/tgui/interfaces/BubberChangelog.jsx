@@ -324,19 +324,14 @@ export const BubberChangelog = (props) => {
         original Space Station 13 developers, and the countless others who have
         contributed to the game.
       </p>
+      {/* MAVERICK EDIT BEGIN - No Discord yet, point at our repo */}
       <p>
-        {"Bubberstation's organization members can be found "}
-        <a href="https://github.com/orgs/Bubberstation/people">here</a>
-        {', recent GitHub contributors can be found '}
-        <a href="https://github.com/Bubberstation/Bubberstation/pulse/monthly">
-          here
-        </a>
-        .
+        {
+          'You may be able to join our discord eventually, when it exists, or check the '
+        }
+        <a href="https://github.com/NanoCats/MaverickStation">github</a>.
       </p>
-      <p>
-        {'You can also join our discord '}
-        <a href="https://discord.com/invite/AvjrTqnqEx">here</a>!
-      </p>
+      {/* MAVERICK EDIT END */}
       <DateDropdown
         dates={dates}
         selectedDate={selectedDate}
