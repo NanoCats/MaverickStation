@@ -1614,6 +1614,7 @@
 			r.classList.add("shake", "flash");
 			boom.classList.remove("blink");
 			boom.textContent = pick(drills);
+			byond("lobby_kaboom=1");
 		}
 		document.addEventListener("keydown", kaboom);
 		s.addEventListener("mousedown", kaboom);

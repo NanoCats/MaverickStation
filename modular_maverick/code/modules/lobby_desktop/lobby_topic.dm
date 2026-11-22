@@ -45,6 +45,14 @@
 			SEND_SOUND(src, sound(noise))
 		return TRUE
 
+	// The BIOS boot screen dares you to touch a button. Touching one gets you an explosion,
+	// for your ears only. Shares the Clown.exe icon cooldown so mashing keys stays bearable.
+	if(href_list["lobby_kaboom"])
+		if(COOLDOWN_FINISHED(client, maverick_icon_honk_cooldown))
+			COOLDOWN_START(client, maverick_icon_honk_cooldown, 1.2 SECONDS)
+			SEND_SOUND(src, sound(pick('sound/effects/explosion/explosion1.ogg', 'sound/effects/explosion/explosion2.ogg')))
+		return TRUE
+
 	// Start > Shut Down. It really does shut down. Rejoining is one click.
 	if(href_list["lobby_shutdown"])
 		log_game("[key_name(src)] shut down their lobby desktop and was disconnected.")
