@@ -27,6 +27,12 @@
 				COOLDOWN_START(client, maverick_icon_honk_cooldown, 1.2 SECONDS)
 				SEND_SOUND(src, sound('modular_zubbers/sound/effects/clown/clown_rift_high.ogg'))
 			return TRUE
+		// The Clown.exe clown's shoes, one squeak per step
+		if(kind == "step")
+			if(COOLDOWN_FINISHED(client, maverick_clown_step_cooldown))
+				COOLDOWN_START(client, maverick_clown_step_cooldown, 0.1 SECONDS)
+				SEND_SOUND(src, sound(pick('sound/effects/footstep/clownstep1.ogg', 'sound/effects/footstep/clownstep2.ogg'), volume = 50))
+			return TRUE
 		// Clown.exe's error windows each make one silly noise as they pop up
 		var/static/list/clown_noises = list(
 			"bikehorn" = 'sound/items/bikehorn.ogg',

@@ -31,6 +31,9 @@ GLOBAL_LIST_INIT(maverick_boot_files, list(
 	"mav_chevron.png",
 	"mav_clown_small.png",
 	"mav_icon_join.png",
+	"mav_icon_station.png",
+	"mav_icon_err.png",
+	"mav_tbtn_glyphs.png",
 ))
 
 /// Every file the lobby page loads, by the name the page asks for.
@@ -88,6 +91,8 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	COOLDOWN_DECLARE(maverick_honk_cooldown)
 	/// Separate from the honk cooldown so clicking the Clown.exe icon never mutes the honks right after it.
 	COOLDOWN_DECLARE(maverick_icon_honk_cooldown)
+	/// The Clown.exe clown's footsteps, kept apart so they never eat a honk
+	COOLDOWN_DECLARE(maverick_clown_step_cooldown)
 
 /datum/controller/subsystem/title
 	/// Which boot screen this server start shows: "bios", "setup" or "bsod".
@@ -176,6 +181,10 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 		// the desktop files can load while the boot screen shows
 		maverick_send_other_lobby_files()
 		maverick_broadcast_humans()
+	// Once the client has every file, the page tries any picture that came up broken again
+	if(!client?.browse_queue_flush())
+		return
+	client << output("", "title_browser:lobby_files_sent")
 
 /// Sends every lobby file the boot screens did not already need.
 /mob/dead/new_player/proc/maverick_send_other_lobby_files()
