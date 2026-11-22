@@ -20,14 +20,40 @@
 		return FALSE
 
 	if(href_list["lobby_honk"])
+		var/kind = href_list["lobby_honk"]
 		// "rift" is the Clown.exe icon: five rising honks, on its own cooldown
-		if(href_list["lobby_honk"] == "rift")
+		if(kind == "rift")
 			if(COOLDOWN_FINISHED(client, maverick_icon_honk_cooldown))
 				COOLDOWN_START(client, maverick_icon_honk_cooldown, 1.2 SECONDS)
 				SEND_SOUND(src, sound('modular_zubbers/sound/effects/clown/clown_rift_high.ogg'))
-		else if(COOLDOWN_FINISHED(client, maverick_honk_cooldown))
-			COOLDOWN_START(client, maverick_honk_cooldown, 0.2 SECONDS)
-			SEND_SOUND(src, sound('sound/items/bikehorn.ogg'))
+			return TRUE
+		// Clown.exe's error windows each make one silly noise as they pop up
+		var/static/list/clown_noises = list(
+			"bikehorn" = 'sound/items/bikehorn.ogg',
+			"squeak1" = 'sound/items/toy_squeak/toysqueak1.ogg',
+			"squeak2" = 'sound/items/toy_squeak/toysqueak2.ogg',
+			"squeak3" = 'sound/items/toy_squeak/toysqueak3.ogg',
+			"slip" = 'sound/misc/slip.ogg',
+			"clownstep" = 'sound/effects/footstep/clownstep1.ogg',
+			"partyhorn" = 'sound/items/party_horn.ogg',
+			"carhorn" = 'sound/items/carhorn.ogg',
+			"trombone" = 'sound/misc/sadtrombone.ogg',
+		)
+		var/noise = clown_noises[kind] || clown_noises["bikehorn"]
+		if(COOLDOWN_FINISHED(client, maverick_honk_cooldown))
+			COOLDOWN_START(client, maverick_honk_cooldown, 0.08 SECONDS)
+			SEND_SOUND(src, sound(noise))
+		return TRUE
+
+	// Start > Shut Down. It really does shut down. Rejoining is one click.
+	if(href_list["lobby_shutdown"])
+		log_game("[key_name(src)] shut down their lobby desktop and was disconnected.")
+		addtimer(CALLBACK(src, PROC_REF(maverick_shutdown_kick)), 2 SECONDS)
+		return TRUE
+
+	// Remember that this connection already saw the boot screens and the CRT power-on.
+	if(href_list["lobby_intro_seen"])
+		client.maverick_intro_seen = TRUE
 		return TRUE
 
 	if(href_list["music"])
@@ -35,5 +61,9 @@
 		return TRUE
 
 	return FALSE
+
+/mob/dead/new_player/proc/maverick_shutdown_kick()
+	if(client)
+		qdel(client)
 
 #undef LOBBY_DESKTOP_MAX_STATE_LENGTH

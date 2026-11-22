@@ -24,7 +24,17 @@ img { image-rendering: pixelated; border: none; }
 #wall { position: absolute; top: 0; width: 640px; height: 270px; }
 #wall img { position: absolute; left: 0; top: 0; transition: opacity 3s linear; }
 #crt_hot { position: absolute; cursor: pointer; }
-#sky { position: absolute; left: 0; top: 0; width: 100%; height: 270px; pointer-events: none; overflow: hidden; }
+.crt_button { position: absolute; cursor: pointer; }
+.crt_light_off { position: absolute; background: #3a1010; display: none; pointer-events: none; }
+.crt_off { position: absolute; background: #04050c; pointer-events: none; opacity: 0; }
+.crt_off.shown { opacity: 1; animation: crt_tv_off 0.35s steps(5); }
+.crt_off.warming { animation: crt_tv_on 0.6s steps(6); }
+@keyframes crt_tv_off { 0% { opacity: 0; background: #fff; } 40% { opacity: 1; background: #cde; } 100% { opacity: 1; } }
+@keyframes crt_tv_on { 0% { opacity: 1; } 30% { opacity: 0.8; background: #cde; } 100% { opacity: 0; } }
+#sky { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+#stars .star { position: absolute; width: 1px; height: 1px; }
+#stars .star.twinkle { animation: twinkle 3s ease-in-out infinite; }
+@keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }
 .sky_shape { position: absolute; left: 0; top: 0; background: url("mav_sky_glyphs.png") no-repeat; image-rendering: pixelated; }
 
 /* ---------------------------------------------------------------- icons */
@@ -42,6 +52,10 @@ img { image-rendering: pixelated; border: none; }
 	background: #0a24a8; text-shadow: none; outline: 1px dotted #fff; outline-offset: -1px;
 	white-space: normal; overflow: visible; max-width: 60px; position: relative; z-index: 2;
 }
+.icon .cham { position: absolute; left: 10px; top: 0; width: 32px; height: 32px; display: none;
+	background: url("mav_setup_glitch.png") no-repeat; image-rendering: pixelated; }
+.icon.scrambling .cham { display: block; }
+.icon.scrambling img { visibility: hidden; }
 .icon.knocked { transition: transform 0.25s ease-in; transform: rotate(90deg) translateY(4px); }
 .icon.knocked2 { transition: transform 0.25s ease-in; transform: rotate(-75deg) translateY(6px); }
 
@@ -62,11 +76,17 @@ img { image-rendering: pixelated; border: none; }
 .titlebar img { width: 9px; height: 9px; margin-right: 2px; }
 .titlebar .ttl { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 12px; }
 .tbtn {
-	width: 9px; height: 8px; margin-left: 1px; background: #dcdcdc; color: #101028; font-size: 8px;
-	line-height: 7px; text-align: center; cursor: pointer;
+	width: 9px; height: 9px; flex: 0 0 9px; margin-left: 1px; cursor: pointer;
+	background: url("mav_tbtn_glyphs.png") no-repeat, #dcdcdc;
 	box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #404040;
 }
+.tbtn_min { background-position: 0 0, 0 0; }
+.tbtn_max { background-position: -9px 0, 0 0; }
+.tbtn_close { background-position: -18px 0, 0 0; }
 .tbtn:active { box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff; }
+.tbtn_min:active { background-position: 1px 1px, 0 0; }
+.tbtn_max:active { background-position: -8px 1px, 0 0; }
+.tbtn_close:active { background-position: -17px 1px, 0 0; }
 .menubar { height: 10px; flex: 0 0 10px; line-height: 10px; display: flex; gap: 6px; padding: 1px 3px 0; color: #101028; }
 .body { flex: 1; position: relative; overflow: hidden; margin-top: 2px; }
 .sunken {
@@ -98,8 +118,17 @@ img { image-rendering: pixelated; border: none; }
 /* station.exe */
 .station_body {
 	background: #05081a url("mav_starfield.png"); color: #cde; font-family: "Fixedsys";
-	padding: 4px 6px; box-sizing: border-box;
+	padding: 4px 6px; box-sizing: border-box; position: relative;
 }
+.station_body > * { position: relative; z-index: 1; }
+.station_body > .station_sky { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.station_drift { position: absolute; top: 96px; left: -100px; opacity: 0.4;
+	animation: station_drift 90s steps(380) infinite, station_bob 7s steps(4) infinite; }
+@keyframes station_drift { from { left: -100px; } to { left: 100%; } }
+@keyframes station_bob { 0%, 100% { margin-top: 0; } 50% { margin-top: 2px; } }
+.station_glint { position: absolute; background: url("mav_sky_glyphs.png") no-repeat; opacity: 0.6;
+	animation: glint 4s ease-in-out infinite; }
+@keyframes glint { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.75; } }
 .station_head { position: relative; height: 50px; text-align: center; }
 .station_head .wm { display: inline-block; }
 .mbtn {
@@ -123,6 +152,7 @@ img { image-rendering: pixelated; border: none; }
 
 /* notepad */
 .notepad { font-family: "Fixedsys"; font-size: 8px; line-height: 9px; white-space: pre-wrap; overflow-y: auto; height: 100%; }
+.dlg .manifesto { height: 120px; flex: 1; }
 
 /* paint */
 .paint_wrap { display: flex; flex-direction: column; height: 100%; }
@@ -162,7 +192,7 @@ img { image-rendering: pixelated; border: none; }
 .task.on { background: #eee; box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff; }
 #tray { height: 12px; display: flex; align-items: center; gap: 3px; padding: 0 5px;
 	box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff; }
-#tray img { width: 9px; height: 9px; cursor: pointer; }
+#tray img { cursor: pointer; margin: -1px 5px -1px -1px; }
 #startmenu {
 	position: absolute; left: 2px; bottom: 16px; width: 120px; background: #dcdcdc; display: none; z-index: 950;
 	box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #404040, 0 0 0 1px #101028; padding: 2px 2px 2px 16px;
@@ -256,15 +286,18 @@ img { image-rendering: pixelated; border: none; }
 .amp_time.paused { animation: blink 1s step-start infinite; }
 .amp_marquee { position: absolute; left: 50px; right: 3px; top: 2px; height: 11px; line-height: 11px; overflow: hidden; white-space: nowrap; color: #5fff5f; }
 .amp_marquee span { display: inline-block; padding-left: 100%; animation: marquee 12s linear infinite; }
+.amp_marquee.held span { padding-left: 0; animation: none; }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
 .amp_info { position: absolute; left: 50px; top: 14px; line-height: 10px; white-space: nowrap; color: #2f9f2f; font-size: 8px; }
 .amp_lcd canvas { position: absolute; right: 3px; bottom: 3px; image-rendering: pixelated; }
 .amp_seek { height: 5px; flex: 0 0 5px; background: #0b0d18; position: relative; cursor: pointer; box-shadow: inset 1px 1px 0 #000; }
 .amp_seek i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, #3a78e0, #7df2ff); width: 0; }
 .amp_row { display: flex; align-items: center; gap: 2px; height: 11px; flex: 0 0 11px; }
-.amp_btn { width: 12px; height: 10px; background: #3a3f60 url("mav_amp_glyphs.png") no-repeat; cursor: pointer;
-	box-shadow: inset 1px 1px 0 #6a70a0, inset -1px -1px 0 #101220; }
-.amp_btn:active, .amp_btn.on { box-shadow: inset 1px 1px 0 #101220, inset -1px -1px 0 #6a70a0; }
+.amp_btn { width: 12px; height: 10px; flex: 0 0 12px; background: #4a5078 url("mav_amp_glyphs.png") no-repeat; cursor: pointer;
+	box-shadow: inset 1px 1px 0 #8a90c0, inset -1px -1px 0 #101220; }
+.amp_btn:hover { background-color: #565d8a; }
+.amp_btn:active, .amp_btn.on { background-color: #2a2e48; box-shadow: inset 1px 1px 0 #101220, inset -1px -1px 0 #6a70a0; }
+.amp_btn.on { filter: drop-shadow(0 0 1px #5fff5f); }
 .amp_tog { font-size: 8px; height: 9px; line-height: 9px; padding: 0 2px; color: #7a80b0; cursor: pointer;
 	box-shadow: inset 1px 1px 0 #6a70a0, inset -1px -1px 0 #101220; background: #2a2e48; }
 .amp_tog.on { color: #5fff5f; }

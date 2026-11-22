@@ -74,6 +74,26 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		GLOB.maverick_lobby_alert_listener = new
 	return tracks
 
+/**
+ * The round's main lobby track (the one everyone hears on login) must be a regular track.
+ * The stock picker knows nothing about names.txt, so it can land on a track that only belongs
+ * on red alert or on a holiday. Re-pick from the tracks without rules when that happens.
+ */
+/datum/controller/subsystem/ticker/Initialize()
+	. = ..()
+	maverick_regular_login_music()
+
+/datum/controller/subsystem/ticker/proc/maverick_regular_login_music()
+	if(!login_music || !maverick_track_window(login_music))
+		return
+	var/list/regular = list()
+	for(var/track in maverick_lobby_tracks())
+		if(!maverick_track_window(track))
+			regular += track
+	if(length(regular))
+		login_music = pick(regular)
+		GLOB.maverick_lobby_tracks = list() // rebuild around the new main track
+
 /// Chance a special track wins when its rules match and the line gives no chance=.
 #define TRACK_RULE_DEFAULT_CHANCE 50
 

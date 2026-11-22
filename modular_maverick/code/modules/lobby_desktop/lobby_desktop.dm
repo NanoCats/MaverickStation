@@ -21,6 +21,11 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	"mav_wall_day.png" = 'modular_maverick/html/lobby_desktop/mav_wall_day.png',
 	"mav_wall_dusk.png" = 'modular_maverick/html/lobby_desktop/mav_wall_dusk.png',
 	"mav_amp_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_amp_glyphs.png',
+	"mav_tray_horn.png" = 'modular_maverick/html/lobby_desktop/mav_tray_horn.png',
+	"mav_icon_power.png" = 'modular_maverick/html/lobby_desktop/mav_icon_power.png',
+	"mav_tbtn_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_tbtn_glyphs.png',
+	"mav_station.png" = 'modular_maverick/html/lobby_desktop/mav_station.png',
+	"mav_setup_glitch.png" = 'modular_maverick/html/lobby_desktop/mav_setup_glitch.png',
 	"mav_sky_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_sky_glyphs.png',
 	"mav_blinds.png" = 'modular_maverick/html/lobby_desktop/mav_blinds.png',
 	"mav_chevron.png" = 'modular_maverick/html/lobby_desktop/mav_chevron.png',
@@ -54,6 +59,8 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	var/maverick_desktop_state
 	/// Round ID for which this client already saw the "You have been assigned a STATION" popup.
 	var/maverick_assigned_round
+	/// This connection already sat through the boot screens and the CRT power-on
+	var/maverick_intro_seen = FALSE
 	COOLDOWN_DECLARE(maverick_honk_cooldown)
 	/// Separate from the honk cooldown so clicking the Clown.exe icon never mutes the honks right after it.
 	COOLDOWN_DECLARE(maverick_icon_honk_cooldown)
@@ -116,10 +123,15 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	settings["crt_hotspot"] = LOBBY_DESKTOP_CRT_HOTSPOT
 	settings["desktop"] = client.maverick_desktop_state
 	settings["music"] = client.maverick_music_state()
-	if(startup)
+	// A player's first page this connection plays the CRT power-on and a boot screen.
+	// While the server is still starting, the boot screen shows the real progress instead.
+	settings["intro"] = !client.maverick_intro_seen
+	if(startup || !client.maverick_intro_seen)
 		SStitle.maverick_pick_boot_gags()
-		settings["splash"] = SStitle.maverick_splash
 		settings["boot"] = maverick_boot_info()
+	// everyone sees the same boot screen while the server starts; later intros pick their own
+	if(startup)
+		settings["splash"] = SStitle.maverick_splash
 
 	// "</" would close the script tag early if it showed up in a name or notice.
 	var/settings_json = replacetext(json_encode(settings), "</", "<\\/")

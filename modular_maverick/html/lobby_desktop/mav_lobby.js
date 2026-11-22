@@ -83,13 +83,13 @@
 			wall.style.left = Math.round((stage_w - 640) / 2) + "px";
 			wall.style.top = wall_y + "px";
 		}
-		var sky = document.getElementById("sky");
-		if (sky) {
-			sky.style.top = wall_y + "px";
-		}
 		place_icons();
 		clamp_windows();
+		layout_hooks.forEach(function (fn) { fn(); });
 	}
+
+	// things glued to the wallpaper re-place themselves after every layout
+	var layout_hooks = [];
 
 	// ------------------------------------------------------------- time of day
 
@@ -152,10 +152,46 @@
 	var SKY_COVERS = [[96, 14, 166, 52], C.crt_hotspot || [100, 105, 92, 96]];
 	var sky_shapes = [];
 
+	// A tall window shows sky above the wallpaper. Fill it with stars like the wallpaper's,
+	// a few of them twinkling, so the sky doesn't just stop.
+	function build_stars(sky) {
+		var field = el("div", null, sky);
+		field.id = "stars";
+		function fill() {
+			field.innerHTML = "";
+			var count = Math.round(stage_w * wall_y / 110);
+			for (var i = 0; i < count; i++) {
+				var big = Math.random() < 0.12;
+				var st = el("i", big ? "star big" : "star", field);
+				st.style.left = Math.floor(Math.random() * stage_w) + "px";
+				st.style.top = Math.floor(Math.random() * wall_y) + "px";
+				var col = pick(["#ffffff", "#cfd8ff", "#8a96d8"]);
+				st.style.background = col;
+				if (big) {
+					st.style.boxShadow = "1px 0 " + col + ", -1px 0 " + col + ", 0 1px " + col + ", 0 -1px " + col;
+				}
+				if (big || Math.random() < 0.15) {
+					st.style.animationDelay = (-Math.random() * 4).toFixed(2) + "s";
+					st.style.animationDuration = (2 + Math.random() * 3).toFixed(2) + "s";
+					st.classList.add("twinkle");
+				}
+			}
+		}
+		var last_key = "";
+		layout_hooks.push(function () {
+			var key = stage_w + "x" + wall_y;
+			if (key !== last_key) {
+				last_key = key;
+				fill();
+			}
+		});
+	}
+
 	// The neon shapes drift slowly across the sky, behind the windows, so some always peek out.
 	function build_sky(parent) {
 		var sky = el("div", null, parent);
 		sky.id = "sky";
+		build_stars(sky);
 		var order = [0, 1, 2, 3, 8, 10, 4, 5, 6, 7, 9, 4, 6, 9];
 		for (var i = 0; i < order.length; i++) {
 			var f = SKY_FRAMES[order[i]];
@@ -166,7 +202,8 @@
 			sky_shapes.push({
 				e: e, w: f[1], h: f[2], twinkle: f[3],
 				x: Math.random() * stage_w,
-				lane: 6 + Math.random() * (172 - f[2]),
+				// 0 is the top of the window, 1 is just above the hills
+				lane: Math.random(),
 				speed: (1.5 + Math.random() * 3) * (Math.random() < 0.5 ? -1 : 1),
 				bob: 1 + Math.random() * 3,
 				period: 5 + Math.random() * 6,
@@ -189,13 +226,14 @@
 					s.x = stage_w + 4;
 				}
 				var x = Math.round(s.x);
-				var y = Math.round(s.lane + Math.sin(t * 6.28 / s.period + s.phase) * s.bob);
+				var y = Math.round(6 + s.lane * (wall_y + 172 - s.h - 6) + Math.sin(t * 6.28 / s.period + s.phase) * s.bob);
 				// fade out while crossing the wordmark or the CRT, so they read as passing behind
 				var hidden = false;
 				for (var k = 0; k < SKY_COVERS.length; k++) {
 					var c = SKY_COVERS[k];
 					var cx = c[0] + wall_x;
-					if (x < cx + c[2] && x + s.w > cx && y < c[1] + c[3] && y + s.h > c[1]) {
+					var cy = c[1] + wall_y;
+					if (x < cx + c[2] && x + s.w > cx && y < cy + c[3] && y + s.h > cy) {
 						hidden = true;
 					}
 				}
@@ -287,7 +325,7 @@
 		el("span", "ttl", bar, spec.title);
 		var buttons = opts.buttons || ["min", "max", "close"];
 		buttons.forEach(function (b) {
-			var t = el("div", "tbtn", bar, { min: "_", max: "□", close: "x" }[b]);
+			var t = el("div", "tbtn tbtn_" + b, bar);
 			t.addEventListener("mousedown", function (e) { e.stopPropagation(); });
 			t.addEventListener("click", function (e) {
 				e.stopPropagation();
@@ -424,7 +462,7 @@
 			saved = null;
 		}
 		if (!saved || !saved.length) {
-			saved = [{ id: "paint" }, { id: "amp", min: 1 }, { id: "station" }];
+			saved = [{ id: "amp" }];
 		}
 		saved.forEach(function (s) {
 			if (!WINDOWS[s.id]) {
@@ -547,7 +585,20 @@
 		refresh_station();
 	}
 
+	// station.exe: the station drifts slowly across its starfield, with a few glowing shapes.
 	function build_station(body) {
+		var bg = el("div", "station_sky", body);
+		img("mav_station.png", "station_drift", bg);
+		[[9, 18, 70], [4, 150, 96], [6, 40, 150], [10, 128, 40], [5, 88, 128]].forEach(function (g, i) {
+			var f = SKY_FRAMES[g[0]];
+			var e = el("div", "station_glint", bg);
+			e.style.width = f[1] + "px";
+			e.style.height = f[2] + "px";
+			e.style.backgroundPosition = -f[0] + "px 0";
+			e.style.left = g[1] + "px";
+			e.style.top = g[2] + "px";
+			e.style.animationDelay = (-i * 1.3) + "s";
+		});
 		station_menu(body);
 	}
 
@@ -575,16 +626,20 @@
 	// ------------------------------------------------------------- notepad, recycle bin
 
 	var README = [
-		"WELCOME TO MAVERICKSTATION",
+		"NANOTRASEN STANDARD CREW TERMINAL",
+		"AeriOS 4.0 (build 2566.11), crew edition",
 		"",
-		"yes, this is a desktop. no, it does not run doom.",
+		"This terminal is Nanotrasen property. Your use of it is logged, reviewed and occasionally laughed at.",
 		"",
-		"- double click things. they do stuff.",
-		"- station.exe is where the game is.",
-		"- SpaceAmp plays the lobby music.",
-		"- do NOT open the clown.",
+		"KNOWN ISSUES",
+		"- Clown.exe is not Nanotrasen software. It was here when we got the machine. Do not run it.",
+		"- SpaceAmp may play music you did not approve of. This is a feature.",
+		"- The clock shows YOUR time, not station time. Station time is someone else's problem.",
 		"",
-		"if something breaks, it was the clown.",
+		"SUPPORT",
+		"Contact your Head of Personnel. If your Head of Personnel is the problem, contact the Captain. If the Captain is the problem, good luck.",
+		"",
+		"(C) 2566 Aeri Consultations and Services, under license to Nanotrasen. All rights reserved, most of them by the clown.",
 	].join("\n");
 
 	function build_readme(body) {
@@ -593,7 +648,22 @@
 		box.textContent = README;
 	}
 
+	var MANIFESTO = [
+		"THE SHOTGUN MANIFESTO",
+		"",
+		"1. Every problem on this station is a shotgun problem.",
+		"2. If it isn't, you are not using enough shotgun.",
+		"3. Slugs for doors. Buckshot for feelings.",
+		"4. The Warden's shotgun is not a decoration. It is a promise.",
+		"5. A shotgun leg is not a joke. It is a lifestyle.",
+		"6. Beanbags count. Rubbershot counts. Throwing the shotgun at them counts, once, if you meant it.",
+		"7. Never trust anyone who says \"it's a bit much\". It is exactly enough.",
+		"",
+		"Deleted by: HR. Restored by: me. Deleted again by: HR.",
+	].join("\n");
+
 	var BIN = [
+		["Shotgun_manifesto.txt", "4 KB", MANIFESTO],
 		["my_will_to_live.txt", "0 KB"],
 		["nuke_disk (2).lnk", "1 KB"],
 		["clown_permission_slip.pdf", "12 KB"],
@@ -603,27 +673,38 @@
 		["NOT_A_VIRUS.exe", "666 KB"],
 	];
 
+	// Why a deleted file can't come back. Each file gets its own reason.
+	var BIN_REFUSALS = [
+		"Restore failed: this file was deleted under Nanotrasen Records Retention Policy 7.2 (Plausible Deniability). It never existed.",
+		"Restore failed: this file has been reassigned to Lavaland.",
+		"Restore failed: a Nanotrasen representative is already reading this file. Please wait your turn.",
+		"Restore failed: this file went down the disposals chute and is now somewhere in Cargo.",
+	];
+
 	function build_recycle(body) {
 		var tb = el("div", "toolbar", body);
 		var empty = el("div", "btn", tb, "Empty Recycle Bin");
 		empty.addEventListener("click", function () {
 			dialog({
 				title: "Recycle Bin", icon: "mav_icon_clown.png",
-				text: "Nice try. The clown lives in here now.",
+				text: "Cannot empty the Recycle Bin. Someone is living in it.",
 			});
 		});
 		var list = el("div", "sunken filelist", body);
 		list.style.height = "calc(100% - 14px)";
 		list.style.overflowY = "auto";
-		BIN.forEach(function (f) {
+		BIN.forEach(function (f, i) {
 			var row = el("div", null, list);
 			el("span", null, row, f[0]);
 			el("span", "sz", row, f[1]);
 			row.addEventListener("dblclick", function () {
-				dialog({
-					title: f[0], icon: "err",
-					text: "This file has been deleted. Like your hopes and dreams.",
-				});
+				// the manifesto keeps finding its way back, so it still opens
+				if (f[2]) {
+					var d = dialog({ title: f[0] + " - Notepad", w: 210, y: 24, html: "<div class='sunken notepad manifesto'></div>", buttons: [{ label: "Close" }] });
+					d.el.querySelector(".manifesto").textContent = f[2];
+					return;
+				}
+				dialog({ title: f[0], icon: "err", text: BIN_REFUSALS[(i - 1) % BIN_REFUSALS.length] });
 			});
 		});
 	}
@@ -819,7 +900,7 @@
 		var btns = {};
 		["prev", "play", "pause", "stop", "next"].forEach(function (b) {
 			var e = el("div", "amp_btn", row);
-			e.style.backgroundPosition = (-glyph[b] * 8 + 2) + "px 2px";
+			e.style.backgroundPosition = (-glyph[b] * 12) + "px 0";
 			e.title = b;
 			e.addEventListener("click", function () { amp_cmd(b); });
 			btns[b] = e;
@@ -853,6 +934,7 @@
 		function set_vol_from(e) {
 			var r = Math.min(1, Math.max(0, (e.clientX - vol.getBoundingClientRect().left) / (vol.offsetWidth * scale)));
 			M.vol = Math.round(r * 100);
+			amp.vol_label = "VOLUME: " + M.vol + "%";
 			draw_amp();
 			clearTimeout(vol_timer);
 			vol_timer = after(250, function () { byond("music=vol;vol=" + M.vol); });
@@ -863,6 +945,10 @@
 			function up() {
 				document.removeEventListener("mousemove", mv);
 				document.removeEventListener("mouseup", up);
+				if (amp) {
+					amp.vol_label = null;
+					draw_amp();
+				}
 			}
 			document.addEventListener("mousemove", mv);
 			document.addEventListener("mouseup", up);
@@ -894,6 +980,11 @@
 		var M = C.music;
 		var t = M.tracks[M.index] || { title: "Nothing" };
 		var label = (M.index + 1) + ". " + t.title + "  ***  " + (M.playing ? (M.paused ? "PAUSED" : "It really whips the clown's ass.") : "STOPPED");
+		// while the volume slider is held, the display shows the volume instead, held still
+		amp.marquee_text.parentNode.classList.toggle("held", !!amp.vol_label);
+		if (amp.vol_label) {
+			label = amp.vol_label;
+		}
 		if (amp.marquee_text.textContent !== label) {
 			amp.marquee_text.textContent = label;
 		}
@@ -955,7 +1046,7 @@
 			{ id: "observe", label: "Observe", icon: "observe", open: ACTIONS.observe },
 			{ id: "setup", label: "Setup Character", icon: "setup", open: ACTIONS.setup },
 			{ id: "options", label: "Game Options", icon: "options", open: ACTIONS.options },
-			{ id: "directory", label: "Characters", icon: "directory", open: ACTIONS.directory },
+			{ id: "directory", label: "Personnel Files", icon: "directory", open: ACTIONS.directory },
 			{ id: "amp", label: "SpaceAmp", icon: "music", open: function () { open_window("amp"); } },
 			{ id: "paint", label: "MSpacePaint", icon: "paint", open: function () { open_window("paint"); } },
 			{ id: "readme", label: "readme.txt", icon: "readme", open: function () { open_window("readme"); } },
@@ -988,6 +1079,9 @@
 				e.stopPropagation();
 				select_icon(d.id);
 			});
+			if (d.id === "setup") {
+				chameleon_scramble(ic);
+			}
 			ic.addEventListener("dblclick", function () {
 				if (d.id === "clown") {
 					clown_icon_honk();
@@ -1002,6 +1096,37 @@
 				select_icon(null);
 			}
 		});
+	}
+
+	// Setup Character: like a chameleon ID hit by an EMP, it flips through random cards.
+	// Only now and then, and when hovered, so it doesn't nag.
+	function chameleon_scramble(ic) {
+		var face = el("div", "cham", ic);
+		var busy = false;
+		function scramble() {
+			if (busy) {
+				return;
+			}
+			busy = true;
+			ic.classList.add("scrambling");
+			var n = 0;
+			var timer = setInterval(function () {
+				face.style.backgroundPosition = (-Math.floor(Math.random() * 10) * 32) + "px 0";
+				face.style.left = (10 + (Math.random() < 0.3 ? (Math.random() < 0.5 ? -1 : 1) : 0)) + "px";
+				if (++n > 12) {
+					clearInterval(timer);
+					ic.classList.remove("scrambling");
+					busy = false;
+				}
+			}, 80);
+		}
+		ic.addEventListener("mouseenter", scramble);
+		(function idle() {
+			after(20000 + Math.random() * 25000, function () {
+				scramble();
+				idle();
+			});
+		})();
 	}
 
 	function select_icon(id) {
@@ -1036,7 +1161,7 @@
 		tasks.id = "tasks";
 		var tray = el("div", null, tb);
 		tray.id = "tray";
-		var horn = img("mav_icon_horn.png", null, tray);
+		var horn = img("mav_tray_horn.png", null, tray);
 		horn.title = "Honk";
 		horn.addEventListener("click", function () { honk(); });
 		var clock = el("span", null, tray);
@@ -1052,7 +1177,7 @@
 		var menu = el("div", null, parent);
 		menu.id = "startmenu";
 		var side = el("div", "side", menu);
-		side.innerHTML = "Maverick<b>OS</b>";
+		side.innerHTML = "Aeri<b>OS</b>";
 		function item(icon, label, fn) {
 			var it = el("div", "item", menu);
 			img("mav_icon_" + icon + ".png", null, it);
@@ -1076,7 +1201,7 @@
 			item("servers", "Swap Servers", ACTIONS.servers);
 		}
 		el("div", "sep", menu);
-		item("recycle", "Shut Down...", shut_down);
+		item("power", "Shut Down...", shut_down);
 		start.addEventListener("click", function (e) {
 			e.stopPropagation();
 			var open = menu.style.display === "block";
@@ -1114,11 +1239,13 @@
 		});
 	}
 
+	// It really shuts down: the server disconnects you a moment later. Rejoining is one click.
 	function shut_down() {
 		var s = document.getElementById("shutdown");
 		s.style.display = "block";
-		s.textContent = "It's now safe to turn off your station.";
-		s.onclick = function () { s.style.display = "none"; };
+		s.textContent = "AeriOS is shutting down...";
+		after(1200, function () { s.textContent = "It's now safe to turn off your station."; });
+		byond("lobby_shutdown=1");
 	}
 
 	// ------------------------------------------------------------- clown.exe
@@ -1155,15 +1282,10 @@
 		if (clown_busy) {
 			return;
 		}
-		dialog({
-			title: "Clown.exe (NEVER OPEN)", icon: "mav_icon_clown.png", w: 170, y: 90,
-			text: "Are you sure you want to open Clown.exe? It says NEVER OPEN. Right there. In the name.",
-			buttons: [
-				{ label: "Yes", fn: function (close) { close(); clown_chain(); } },
-				{ label: "Also yes", fn: function (close) { close(); clown_chain(); } },
-			],
-		});
+		clown_chain();
 	}
+
+	var CLOWN_NOISES = ["bikehorn", "squeak1", "slip", "squeak2", "partyhorn", "clownstep", "carhorn", "squeak3", "trombone"];
 
 	function clown_chain() {
 		clown_busy = true;
@@ -1171,6 +1293,7 @@
 		for (var i = 0; i < 9; i++) {
 			(function (i) {
 				after(i * 110, function () {
+					byond("lobby_honk=" + CLOWN_NOISES[i]);
 					spam.push(dialog({
 						title: "clown.exe", icon: "err", w: 120, big: true,
 						x: 40 + i * 12, y: 20 + i * 11,
@@ -1259,7 +1382,10 @@
 		if (C.classic) {
 			return;
 		}
-		document.body.classList.add("crt_on");
+		// the power-on only plays on a connection's first page, not on every reload
+		if (C.intro) {
+			document.body.classList.add("crt_on");
+		}
 		["crt_scan", "crt_grille", "crt_flicker", "crt_roll", "crt_glass"].forEach(function (c) {
 			el("div", "crt_layer " + c, document.body);
 		});
@@ -1277,10 +1403,20 @@
 		return (d.textContent || "").trim();
 	}
 
-	function build_splash(root) {
+	var splash_live = false;
+
+	// done: set for the quick boot screen a player sees on connecting to a running server.
+	// Without it, the splash shows the server's real startup until the server reloads the page.
+	function build_splash(root, done) {
 		var B = C.boot || {};
-		progress.cur = +B.progress_time || 0;
-		progress.total = +B.progress_total || 1500;
+		splash_live = true;
+		if (done) {
+			progress.cur = 0;
+			progress.total = 38;
+		} else {
+			progress.cur = +B.progress_time || 0;
+			progress.total = +B.progress_total || 1500;
+		}
 		(B.messages || []).forEach(function (m) { latest_line = strip(m) || latest_line; });
 		var kind = C.splash || pick(["bios", "setup", "bsod"]);
 		if (kind === "bios") {
@@ -1290,7 +1426,14 @@
 		} else {
 			build_bsod(root, B);
 		}
-		setInterval(progress_tick, 100);
+		var ticker = setInterval(function () {
+			progress_tick();
+			if (done && progress_ratio() >= 1) {
+				clearInterval(ticker);
+				splash_live = false;
+				after(450, done);
+			}
+		}, 100);
 		progress_tick();
 	}
 
@@ -1350,6 +1493,9 @@
 		boom.style.marginTop = "6px";
 		var drills = ["...relax. that was a drill.", "ok that one was a joke. stop touching things.", "you're lucky it's a test server.", "BOOM. (it didn't explode. we lied.)"];
 		function kaboom() {
+			if (!splash_live) {
+				return;
+			}
 			var r = document.getElementById("root");
 			r.classList.remove("shake", "flash");
 			void r.offsetWidth;
@@ -1438,6 +1584,7 @@
 		hot.title = "station.exe";
 		var hs = C.crt_hotspot || [100, 105, 92, 96];
 		hot.addEventListener("dblclick", function () { open_window("station"); });
+		build_crt_power(root);
 		var holder = el("div", null, root);
 		holder.id = "windows";
 		if (C.classic) {
@@ -1474,15 +1621,52 @@
 			show_notice();
 		}
 		// keep the hotspot glued to the CRT in the wallpaper
-		var place_hot = function () {
+		layout_hooks.push(function () {
 			var left = Math.round((stage_w - 640) / 2);
 			hot.style.left = (left + hs[0]) + "px";
 			hot.style.top = (wall_y + hs[1]) + "px";
 			hot.style.width = hs[2] + "px";
 			hot.style.height = hs[3] + "px";
-		};
-		window.addEventListener("resize", place_hot);
-		place_hot();
+		});
+	}
+
+	// The CRT on the wallpaper has a working power button on its base unit.
+	// Wallpaper coordinates: the screen, the button, and the power light on the button.
+	var CRT_SCREEN = [112, 113, 69, 45];
+	var CRT_BUTTON = [104, 183, 13, 12];
+	var CRT_LIGHT = [110, 187, 1, 2];
+
+	function build_crt_power(root) {
+		var screen_off = el("div", "crt_off", root);
+		var light_off = el("div", "crt_light_off", root);
+		var button = el("div", "crt_button", root);
+		button.title = "Power";
+		var on = true;
+		button.addEventListener("mousedown", function (e) { e.stopPropagation(); });
+		button.addEventListener("dblclick", function (e) { e.stopPropagation(); });
+		button.addEventListener("click", function (e) {
+			e.stopPropagation();
+			on = !on;
+			screen_off.classList.toggle("shown", !on);
+			light_off.style.display = on ? "none" : "block";
+			if (on) {
+				screen_off.classList.remove("shown");
+				screen_off.classList.add("warming");
+				after(600, function () { screen_off.classList.remove("warming"); });
+			}
+		});
+		function place(e, box) {
+			var left = Math.round((stage_w - 640) / 2);
+			e.style.left = (left + box[0]) + "px";
+			e.style.top = (wall_y + box[1]) + "px";
+			e.style.width = box[2] + "px";
+			e.style.height = box[3] + "px";
+		}
+		layout_hooks.push(function () {
+			place(screen_off, CRT_SCREEN);
+			place(button, CRT_BUTTON);
+			place(light_off, CRT_LIGHT);
+		});
 	}
 
 	function show_notice() {
@@ -1517,11 +1701,23 @@
 		antag = !!C.antag;
 		if (C.mode === "startup") {
 			build_splash(root);
+		} else if (C.intro && !C.classic) {
+			// a quick boot screen on the first page of a connection, then the desktop
+			music_hello();
+			build_splash(root, function () {
+				root.innerHTML = "";
+				splash_refs = {};
+				build_lobby(root);
+				layout();
+			});
 		} else {
 			build_lobby(root);
 			music_hello();
 		}
 		add_crt();
+		if (C.intro) {
+			byond("lobby_intro_seen=1");
+		}
 		window.addEventListener("resize", layout);
 		layout();
 	}
