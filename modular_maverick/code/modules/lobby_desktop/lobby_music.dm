@@ -205,9 +205,9 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 				level = trim(level)
 				if(!level)
 					continue
-				var/or_above = copytext(level, -1) == "+"
+				var/or_above = copytext(level, length(level)) == "+"
 				if(or_above)
-					level = trim(copytext(level, 1, -1))
+					level = trim(copytext(level, 1, length(level)))
 				if(!(level in known_levels))
 					return "\"[level]\" is not an alert level (known: [jointext(known_levels, ", ")])"
 				if(!or_above)
