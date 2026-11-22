@@ -588,6 +588,16 @@
 	// station.exe: the station drifts slowly across its starfield, with a few glowing shapes.
 	function build_station(body) {
 		var bg = el("div", "station_sky", body);
+		for (var n = 0; n < 26; n++) {
+			var st = el("i", "twinkle_star", bg);
+			st.style.left = Math.floor(Math.random() * 180) + "px";
+			st.style.top = Math.floor(Math.random() * 160) + "px";
+			st.style.animationDelay = (-Math.random() * 4).toFixed(2) + "s";
+			st.style.animationDuration = (1.8 + Math.random() * 2.6).toFixed(2) + "s";
+			if (Math.random() < 0.3) {
+				st.classList.add("big");
+			}
+		}
 		img("mav_station.png", "station_drift", bg);
 		[[9, 18, 70], [4, 150, 96], [6, 40, 150], [10, 128, 40], [5, 88, 128]].forEach(function (g, i) {
 			var f = SKY_FRAMES[g[0]];
@@ -1080,7 +1090,7 @@
 				select_icon(d.id);
 			});
 			if (d.id === "setup") {
-				chameleon_scramble(ic);
+				chameleon_id(ic);
 			}
 			ic.addEventListener("dblclick", function () {
 				if (d.id === "clown") {
@@ -1098,32 +1108,82 @@
 		});
 	}
 
-	// Setup Character: like a chameleon ID hit by an EMP, it flips through random cards.
-	// Only now and then, and when hovered, so it doesn't nag.
-	function chameleon_scramble(ic) {
-		var face = el("div", "cham", ic);
-		var busy = false;
-		function scramble() {
-			if (busy) {
-				return;
-			}
-			busy = true;
-			ic.classList.add("scrambling");
-			var n = 0;
-			var timer = setInterval(function () {
-				face.style.backgroundPosition = (-Math.floor(Math.random() * 10) * 32) + "px 0";
-				face.style.left = (10 + (Math.random() < 0.3 ? (Math.random() < 0.5 ? -1 : 1) : 0)) + "px";
-				if (++n > 12) {
-					clearInterval(timer);
-					ic.classList.remove("scrambling");
-					busy = false;
+	// Setup Character is a chameleon ID card. Every ten seconds or so it glitches for a
+	// moment, then settles on a new random station card back and job trim.
+	// mav_id_parts.png: row 0 is the card backs, row 1 is the trims, 32px cells.
+	// Backs: every card with the standard station shape. Trims: every job, CentCom, Syndicate
+	// and prisoner trim. Prisoner number trims only go on the prisoner card back.
+	var ID_BACKS = 11;
+	var ID_PRISONER_BACK = 6;
+	var ID_TRIMS = 45;
+	var ID_PRISONER_TRIMS = [33, 34, 35, 36, 37, 38, 39];
+
+	function id_face(parent) {
+		var face = el("div", "idface", parent);
+		var back = el("i", "idback", face);
+		var trim = el("i", "idtrim", face);
+		return {
+			el: face,
+			set: function (b, t) {
+				back.style.backgroundPosition = (-b * 32) + "px 0";
+				trim.style.backgroundPosition = (-t * 32) + "px -32px";
+			},
+		};
+	}
+
+	function chameleon_id(ic) {
+		ic.classList.add("idcard");
+		var box = el("div", "cham", ic);
+		var faces = [id_face(box), id_face(box)];
+		var shown = 0;
+		var cur = [0, 0];
+		function random_combo() {
+			var next;
+			do {
+				var b = Math.floor(Math.random() * ID_BACKS);
+				var t;
+				if (b === ID_PRISONER_BACK) {
+					t = pick(ID_PRISONER_TRIMS);
+				} else {
+					do {
+						t = Math.floor(Math.random() * ID_TRIMS);
+					} while (ID_PRISONER_TRIMS.indexOf(t) >= 0);
 				}
-			}, 80);
+				next = [b, t];
+			} while (next[0] === cur[0] && next[1] === cur[1]);
+			return next;
 		}
-		ic.addEventListener("mouseenter", scramble);
+		cur = random_combo();
+		faces[0].set(cur[0], cur[1]);
+		faces[1].el.style.opacity = 0;
+		function change() {
+			var next = random_combo();
+			var glitch = faces[shown];
+			// two quick glitch frames with a pixel of jitter...
+			var g = 0;
+			var timer = setInterval(function () {
+				if (g < 2) {
+					var c = random_combo();
+					glitch.set(c[0], c[1]);
+					box.style.left = (10 + (g % 2 ? 1 : -1)) + "px";
+					g++;
+					return;
+				}
+				clearInterval(timer);
+				glitch.set(cur[0], cur[1]);
+				box.style.left = "10px";
+				// ...then fade over to the new card
+				var other = faces[1 - shown];
+				other.set(next[0], next[1]);
+				other.el.style.opacity = 1;
+				glitch.el.style.opacity = 0;
+				shown = 1 - shown;
+				cur = next;
+			}, 90);
+		}
 		(function idle() {
-			after(20000 + Math.random() * 25000, function () {
-				scramble();
+			after(8000 + Math.random() * 4000, function () {
+				change();
 				idle();
 			});
 		})();
@@ -1412,7 +1472,7 @@
 		splash_live = true;
 		if (done) {
 			progress.cur = 0;
-			progress.total = 38;
+			progress.total = 75;
 		} else {
 			progress.cur = +B.progress_time || 0;
 			progress.total = +B.progress_total || 1500;
@@ -1529,10 +1589,30 @@
 		head.style.fontFamily = "Pixellari";
 		head.style.fontSize = "16px";
 		head.style.marginBottom = "6px";
-		[
-			"Waking the crew... (robots, they don't sleep)",
-			"Restocking vendors... (lol, lmao)",
-		].forEach(function (t) { line(col, t); });
+		// one line at a time, like a certain life simulator
+		var sims = line(col, "");
+		var SIMS_LINES = [
+			"Reticulating splines...",
+			"Lubing the hallways...",
+			"Teaching the AI a fourth law...",
+			"Counting the monkeys...",
+			"Recounting the monkeys...",
+			"Polishing the captain's spare ID...",
+			"Untangling the disposals loop...",
+			"Charging the SMES...",
+			"Feeding the slimes...",
+			"Bribing the quartermaster...",
+			"Hiding the toolboxes from the assistants...",
+			"Calibrating the gravity generator...",
+			"Inflating the clown's balloons...",
+			"Locating the nuke disk...",
+		];
+		var sims_i = Math.floor(Math.random() * SIMS_LINES.length);
+		sims.textContent = SIMS_LINES[sims_i];
+		setInterval(function () {
+			sims_i = (sims_i + 1 + Math.floor(Math.random() * 3)) % SIMS_LINES.length;
+			sims.textContent = SIMS_LINES[sims_i];
+		}, 1400);
 		var disk = el("div", null, col);
 		disk.style.display = "flex";
 		disk.style.alignItems = "center";

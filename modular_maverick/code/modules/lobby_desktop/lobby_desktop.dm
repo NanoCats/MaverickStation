@@ -7,11 +7,11 @@
 
 /// Whether this lobby mob already sent its client the lobby files
 /mob/dead/new_player/var/maverick_lobby_files_sent = FALSE
+/// Counts title screen updates, so only the newest one sends its page
+/mob/dead/new_player/var/maverick_title_sends = 0
 
 /// Every file the lobby page loads, by the name the page asks for.
 GLOBAL_LIST_INIT(maverick_lobby_files, list(
-	"mav_lobby.css" = 'modular_maverick/html/lobby_desktop/mav_lobby.css',
-	"mav_lobby.js" = 'modular_maverick/html/lobby_desktop/mav_lobby.js',
 	"FixedsysExcelsior3.01Regular.ttf" = 'html/browser/FixedsysExcelsior3.01Regular.ttf',
 	"Pixellari.ttf" = 'interface/fonts/Pixellari.ttf',
 	"Grand9K_Pixel.ttf" = 'interface/fonts/Grand9K_Pixel.ttf',
@@ -25,7 +25,7 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	"mav_icon_power.png" = 'modular_maverick/html/lobby_desktop/mav_icon_power.png',
 	"mav_tbtn_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_tbtn_glyphs.png',
 	"mav_station.png" = 'modular_maverick/html/lobby_desktop/mav_station.png',
-	"mav_setup_glitch.png" = 'modular_maverick/html/lobby_desktop/mav_setup_glitch.png',
+	"mav_id_parts.png" = 'modular_maverick/html/lobby_desktop/mav_id_parts.png',
 	"mav_sky_glyphs.png" = 'modular_maverick/html/lobby_desktop/mav_sky_glyphs.png',
 	"mav_blinds.png" = 'modular_maverick/html/lobby_desktop/mav_blinds.png',
 	"mav_chevron.png" = 'modular_maverick/html/lobby_desktop/mav_chevron.png',
@@ -91,17 +91,30 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 /mob/dead/new_player/proc/maverick_update_title_screen()
 	if(!CONFIG_GET(flag/maverick_lobby_desktop) || !client)
 		return FALSE
-	// browse() with file= puts each file in the client's browser cache under its own name,
-	// the same way the old lobby sends its title image. browse_rsc assets did not reach the page.
+	INVOKE_ASYNC(src, PROC_REF(maverick_send_title_screen), ++maverick_title_sends)
+	return TRUE
+
+/**
+ * Sends the pictures and fonts, waits until the client has them, then sends the page.
+ * The page's own script and styles are written into the page itself, so they can never
+ * arrive late. Pictures and fonts go in the browser cache by name with browse(file=),
+ * the way the old lobby sends its title image.
+ */
+/mob/dead/new_player/proc/maverick_send_title_screen(send_number)
+	if(!client)
+		return
 	// Once per lobby mob, so a player coming back to the lobby (respawn, reconnect) gets them again.
 	if(!maverick_lobby_files_sent)
 		maverick_lobby_files_sent = TRUE
 		for(var/file_name in GLOB.maverick_lobby_files)
 			src << browse(GLOB.maverick_lobby_files[file_name], "file=[file_name];display=0")
+		client.browse_queue_flush()
+	// A newer update came in while we waited, and it will send its own page.
+	if(!client || send_number != maverick_title_sends)
+		return
 	src << browse(maverick_title_html(), "window=title_browser")
 	if(SSticker.current_state == GAME_STATE_STARTUP)
 		maverick_broadcast_humans()
-	return TRUE
 
 /// Builds the lobby page: an empty stage, the settings object, and the desktop script.
 /mob/dead/new_player/proc/maverick_title_html()
@@ -141,25 +154,33 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="stylesheet" type="text/css" href="mav_lobby.css">
+<style>[maverick_lobby_code("css")]</style>
 </head>
 <body>
 <div id="screen" class="screen_root"><div id="stage"></div></div>
 [maverick_fallback_menu()]
 <script>window.MAV = [settings_json];</script>
-<script src="mav_lobby.js"></script>
+<script>[maverick_lobby_code("js")]</script>
 <script>
 setTimeout(function () {
 	if (!window.MAV_OK) {
 		document.getElementById("mav_fallback").style.display = "block";
 	}
-}, 4000);
+}, 8000);
 </script>
 "}
 	if(!title_screen_is_ready)
 		dat += {"<script>location.href = "byond://?src=[text_ref(src)];title_is_ready=1";</script>"}
 	dat += "</body></html>"
 	return dat
+
+/// The desktop's stylesheet or script, read once from the compiled-in files.
+/proc/maverick_lobby_code(kind)
+	var/static/list/code = list(
+		"css" = file2text('modular_maverick/html/lobby_desktop/mav_lobby.css'),
+		"js" = file2text('modular_maverick/html/lobby_desktop/mav_lobby.js'),
+	)
+	return code[kind]
 
 /**
  * A plain menu with the lobby actions that matter, as ordinary links with inline styles.

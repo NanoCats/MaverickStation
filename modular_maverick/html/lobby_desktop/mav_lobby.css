@@ -52,10 +52,11 @@ img { image-rendering: pixelated; border: none; }
 	background: #0a24a8; text-shadow: none; outline: 1px dotted #fff; outline-offset: -1px;
 	white-space: normal; overflow: visible; max-width: 60px; position: relative; z-index: 2;
 }
-.icon .cham { position: absolute; left: 10px; top: 0; width: 32px; height: 32px; display: none;
-	background: url("mav_setup_glitch.png") no-repeat; image-rendering: pixelated; }
-.icon.scrambling .cham { display: block; }
-.icon.scrambling img { visibility: hidden; }
+.icon .cham { position: absolute; left: 10px; top: 0; width: 32px; height: 32px; }
+.icon.idcard img { visibility: hidden; }
+.idface { position: absolute; inset: 0; transition: opacity 0.45s linear; }
+.idface i { position: absolute; inset: 0; background: url("mav_id_parts.png") no-repeat; image-rendering: pixelated; }
+.icon.selected .cham { filter: brightness(0.75) sepia(1) hue-rotate(185deg) saturate(5); }
 .icon.knocked { transition: transform 0.25s ease-in; transform: rotate(90deg) translateY(4px); }
 .icon.knocked2 { transition: transform 0.25s ease-in; transform: rotate(-75deg) translateY(6px); }
 
@@ -126,6 +127,8 @@ img { image-rendering: pixelated; border: none; }
 	animation: station_drift 90s steps(380) infinite, station_bob 7s steps(4) infinite; }
 @keyframes station_drift { from { left: -100px; } to { left: 100%; } }
 @keyframes station_bob { 0%, 100% { margin-top: 0; } 50% { margin-top: 2px; } }
+.twinkle_star { position: absolute; width: 1px; height: 1px; background: #dfe6ff; animation: twinkle 3s ease-in-out infinite; }
+.twinkle_star.big { box-shadow: 1px 0 #dfe6ff, -1px 0 #dfe6ff, 0 1px #dfe6ff, 0 -1px #dfe6ff; }
 .station_glint { position: absolute; background: url("mav_sky_glyphs.png") no-repeat; opacity: 0.6;
 	animation: glint 4s ease-in-out infinite; }
 @keyframes glint { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.75; } }
@@ -192,7 +195,7 @@ img { image-rendering: pixelated; border: none; }
 .task.on { background: #eee; box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff; }
 #tray { height: 12px; display: flex; align-items: center; gap: 3px; padding: 0 5px;
 	box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff; }
-#tray img { cursor: pointer; margin: -1px 5px -1px -1px; }
+#tray img { cursor: pointer; width: 11px; height: 11px; margin: 0 5px 0 -1px; }
 #startmenu {
 	position: absolute; left: 2px; bottom: 16px; width: 120px; background: #dcdcdc; display: none; z-index: 950;
 	box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #404040, 0 0 0 1px #101028; padding: 2px 2px 2px 16px;
