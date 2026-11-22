@@ -39,7 +39,7 @@
 	. = ..()
 	if(. || type == "world" || !key)
 		return
-	if(!CONFIG_GET(flag/age_gate) || !SSage_gate?.is_file_banned(ckey(key)))
+	if(!CONFIG_GET(flag/maverick_age_gate) || !SSage_gate?.is_file_banned(ckey(key)))
 		return
 	log_access("Failed Login: [key] [address]-[computer_id] - banned by the age gate")
 	return list("reason" = "age gate", "desc" = "\nReason: Age verification failed. This server is for adults only.")

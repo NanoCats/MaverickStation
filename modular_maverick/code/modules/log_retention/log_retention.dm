@@ -1,16 +1,16 @@
 /// Round logs and player-linked database history older than this many days are deleted at server start.
-/datum/config_entry/number/log_retention_days
+/datum/config_entry/number/maverick_log_retention_days
 	default = 90
 	integer = TRUE
 	min_val = 1
 
 /// Writes PDA messages to a separate log meant for public release. Off by default, because we do not publish logs.
-/datum/config_entry/flag/public_logging
+/datum/config_entry/flag/maverick_public_logging
 
 /**
  * Deletes old round logs and player-linked database history once per server start.
  *
- * The privacy policy promises LOG_RETENTION_DAYS, and this is what keeps that promise.
+ * The privacy policy promises MAVERICK_LOG_RETENTION_DAYS, and this is what keeps that promise.
  * Ban records, admin notes, characters and preferences are not touched.
  */
 SUBSYSTEM_DEF(log_retention)
@@ -22,7 +22,7 @@ SUBSYSTEM_DEF(log_retention)
 	return SS_INIT_SUCCESS
 
 /datum/controller/subsystem/log_retention/proc/purge_old_history()
-	var/days = CONFIG_GET(number/log_retention_days)
+	var/days = CONFIG_GET(number/maverick_log_retention_days)
 	// Log folders are named by UTC date, so the cutoff is a UTC date too.
 	var/cutoff = text2num(time2text(world.realtime - (days DAYS), "YYYYMMDD", TIMEZONE_UTC))
 	var/deleted = 0

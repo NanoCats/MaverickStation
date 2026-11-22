@@ -1,4 +1,4 @@
-/// Oldest age the window offers. Answers above AGE_GATE_MAXIMUM_AGE (config) are banned as implausible.
+/// Oldest age the window offers. Answers above MAVERICK_AGE_GATE_MAXIMUM_AGE (config) are banned as implausible.
 #define AGE_GATE_MAX_AGE 120
 /// The privacy policy shown in the welcome window.
 #define PRIVACY_POLICY_FILE "config/maverick/privacy_policy.txt"
@@ -87,9 +87,9 @@
 	var/text = file2text(PRIVACY_POLICY_FILE)
 	if(!text)
 		return "The privacy policy file is missing. Please tell an admin."
-	text = replacetext(text, "%POLICY_VERSION%", "[CONFIG_GET(number/privacy_policy_version)]")
-	text = replacetext(text, "%MINIMUM_AGE%", "[CONFIG_GET(number/age_gate_minimum_age)]")
-	text = replacetext(text, "%LOG_RETENTION_DAYS%", "[CONFIG_GET(number/log_retention_days)]")
+	text = replacetext(text, "%POLICY_VERSION%", "[CONFIG_GET(number/maverick_privacy_policy_version)]")
+	text = replacetext(text, "%MINIMUM_AGE%", "[CONFIG_GET(number/maverick_age_gate_minimum_age)]")
+	text = replacetext(text, "%LOG_RETENTION_DAYS%", "[CONFIG_GET(number/maverick_log_retention_days)]")
 	return text
 
 #undef AGE_GATE_MAX_AGE

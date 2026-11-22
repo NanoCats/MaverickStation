@@ -10,7 +10,7 @@
 /**
  * The welcome window every player sees before they can play: the privacy policy and the age gate.
  *
- * The age check is asked once. The privacy policy is asked again whenever PRIVACY_POLICY_VERSION goes up.
+ * The age check is asked once. The privacy policy is asked again whenever MAVERICK_PRIVACY_POLICY_VERSION goes up.
  * Players under the minimum age, or over the plausible maximum, are banned.
  *
  * Only results are kept. The date of birth itself is never sent to the server,
@@ -35,7 +35,7 @@ SUBSYSTEM_DEF(age_gate)
 	var/list/open_prompts = list()
 
 /datum/controller/subsystem/age_gate/Initialize()
-	if(!CONFIG_GET(flag/age_gate))
+	if(!CONFIG_GET(flag/maverick_age_gate))
 		return SS_INIT_NO_NEED
 	load_data_file()
 	RegisterSignal(SSdcs, COMSIG_GLOB_PRE_JOBS_ASSIGNED, PROC_REF(unready_unchecked_players))
@@ -43,7 +43,7 @@ SUBSYSTEM_DEF(age_gate)
 
 /// Returns TRUE if this client still has to finish the welcome window. Only reads the cache, so it never sleeps.
 /datum/controller/subsystem/age_gate/proc/needs_check(client/player)
-	if(!CONFIG_GET(flag/age_gate))
+	if(!CONFIG_GET(flag/maverick_age_gate))
 		return FALSE
 	if(!player)
 		return FALSE
@@ -63,7 +63,7 @@ SUBSYSTEM_DEF(age_gate)
 
 /// Database key for the current privacy policy version.
 /datum/controller/subsystem/age_gate/proc/policy_key()
-	return "[AGE_GATE_PRIVACY_KEY_PREFIX][CONFIG_GET(number/privacy_policy_version)]"
+	return "[AGE_GATE_PRIVACY_KEY_PREFIX][CONFIG_GET(number/maverick_privacy_policy_version)]"
 
 /// Looks for a stored age pass and policy agreement for this ckey and caches them. Can sleep on the database.
 /// Returns TRUE if nothing more is needed from this player.
@@ -71,7 +71,7 @@ SUBSYSTEM_DEF(age_gate)
 	load_data_file()
 	if(file_passed_ckeys[ckey])
 		passed_ckeys[ckey] = TRUE
-	if(file_policy_versions[ckey] >= CONFIG_GET(number/privacy_policy_version))
+	if(file_policy_versions[ckey] >= CONFIG_GET(number/maverick_privacy_policy_version))
 		policy_ckeys[ckey] = TRUE
 	if(passed_ckeys[ckey] && policy_ckeys[ckey])
 		return TRUE
@@ -96,7 +96,7 @@ SUBSYSTEM_DEF(age_gate)
 /// Handles an answer from the welcome window that included an age.
 // No local vars in here on purpose: adding them sets off a false unused_var warning in BYOND 516.1659 elsewhere in the codebase.
 /datum/controller/subsystem/age_gate/proc/handle_answer(client/player, age)
-	if(age >= CONFIG_GET(number/age_gate_minimum_age) && age <= CONFIG_GET(number/age_gate_maximum_age))
+	if(age >= CONFIG_GET(number/maverick_age_gate_minimum_age) && age <= CONFIG_GET(number/maverick_age_gate_maximum_age))
 		record_pass(player)
 		record_policy(player)
 		to_chat(player, span_notice("Thanks. Welcome aboard."))
@@ -112,9 +112,9 @@ SUBSYSTEM_DEF(age_gate)
 
 /// Short description of a failed answer for logs and the ban reason.
 /datum/controller/subsystem/age_gate/proc/describe_failed_age(age)
-	if(age < CONFIG_GET(number/age_gate_minimum_age))
-		return "an age under [CONFIG_GET(number/age_gate_minimum_age)]"
-	return "an implausible age over [CONFIG_GET(number/age_gate_maximum_age)]"
+	if(age < CONFIG_GET(number/maverick_age_gate_minimum_age))
+		return "an age under [CONFIG_GET(number/maverick_age_gate_minimum_age)]"
+	return "an implausible age over [CONFIG_GET(number/maverick_age_gate_maximum_age)]"
 
 /// Opens the welcome window for this client, or brings the open one back up.
 /// test_age asks for a date of birth even if they already passed, for the Test Age Gate verb.
@@ -138,7 +138,7 @@ SUBSYSTEM_DEF(age_gate)
 /// Called when a player agrees to the current privacy policy.
 /datum/controller/subsystem/age_gate/proc/record_policy(client/player)
 	policy_ckeys[player.ckey] = TRUE
-	log_access("Privacy policy: [key_name(player)] agreed to version [CONFIG_GET(number/privacy_policy_version)].")
+	log_access("Privacy policy: [key_name(player)] agreed to version [CONFIG_GET(number/maverick_privacy_policy_version)].")
 	INVOKE_ASYNC(src, PROC_REF(store_result), player.ckey, policy_key())
 
 /// Stores an age pass or a policy agreement. Falls back to the data file if the database is off or fails.
@@ -156,7 +156,7 @@ SUBSYSTEM_DEF(age_gate)
 	if(result_key == AGE_GATE_POLICY_KEY)
 		file_passed_ckeys[ckey] = TRUE
 	else
-		file_policy_versions[ckey] = CONFIG_GET(number/privacy_policy_version)
+		file_policy_versions[ckey] = CONFIG_GET(number/maverick_privacy_policy_version)
 	save_data_file()
 
 /// Bans and kicks a player who failed the age gate. Reason is a short description of the age they gave.
