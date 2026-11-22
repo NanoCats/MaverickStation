@@ -1,9 +1,3 @@
-#define LOBBY_DESKTOP_SOUNDS_ALL "All"
-#define LOBBY_DESKTOP_SOUNDS_QUIET "Clicks only"
-#define LOBBY_DESKTOP_SOUNDS_OFF "Off"
-/// Reverb switched off: room, reflections and reverb all at their minimum
-#define LOBBY_DESKTOP_DRY_ENVIRONMENT list(1.8, 0.5, -10000, -4000, 0, 5, 0.1, 1, -10000, 0.007, -10000, 0.05, 0.25, 1, 1.18, 0.348, -5, 2000, 250, 0, 3, 100, 63)
-
 /// Which lobby desktop sounds a player hears: all of them, clicks and errors only, or none.
 /datum/preference/choiced/maverick_desktop_sounds
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
