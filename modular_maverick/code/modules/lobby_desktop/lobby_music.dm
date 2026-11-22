@@ -103,17 +103,35 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
  * Format: "file name : Display Name | rule | rule". The file name can have its
  * extension or not, and case does not matter. Lines starting with # are skipped.
  * Each entry is list("name" = display name, "rules" = list of parsed rules).
+ *
+ * names_local.txt in the same folder is read after names.txt, and its lines win.
+ * It is gitignored, so a server can keep its own tracks out of the repo.
  */
 /proc/maverick_track_entries()
 	var/static/list/entries
 	if(entries)
 		return entries
 	entries = list()
-	var/names_file = "[global.config.directory]/title_music/names.txt"
-	if(!fexists(names_file))
-		return entries
-	var/list/problems = list()
 	var/list/known_files = maverick_known_music_files()
+	for(var/file_name in list("names.txt", "names_local.txt"))
+		var/names_file = "[global.config.directory]/title_music/[file_name]"
+		if(!fexists(names_file))
+			continue
+		var/list/problems = maverick_read_track_file(names_file, entries, known_files)
+		for(var/problem in problems)
+			log_config("title_music/[file_name] [problem]")
+		if(length(problems))
+			message_admins("title_music/[file_name] has [length(problems)] problem\s. Details are in the config log.")
+	return entries
+
+/**
+ * Reads one track names file into entries. A line for a file name that is
+ * already in entries replaces it, so later files override earlier ones.
+ * Returns a list of problems found, for the config log.
+ */
+/proc/maverick_read_track_file(names_file, list/entries, list/known_files)
+	var/list/problems = list()
+	var/list/seen_here = list()
 	var/line_number = 0
 	for(var/line in world.file2list(names_file))
 		line_number++
@@ -135,8 +153,9 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 			problems += "line [line_number]: no display name after the \":\""
 		if(!(key in known_files))
 			problems += "line [line_number]: \"[key]\" matches no lobby music file"
-		if(entries[key])
+		if(seen_here[key])
 			problems += "line [line_number]: \"[key]\" is listed twice, the later line wins"
+		seen_here[key] = TRUE
 		var/list/rules = list()
 		for(var/i in 2 to length(segments))
 			var/problem = maverick_parse_track_rule(trim(segments[i]), rules)
@@ -145,12 +164,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		if(rules["exclusive"] && !(rules["time"] || rules["date"] || rules["holiday"] || rules["alert"]))
 			problems += "line [line_number]: exclusive needs a time, date, holiday or alert rule, or it would take over every lobby"
 		entries[key] = list("name" = display, "rules" = rules)
-
-	for(var/problem in problems)
-		log_config("title_music/names.txt [problem]")
-	if(length(problems))
-		message_admins("title_music/names.txt has [length(problems)] problem\s. Details are in the config log.")
-	return entries
+	return problems
 
 /// Lowercase names of every lobby music file, with and without extensions, for spotting typos in names.txt.
 /proc/maverick_known_music_files()

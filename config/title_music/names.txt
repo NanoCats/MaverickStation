@@ -37,6 +37,10 @@
 # roll. If none wins, they hear the regular lobby track. When the alert level
 # changes, alert tracks roll again for lobby players who didn't pick their own song.
 #
+# Your own tracks: put their lines in names_local.txt, in this same folder and
+# with the same format. It is read after this file, so its lines win, and git
+# ignores it, so your test tracks never show up as changes.
+#
 # Examples:
 #   lobbymusic2 : BIRDBRAIN - Jamie Paige
 #   starry_sky : Starry Sky - nor | time=22-5
