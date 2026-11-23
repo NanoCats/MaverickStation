@@ -23,7 +23,7 @@
 /// The GAGS entry for the suit this plating makes, or null if that suit cannot be painted.
 /datum/loadout_item/plating/proc/get_gags_entry()
 	var/datum/mod_theme/theme = get_theme()
-	return theme ? GLOB.mod_gags_skins[theme.default_skin] : null
+	return theme ? GLOB.mod_gags_skins?[theme.default_skin] : null
 
 /datum/loadout_item/plating/New(category)
 	. = ..()
@@ -39,8 +39,24 @@
 		ui_icon_state = suit_state
 
 // Recoloring paints the suit, not the plating item, so it is allowed only when the suit has GAGS.
+// Loadout items are built before GLOB.mod_gags_skins exists, so New() cannot decide this. Check when the UI asks instead.
 /datum/loadout_item/plating/is_greyscale_item()
-	return !isnull(get_gags_entry())
+	return FALSE
+
+/// Turns the GAGS recolor on once the MOD GAGS skins are loaded.
+/datum/loadout_item/plating/proc/update_recolor_flag()
+	if(get_gags_entry())
+		loadout_flags |= LOADOUT_FLAG_GREYSCALING_ALLOWED
+	else
+		loadout_flags &= ~LOADOUT_FLAG_GREYSCALING_ALLOWED
+
+/datum/loadout_item/plating/to_ui_data()
+	update_recolor_flag()
+	return ..()
+
+/datum/loadout_item/plating/handle_loadout_action(datum/preference_middleware/loadout/manager, mob/user, action, params)
+	update_recolor_flag()
+	return ..()
 
 // Drop the simple repaint buttons. They act on the plating item, which never spawns.
 // Recolor, Rename and Change description stay, and on_equip_item applies them to the suit.
