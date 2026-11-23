@@ -68,7 +68,8 @@
 	if(!passes_staff_tier(preference_source?.parent))
 		return "staff restrictions"
 	// The preview has no real ID, so show access locked items there.
-	if(!visuals_only && !passes_access(outfit))
+	// Admins skip the access lock. They can spawn the item anyway.
+	if(!visuals_only && !passes_access(outfit) && get_loadout_staff_tier(preference_source?.parent) < LOADOUT_STAFF_ADMIN)
 		return "access restrictions"
 	return null
 
