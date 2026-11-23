@@ -22,6 +22,7 @@ SUBSYSTEM_DEF(amas)
 
 	for(var/watchdog_type in subtypesof(/datum/amas_watchdog))
 		watchdogs[watchdog_type] = new watchdog_type
+	RegisterSignal(SSticker, COMSIG_TICKER_ROUND_STARTING, PROC_REF(install_ai_core))
 	return SS_INIT_SUCCESS
 
 /datum/controller/subsystem/amas/fire(resumed)

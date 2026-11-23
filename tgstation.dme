@@ -7373,6 +7373,7 @@
 #include "modular_maverick\code\controllers\configuration\entries\maverick_config_entries.dm"
 #include "modular_maverick\code\modules\admin\vv_export.dm"
 #include "modular_maverick\code\modules\amas\admin_verbs.dm"
+#include "modular_maverick\code\modules\amas\amas_ai_core.dm"
 #include "modular_maverick\code\modules\amas\amas_subsystem.dm"
 #include "modular_maverick\code\modules\amas\automaton.dm"
 #include "modular_maverick\code\modules\amas\automaton_species.dm"
