@@ -22,14 +22,14 @@
 	return LOADOUT_STAFF_NONE
 
 /// Returns the name of a staff tier for tooltips and warnings.
-/proc/loadout_staff_tier_name(tier)
+/proc/loadout_staff_tier_name(tier, plural = TRUE)
 	switch(tier)
 		if(LOADOUT_STAFF_DONATOR)
-			return "Donators"
+			return plural ? "Donators" : "Donator"
 		if(LOADOUT_STAFF_MENTOR)
-			return "Mentors"
+			return plural ? "Mentors" : "Mentor"
 		if(LOADOUT_STAFF_ADMIN)
-			return "Admins"
+			return plural ? "Admins" : "Admin"
 	return "Everyone"
 
 /// Returns TRUE if the client is staff enough for this item.
@@ -70,12 +70,12 @@
 /datum/loadout_item/get_item_information()
 	. = ..()
 	if(required_staff_tier > LOADOUT_STAFF_NONE)
-		.[FA_ICON_USER_SHIELD] = "Staff only: [loadout_staff_tier_name(required_staff_tier)]"
+		.[FA_ICON_USER_SHIELD] = "[loadout_staff_tier_name(required_staff_tier, plural = FALSE)] only"
 	if(length(required_access))
 		var/list/access_names = list()
 		for(var/needed in required_access)
 			access_names += SSid_access.get_access_desc(needed) || needed
-		.[FA_ICON_ID_CARD] = "Needs access: [access_names.Join(", ")]\nChecked against your ID when you spawn."
+		.[FA_ICON_ID_CARD] = "Access whitelist: [access_names.Join(", ")]"
 
 // Sends the staff tier to the loadout UI so it can hide items above the viewer's tier, like ckey locked items.
 /datum/loadout_item/to_ui_data()
