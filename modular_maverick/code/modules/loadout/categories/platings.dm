@@ -101,6 +101,11 @@
 	var/datum/species/protean/protean = equipper.dna?.species
 	if(!istype(protean) || isnull(protean.species_modsuit))
 		return NONE
+	// The outfit gave a real MODsuit, which the protean absorbs on its own (see outfit_handling()).
+	// That suit wins. Changing the theme while it is being absorbed breaks the suit parts.
+	if(ispath(outfit?.back, /obj/item/mod/control) || protean.species_modsuit.stored_modsuit)
+		to_chat(equipper, span_notice("Your [name] was not applied, because your outfit came with its own MODsuit."))
+		return NONE
 	var/obj/item/mod/construction/plating/plates = new item_path(null)
 	protean.assimilate_theme(equipper, plates)
 	qdel(plates)
