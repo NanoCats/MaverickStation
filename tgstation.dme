@@ -7371,6 +7371,7 @@
 #include "modular_maverick\code\__DEFINES\lobby_desktop.dm"
 #include "modular_maverick\code\controllers\configuration\entries\maverick_config_entries.dm"
 #include "modular_maverick\code\controllers\subsystem\maverick_loot.dm"
+#include "modular_maverick\code\modules\admin\cheat_engine.dm"
 #include "modular_maverick\code\modules\admin\local_debug.dm"
 #include "modular_maverick\code\modules\admin\vv_export.dm"
 #include "modular_maverick\code\modules\age_gate\age_gate_hooks.dm"

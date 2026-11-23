@@ -72,6 +72,12 @@
 		maverick_desktop_sfx(href_list["lobby_sfx"])
 		return TRUE
 
+	// The Cheat Engine desktop icon. The panel checks admin rights itself too.
+	if(href_list["open_cheats"])
+		if(check_rights_for(client, R_DEBUG))
+			GLOB.maverick_cheats.ui_interact(src)
+		return TRUE
+
 	// Start > Sounds
 	if(href_list["lobby_sfx_mode"])
 		maverick_cycle_desktop_sounds()
