@@ -40,6 +40,10 @@
 	ui.open()
 
 /client/proc/show_privacy_policy()
+	// MAVERICK EDIT BEGIN - the welcome window shows our own privacy policy instead
+	if(CONFIG_GET(flag/maverick_age_gate))
+		return
+	// MAVERICK EDIT END
 	if(!CONFIG_GET(flag/sql_enabled))
 		return
 

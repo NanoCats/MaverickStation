@@ -146,6 +146,8 @@
 	// plays the startup sound and uses it up even when sounds are off, so it can't turn up
 	// later in the round. If it is heard, the music waits for it.
 	function desktop_ready() {
+		// the welcome window (privacy policy and age check) waits for this, so it never covers the boot screen
+		byond("lobby_desktop_up=1");
 		if (C.startup_due) {
 			C.startup_due = false;
 			byond("lobby_sfx=startup");

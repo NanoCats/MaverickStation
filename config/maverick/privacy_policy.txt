@@ -1,0 +1,36 @@
+MAVERICKSTATION PRIVACY POLICY (version %POLICY_VERSION%)
+
+WHO WE ARE
+MaverickStation is a custom Space Station 13 fork created by one "Aeri". We have zero interest in selling your data, sharing it, or showing advertisements.
+
+WHAT WE COLLECT, AND WHY
+1. Your BYOND key, IP address and computer ID. BYOND already sends these to every server you join. They are vital to the core operation of the game.
+2. Connection records. We record when you connect, with the data in item 1.
+3. Game logs. The server records what happens in a round: speech, OOC, PDA messages, emotes, fights and admin actions. This logging is necessary to make sure the rules can be enforced.
+4. Your characters and preferences. If we didn't save these, you wouldn't be able to play the game.
+5. Your age check result. We only keep "passed". If you fail, you are banned on the spot. We never store your date of birth. Your game client works out your age and sends only that number. Seriously, no kids.
+6. Your recent connections. Your game window keeps your last 5 connections (key, IP address, computer ID) on your computer. It sends them to any SS13 server you join. We use them only to find alt accounts and ban evasion.
+
+WHAT WE DO NOT DO
+- We do not ask for ID, photos or your real name. (Against my ethical principles, and also really hard.)
+- We do not sell or share your data. (Who would buy it anyway?)
+- We do not send your data to outside services.
+
+HOW LONG WE KEEP IT
+- Game logs and connection records: up to %LOG_RETENTION_DAYS% days. The server erases older records automatically.
+- Bans: until the ban is lifted. A ban keeps the key and computer ID it applies to.
+- Your account record (key, last IP address, last computer ID, first and last join date): indefinitely.
+- Your age check result, and your agreement to this privacy policy: indefinitely.
+
+YOUR CHOICES
+You can ask us to delete your data, I guess. But like, I'm not sure why you would. It's just an SS13 server.
+Contact: to be announced.
+
+ADULTS ONLY
+Again, you must be %MINIMUM_AGE% or older to play here. If we find out that you are not, we ban you and delete your data, except the ban record.
+
+BYOND
+BYOND is a separate service with its own privacy policy. We do not control what BYOND collects.
+
+CHANGES
+If we change this policy in a way that matters, we may ask you to agree again the next time you join.

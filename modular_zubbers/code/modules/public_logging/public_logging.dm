@@ -4,6 +4,10 @@ GLOBAL_VAR(master_public_log_file)
 
 
 /proc/log_public_file(redacted_log_text, no_regex_needed)
+	// MAVERICK EDIT BEGIN - we do not publish logs
+	if(!CONFIG_GET(flag/maverick_public_logging))
+		return
+	// MAVERICK EDIT END
 	if(fexists(GLOB.master_public_log_file) && !isnull(redacted_log_text))
 		if(no_regex_needed)
 			rustg_file_append("\[[time2text(world.timeofday)]\] : [redacted_log_text]\n", GLOB.master_public_log_file)

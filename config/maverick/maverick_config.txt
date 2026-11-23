@@ -9,6 +9,25 @@
 # This file is read on server start. Admins can also change entries live with
 # View Variables on the config datum.
 
+## Ask new players for their date of birth and ban anyone under the minimum age. Set to 0 to turn it off.
+MAVERICK_AGE_GATE 1
+
+## Minimum age to pass the age gate. Cannot be set below 18.
+MAVERICK_AGE_GATE_MINIMUM_AGE 18
+
+## Ages above this are treated as a fake answer and banned. Between 60 and 120.
+MAVERICK_AGE_GATE_MAXIMUM_AGE 100
+
+## Version of maverick/privacy_policy.txt. Raise it after a meaningful change and every player is asked to agree again.
+MAVERICK_PRIVACY_POLICY_VERSION 1
+
+## Round logs and player-linked database history older than this many days are deleted at server start.
+## The privacy policy quotes this number, so players are told the real value.
+MAVERICK_LOG_RETENTION_DAYS 90
+
+## Uncomment to write PDA messages to a log meant for public release. Off because the privacy policy says we do not publish logs.
+#MAVERICK_PUBLIC_LOGGING
+
 ## Local test servers: turn game debugging on when someone connects from localhost,
 ## so runtimes show in the Debug Log chat tab. Only with the localhost admin rank on.
 MAVERICK_LOCAL_DEBUG
