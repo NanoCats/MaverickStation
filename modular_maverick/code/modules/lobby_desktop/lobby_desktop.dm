@@ -79,6 +79,7 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	"mav_paint_tools.png" = 'modular_maverick/html/lobby_desktop/mav_paint_tools.png',
 	"mav_starfield.png" = 'modular_maverick/html/lobby_desktop/mav_starfield.png',
 	"mav_wordmark.png" = 'modular_maverick/html/lobby_desktop/mav_wordmark.png',
+	"mav_icon_cheats.png" = 'modular_maverick/html/lobby_desktop/mav_icon_cheats.png',
 	"mav_icon_clown.png" = 'modular_maverick/html/lobby_desktop/mav_icon_clown.png',
 	"mav_icon_directory.png" = 'modular_maverick/html/lobby_desktop/mav_icon_directory.png',
 	"mav_icon_horn.png" = 'modular_maverick/html/lobby_desktop/mav_icon_horn.png',
@@ -227,6 +228,8 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	settings["servers"] = LAZYLEN(CONFIG_GET(keyed_list/cross_server)) > 0
 	settings["traits"] = length(GLOB.lobby_station_traits) > 0
 	settings["polls"] = maverick_poll_state()
+	// Cheat Engine icon, for admins who can use the playtest cheats
+	settings["cheats"] = !!check_rights_for(client, R_DEBUG)
 	settings["crt_hotspot"] = LOBBY_DESKTOP_CRT_HOTSPOT
 	settings["inline"] = maverick_inline_image_data()
 	settings["sfx"] = client.maverick_desktop_sound_mode()

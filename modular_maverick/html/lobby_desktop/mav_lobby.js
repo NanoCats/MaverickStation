@@ -1392,6 +1392,9 @@
 		if (C.traits) {
 			list.push({ id: "traits", label: "Job Traits", icon: "traits", open: ACTIONS.traits });
 		}
+		if (C.cheats) {
+			list.push({ id: "cheats", label: "Cheat Engine", icon: "cheats", open: function () { byond("open_cheats=1"); } });
+		}
 		if (C.polls) {
 			list.push({ id: "polls", label: C.polls === "new" ? "Polls (NEW)" : "Polls", icon: "polls", open: ACTIONS.polls });
 		}
