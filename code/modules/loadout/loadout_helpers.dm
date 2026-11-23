@@ -79,7 +79,7 @@
 			continue
 
 		// MAVERICK EDIT ADDITION BEGIN - Staff and access gates
-		var/gate_failure = item.check_maverick_gates(preference_source, equipping, visuals_only)
+		var/gate_failure = item.check_maverick_gates(preference_source, equipped_outfit, visuals_only)
 		if(gate_failure)
 			if(preference_source.parent && !visuals_only)
 				to_chat(preference_source.parent, span_warning("You were unable to get a loadout item ([initial(item.item_path.name)]) due to [gate_failure]!"))
@@ -87,7 +87,7 @@
 			continue
 		// MAVERICK EDIT ADDITION END
 
-		if(loadout_placement_preference == LOADOUT_OVERRIDE_CASE && !visuals_only)
+		if(loadout_placement_preference == LOADOUT_OVERRIDE_CASE && !visuals_only && item.spawns_item) // MAVERICK EDIT CHANGE - Added spawns_item
 			if(!travel_suitcase)
 				travel_suitcase  = new(loc)
 			new item.item_path(travel_suitcase)

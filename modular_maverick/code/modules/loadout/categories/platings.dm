@@ -13,14 +13,12 @@
 /datum/loadout_item/plating
 	abstract_type = /datum/loadout_item/plating
 	restricted_species = list(SPECIES_PROTEAN)
+	spawns_item = FALSE
 
 /datum/loadout_item/plating/insert_path_into_outfit(datum/outfit/outfit, mob/living/carbon/human/equipper, visuals_only = FALSE, loadout_placement_preference)
 	return
 
 /datum/loadout_item/plating/on_equip_item(obj/item/equipped_item, list/item_details, mob/living/carbon/human/equipper, datum/outfit/outfit, visuals_only = FALSE)
-	// The travel case option spawns the item directly, so clean that copy up.
-	if(!QDELETED(equipped_item))
-		qdel(equipped_item)
 	if(visuals_only)
 		return NONE
 	var/datum/species/protean/protean = equipper.dna?.species

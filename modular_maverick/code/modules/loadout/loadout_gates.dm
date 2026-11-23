@@ -4,8 +4,10 @@
 /datum/loadout_item
 	/// Lowest staff tier that can take this item. See LOADOUT_STAFF_* defines.
 	var/required_staff_tier = LOADOUT_STAFF_NONE
-	/// Access the spawning job must have this round. The job needs all of them.
+	/// Access the spawning ID must have this round. The ID needs all of them.
 	var/list/required_access
+	/// If FALSE, the item is never spawned as an object, even in the travel case. It only acts in on_equip_item.
+	var/spawns_item = TRUE
 
 /// Returns the staff tier of a client. Higher tiers include lower ones.
 /proc/get_loadout_staff_tier(client/user)
@@ -36,15 +38,13 @@
 		return TRUE
 	return get_loadout_staff_tier(user) >= required_staff_tier
 
-/// Returns TRUE if the job's ID will have all of our required access this round.
-/// Reads the job's trim, which already has the round's access config applied.
-/datum/loadout_item/proc/passes_access(datum/job/job)
+/// Returns TRUE if the ID this outfit gives has all of our required access.
+/// Reads the outfit's trim, which already has the round's access config applied.
+/// Using the outfit instead of the job means admin spawns and ghost roles are judged by the ID they really get.
+/datum/loadout_item/proc/passes_access(datum/outfit/outfit)
 	if(!length(required_access))
 		return TRUE
-	if(isnull(job?.outfit))
-		return FALSE
-	var/datum/outfit/job_outfit = job.outfit
-	var/trim_path = job_outfit::id_trim
+	var/trim_path = outfit?.id_trim
 	if(!trim_path)
 		return FALSE
 	var/datum/id_trim/trim = SSid_access.trim_singletons_by_path[trim_path]
@@ -59,11 +59,11 @@
  * Checks the Maverick gates when the character spawns.
  * Returns a reason string if the item is blocked, or null if it is fine.
  */
-/datum/loadout_item/proc/check_maverick_gates(datum/preferences/preference_source, datum/job/equipping, visuals_only = FALSE)
+/datum/loadout_item/proc/check_maverick_gates(datum/preferences/preference_source, datum/outfit/outfit, visuals_only = FALSE)
 	if(!passes_staff_tier(preference_source?.parent))
 		return "staff restrictions"
-	// The preview has no real job, so show access locked items there.
-	if(!visuals_only && !passes_access(equipping))
+	// The preview has no real ID, so show access locked items there.
+	if(!visuals_only && !passes_access(outfit))
 		return "access restrictions"
 	return null
 
@@ -75,7 +75,7 @@
 		var/list/access_names = list()
 		for(var/needed in required_access)
 			access_names += SSid_access.get_access_desc(needed) || needed
-		.[FA_ICON_ID_CARD] = "Needs access: [access_names.Join(", ")]\nChecked against your job when you spawn."
+		.[FA_ICON_ID_CARD] = "Needs access: [access_names.Join(", ")]\nChecked against your ID when you spawn."
 
 // Sends the staff tier to the loadout UI so it can hide items above the viewer's tier, like ckey locked items.
 /datum/loadout_item/to_ui_data()
