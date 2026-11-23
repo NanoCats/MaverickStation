@@ -27,3 +27,7 @@ MAVERICK_LOG_RETENTION_DAYS 90
 
 ## Uncomment to write PDA messages to a log meant for public release. Off because the privacy policy says we do not publish logs.
 #MAVERICK_PUBLIC_LOGGING
+
+## Local test servers: turn game debugging on when someone connects from localhost,
+## so runtimes show in the Debug Log chat tab. Only with the localhost admin rank on.
+MAVERICK_LOCAL_DEBUG
