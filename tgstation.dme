@@ -7396,6 +7396,7 @@
 #include "modular_maverick\code\modules\mod\mod_platings.dm"
 #include "modular_maverick\code\modules\mod\security_plating.dm"
 #include "modular_maverick\code\modules\research\research_on_deconstruct.dm"
+#include "modular_maverick\code\modules\species_roster\species_roster.dm"
 #include "modular_maverick\modules\robotics_surgery_tray\code\robotics_surgery_tray.dm"
 #include "modular_skyrat\master_files\code\_globalvars\configuration.dm"
 #include "modular_skyrat\master_files\code\_globalvars\regexes.dm"

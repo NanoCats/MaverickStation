@@ -31,3 +31,10 @@ MAVERICK_LOG_RETENTION_DAYS 90
 ## Local test servers: turn game debugging on when someone connects from localhost,
 ## so runtimes show in the Debug Log chat tab. Only with the localhost admin rank on.
 MAVERICK_LOCAL_DEBUG
+
+## Species roster. These adjust which species can be picked in character setup, on top of the
+## upstream ROUNDSTART_RACES list. Use species IDs, one per line. Disabled wins over enabled.
+MAVERICK_SPECIES_DISABLED vox
+MAVERICK_SPECIES_DISABLED teshari
+MAVERICK_SPECIES_DISABLED cursekin
+MAVERICK_SPECIES_ENABLED primitive_felinid
