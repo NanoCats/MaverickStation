@@ -550,7 +550,8 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		titles += list(list("title" = maverick_track_name(track)))
 	var/enabled = !CONFIG_GET(flag/disallow_title_music) && length(tracks)
 	var/volume = prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
-	var/playing = enabled && !maverick_music_stopped && volume > 0
+	// Once a track is going, it keeps going at 0%. Before that, 0% means lobby music is off.
+	var/playing = enabled && !maverick_music_stopped && (volume > 0 || maverick_music_sent)
 	// Nothing plays until the desktop says hello (after the boot screen and the startup
 	// sound), so until then the track sits at 0:00. Starting the clock any earlier made
 	// SpaceAmp open partway into the song, then jump back to the start.
@@ -579,12 +580,16 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		state["started"] = TRUE
 	src << output(url_encode(json_encode(state)), "title_browser:music_state")
 
-/client/proc/maverick_music_play(path, offset = 0)
+/**
+ * Starts a track for this player. At 0% volume it plays silently, like any music player.
+ * wake: the player pressed play. At 0% that means "I want music", so the volume goes to 50%.
+ */
+/client/proc/maverick_music_play(path, offset = 0, wake = FALSE)
 	if(!path || CONFIG_GET(flag/disallow_title_music))
 		return
 	var/datum/preference/volume_pref = GLOB.preference_entries[/datum/preference/numeric/volume/sound_lobby_volume]
 	var/volume = prefs.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
-	if(!volume)
+	if(!volume && wake)
 		// Pressing play with the volume at zero means "I want music". Don't restart it through the pref's own hook.
 		volume = 50
 		prefs.write_preference(volume_pref, volume)
@@ -618,7 +623,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		if("hello")
 			maverick_music_hello(text2num(href_list["hour"]), text2num(href_list["minute"]), text2num(href_list["month"]), text2num(href_list["day"]))
 		if("play")
-			maverick_music_play(index ? current : next_track)
+			maverick_music_play(index ? current : next_track, wake = TRUE)
 		if("pause")
 			if(maverick_music_stopped || maverick_music_paused)
 				return
