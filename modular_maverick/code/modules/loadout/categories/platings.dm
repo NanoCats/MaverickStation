@@ -6,7 +6,102 @@
 /datum/loadout_category/platings
 	category_name = "Platings"
 	category_ui_icon = FA_ICON_ROBOT
-	category_info = "(Proteans)"
+	category_info = "For Proteans only"
+	type_to_generate = /datum/loadout_item/plating
+	tab_order = /datum/loadout_category/head::tab_order + 15
+
+/datum/loadout_item/plating
+	abstract_type = /datum/loadout_item/plating
+	restricted_species = list(SPECIES_PROTEAN)
+	spawns_item = FALSE
+
+/// The MOD theme this plating applies, or null if it has none.
+/datum/loadout_item/plating/proc/get_theme()
+	var/obj/item/mod/construction/plating/plating_path = item_path
+	return GLOB.mod_themes[plating_path::theme]
+
+/// The GAGS entry for the suit this plating makes, or null if that suit cannot be painted.
+/datum/loadout_item/plating/proc/get_gags_entry()
+	var/datum/mod_theme/theme = get_theme()
+	return theme ? GLOB.mod_gags_skins[theme.default_skin] : null
+
+/datum/loadout_item/plating/New(category)
+	. = ..()
+	// Show the suit's own control unit, since every plating sprite looks the same.
+	var/datum/mod_theme/theme = get_theme()
+	if(!theme)
+		return
+	var/list/skin = theme.variants[theme.default_skin]
+	var/suit_icon = skin?[MOD_ICON_OVERRIDE] || 'icons/obj/clothing/modsuit/mod_clothing.dmi'
+	var/suit_state = "[theme.default_skin]-control"
+	if(icon_exists(suit_icon, suit_state))
+		ui_icon = suit_icon
+		ui_icon_state = suit_state
+
+// Recoloring paints the suit, not the plating item, so it is allowed only when the suit has GAGS.
+/datum/loadout_item/plating/is_greyscale_item()
+	return !isnull(get_gags_entry())
+
+// Only offer the GAGS recolor. The simple repaint has nothing to act on.
+/datum/loadout_item/plating/get_ui_buttons()
+	. = ..()
+	var/list/buttons = list()
+	if(loadout_flags & LOADOUT_FLAG_GREYSCALING_ALLOWED)
+		UNTYPED_LIST_ADD(buttons, list(
+			"label" = "Recolor",
+			"act_key" = "select_color",
+			"button_icon" = FA_ICON_PALETTE,
+			"active_key" = INFO_GREYSCALE,
+		))
+	return buttons
+
+/// Opens the same paint menu the MOD paint kit uses, for this plating's suit.
+/datum/loadout_item/plating/set_item_color(datum/preference_middleware/loadout/manager, mob/user)
+	if(manager.menu)
+		return FALSE
+	var/datum/mod_gags_skin/entry = get_gags_entry()
+	if(!entry)
+		return FALSE
+	var/datum/mod_theme/theme = get_theme()
+	var/list/loadout = manager.get_current_loadout()
+	var/datum/greyscale_modify_menu/menu = new(
+		manager,
+		user,
+		list("[entry.menu_config]"),
+		CALLBACK(src, PROC_REF(set_slot_greyscale), manager),
+		starting_icon_state = "worn [entry.skin]-chestplate-sealed",
+		starting_config = entry.menu_config,
+		starting_colors = loadout?[item_path]?[INFO_GREYSCALE] || theme.get_gags_default_colors(entry),
+	)
+	menu.color_labels = entry.color_labels
+	manager.register_greyscale_menu(menu)
+	menu.ui_interact(user)
+	return TRUE
+
+/datum/loadout_item/plating/insert_path_into_outfit(datum/outfit/outfit, mob/living/carbon/human/equipper, visuals_only = FALSE, loadout_placement_preference)
+	return
+
+/datum/loadout_item/plating/on_equip_item(obj/item/equipped_item, list/item_details, mob/living/carbon/human/equipper, datum/outfit/outfit, visuals_only = FALSE)
+	if(visuals_only)
+		return NONE
+	var/datum/species/protean/protean = equipper.dna?.species
+	if(!istype(protean) || isnull(protean.species_modsuit))
+		return NONE
+	var/obj/item/mod/construction/plating/plates = new item_path(null)
+	protean.assimilate_theme(equipper, plates)
+	qdel(plates)
+	// Paint after the theme swap, so the colors land on the new skin.
+	var/colors = item_details?[INFO_GREYSCALE]
+	if(colors && get_gags_entry())
+		protean.species_modsuit.set_gags_colors(colors)
+	return NONE
+
+// Station platings need the matching department access. Off-station and antag platings are admin only.
+
+/datum/loadout_category/platings
+	category_name = "Platings"
+	category_ui_icon = FA_ICON_ROBOT
+	category_info = "For Proteans only"
 	type_to_generate = /datum/loadout_item/plating
 	tab_order = /datum/loadout_category/head::tab_order + 15
 
