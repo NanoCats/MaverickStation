@@ -8,3 +8,7 @@
 #
 # This file is read on server start. Admins can also change entries live with
 # View Variables on the config datum.
+
+## Local test servers: turn game debugging on when someone connects from localhost,
+## so runtimes show in the Debug Log chat tab. Only with the localhost admin rank on.
+MAVERICK_LOCAL_DEBUG
