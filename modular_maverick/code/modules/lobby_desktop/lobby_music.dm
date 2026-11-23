@@ -622,7 +622,8 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		if("pause")
 			if(maverick_music_stopped || maverick_music_paused)
 				return
-			var/sound/pause = sound(null, repeat = 0, wait = 0, channel = CHANNEL_LOBBYMUSIC)
+			// an update without a volume resets the channel to full volume, so always send it
+			var/sound/pause = sound(null, repeat = 0, wait = 0, volume = prefs.read_preference(/datum/preference/numeric/volume/sound_lobby_volume), channel = CHANNEL_LOBBYMUSIC)
 			pause.status = SOUND_PAUSED | SOUND_UPDATE
 			SEND_SOUND(src, pause)
 			maverick_music_paused = TRUE
@@ -631,7 +632,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		if("resume")
 			if(!maverick_music_paused)
 				return
-			var/sound/resume = sound(null, repeat = 0, wait = 0, channel = CHANNEL_LOBBYMUSIC)
+			var/sound/resume = sound(null, repeat = 0, wait = 0, volume = prefs.read_preference(/datum/preference/numeric/volume/sound_lobby_volume), channel = CHANNEL_LOBBYMUSIC)
 			resume.status = SOUND_UPDATE
 			SEND_SOUND(src, resume)
 			maverick_music_started += world.time - maverick_music_paused_at
