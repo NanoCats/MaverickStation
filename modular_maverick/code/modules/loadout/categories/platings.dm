@@ -42,7 +42,7 @@
 /datum/loadout_item/plating/is_greyscale_item()
 	return !isnull(get_gags_entry())
 
-// Only offer the GAGS recolor. The simple repaint has nothing to act on.
+// Only offer the GAGS recolor and suit naming. The simple repaint has nothing to act on.
 /datum/loadout_item/plating/get_ui_buttons()
 	. = ..()
 	var/list/buttons = list()
@@ -53,6 +53,19 @@
 			"button_icon" = FA_ICON_PALETTE,
 			"active_key" = INFO_GREYSCALE,
 		))
+	// The name and description go on the protean's suit.
+	UNTYPED_LIST_ADD(buttons, list(
+		"label" = "Name suit",
+		"act_key" = "set_name",
+		"button_icon" = FA_ICON_PEN,
+		"active_key" = INFO_NAMED,
+	))
+	UNTYPED_LIST_ADD(buttons, list(
+		"label" = "Describe suit",
+		"act_key" = "set_desc",
+		"button_icon" = FA_ICON_PEN,
+		"active_key" = INFO_DESCRIBED,
+	))
 	return buttons
 
 /// Opens the same paint menu the MOD paint kit uses, for this plating's suit.
@@ -94,6 +107,17 @@
 	var/colors = item_details?[INFO_GREYSCALE]
 	if(colors && get_gags_entry())
 		protean.species_modsuit.set_gags_colors(colors)
+	// Name and describe the suit itself, not the plating.
+	var/obj/item/mod/control/suit = protean.species_modsuit
+	var/renamed = FALSE
+	if(item_details?[INFO_NAMED])
+		suit.name = trim(item_details[INFO_NAMED], PREVENT_CHARACTER_TRIM_LOSS(MAX_NAME_LEN))
+		renamed = TRUE
+	if(item_details?[INFO_DESCRIBED])
+		suit.desc = trim(item_details[INFO_DESCRIBED], PREVENT_CHARACTER_TRIM_LOSS(MAX_DESC_LEN))
+		renamed = TRUE
+	if(renamed)
+		ADD_TRAIT(suit, TRAIT_WAS_RENAMED, TRAIT_SOURCE_LOADOUT)
 	return NONE
 
 // Station platings need the matching department access. Off-station and antag platings are admin only.
