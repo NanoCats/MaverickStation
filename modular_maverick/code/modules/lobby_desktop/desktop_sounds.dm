@@ -30,11 +30,11 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 /**
  * Plays one desktop sound for this player only. kind: click, error, startup or shutdown.
  * The desktop sounds follow the lobby music volume, so the one slider sets both.
- * The desktop page plays its sounds itself and only comes here when one failed to load.
- * record_only: the page played it, so only use up the startup sound.
+ * The desktop page plays its clicks itself and only comes here when one failed to load.
+ * The startup sound always plays from here.
  * Returns TRUE if a sound played.
  */
-/mob/dead/new_player/proc/maverick_desktop_sfx(kind, record_only = FALSE)
+/mob/dead/new_player/proc/maverick_desktop_sfx(kind)
 	if(!client)
 		return FALSE
 	var/static/list/sounds = list(
@@ -53,8 +53,6 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 		if(!client.maverick_startup_due())
 			return FALSE
 		GLOB.maverick_startup_heard[client.ckey] = TRUE
-	if(record_only)
-		return FALSE
 	var/mode = client.maverick_desktop_sound_mode()
 	if(mode == LOBBY_DESKTOP_SOUNDS_OFF)
 		return FALSE

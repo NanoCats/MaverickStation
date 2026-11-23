@@ -68,7 +68,7 @@
 
 	// Desktop clicks, error chimes and the startup sound
 	if(href_list["lobby_sfx"])
-		maverick_desktop_sfx(href_list["lobby_sfx"], record_only = !!href_list["record"])
+		maverick_desktop_sfx(href_list["lobby_sfx"])
 		return TRUE
 
 	// Start > Sounds

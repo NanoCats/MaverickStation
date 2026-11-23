@@ -61,7 +61,6 @@ GLOBAL_LIST_INIT(maverick_lobby_files, list(
 	"TinyUnicode.ttf" = 'interface/fonts/TinyUnicode.ttf',
 	"desktop_click.ogg" = 'modular_maverick/sound/lobby_desktop/desktop_click.ogg',
 	"desktop_error.ogg" = 'modular_maverick/sound/lobby_desktop/desktop_error.ogg',
-	"desktop_startup.ogg" = 'modular_maverick/sound/lobby_desktop/desktop_startup.ogg',
 	"desktop_shutdown.ogg" = 'modular_maverick/sound/lobby_desktop/desktop_shutdown.ogg',
 	"mav_wall_night.png" = 'modular_maverick/html/lobby_desktop/mav_wall_night.png',
 	"mav_wall_dawn.png" = 'modular_maverick/html/lobby_desktop/mav_wall_dawn.png',

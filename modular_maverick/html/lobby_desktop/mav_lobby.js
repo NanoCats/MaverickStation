@@ -58,10 +58,11 @@
 	// The page plays its own sounds, so a click sounds the moment it happens and the
 	// boot screen can wait until they are loaded. The server sends the files with the
 	// other lobby files. A sound that never loads is played by the server instead.
+	// The startup sound is not here: it plays before the player has clicked anything, and
+	// a page may not be allowed to play sound until then. The server always plays it.
 	var SFX_FILES = {
 		click: "desktop_click.ogg",
 		error: "desktop_error.ogg",
-		startup: "desktop_startup.ogg",
 		shutdown: "desktop_shutdown.ogg",
 	};
 	var SFX_RETRIES = 10;
@@ -116,7 +117,12 @@
 		a.volume = Math.min(1, sfx_vol / 100);
 		var started = a.play();
 		if (started && started.catch) {
-			started.catch(function () {});
+			// the page wasn't allowed to play it, so the server plays it instead
+			started.catch(function () {
+				if (kind !== "shutdown") {
+					byond("lobby_sfx=" + kind);
+				}
+			});
 		}
 		return true;
 	}
@@ -137,17 +143,13 @@
 	}
 
 	// The desktop is up. The first desktop of the round always tells the server, which
-	// uses up the startup sound even when sounds are off, so it can't turn up later in
-	// the round. If it does play, the music waits for it.
+	// plays the startup sound and uses it up even when sounds are off, so it can't turn up
+	// later in the round. If it is heard, the music waits for it.
 	function desktop_ready() {
 		if (C.startup_due) {
 			C.startup_due = false;
-			if (sfx_mode === "All" && play_local("startup")) {
-				byond("lobby_sfx=startup;record=1");
-			} else {
-				byond("lobby_sfx=startup");
-			}
-			if (sfx_mode === "All") {
+			byond("lobby_sfx=startup");
+			if (sfx_mode === "All" && sfx_vol > 0) {
 				after(STARTUP_MS, music_hello);
 				return;
 			}
@@ -2221,6 +2223,19 @@
 	// time- or date-limited lobby tracks (see config/title_music/names.txt).
 	var music_live = false;
 
+	function clock_args() {
+		var d = new Date();
+		return "hour=" + d.getHours() + ";minute=" + d.getMinutes() + ";month=" + (d.getMonth() + 1) + ";day=" + d.getDate();
+	}
+
+	// The server picks the first track as soon as the page loads, so SpaceAmp already
+	// shows the right one when the desktop appears instead of switching to it.
+	function music_clock() {
+		if (C.mode !== "startup" && C.music.enabled && C.music.needs_hello) {
+			byond("music=clock;" + clock_args());
+		}
+	}
+
 	function music_hello() {
 		if (music_live) {
 			return;
@@ -2229,8 +2244,7 @@
 		if (!C.music.enabled || !C.music.needs_hello) {
 			return;
 		}
-		var d = new Date();
-		byond("music=hello;hour=" + d.getHours() + ";minute=" + d.getMinutes() + ";month=" + (d.getMonth() + 1) + ";day=" + d.getDate());
+		byond("music=hello;" + clock_args());
 	}
 
 	function init() {
@@ -2255,6 +2269,7 @@
 		root.style.inset = "0";
 		ready = !!C.ready;
 		antag = !!C.antag;
+		music_clock();
 		if (C.mode === "startup") {
 			build_splash(root);
 		} else if ((C.intro || (C.startup_due && !lobby_ready())) && !C.classic) {
