@@ -112,12 +112,12 @@ export const MaverickCheatEngine = () => {
                   </td>
                   <td style={cell}>
                     {cheat.name}
-                    {cheat.waiting && (
+                    {cheat.waiting ? (
                       <span style={{ color: '#606060' }}>
                         {' '}
                         (applies at round start)
                       </span>
-                    )}
+                    ) : null}
                   </td>
                   <td style={{ ...cell, fontFamily: 'monospace' }}>
                     {cheat.address}

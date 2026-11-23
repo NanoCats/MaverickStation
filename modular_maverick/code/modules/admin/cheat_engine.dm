@@ -227,7 +227,7 @@ GLOBAL_DATUM_INIT(maverick_cheats, /datum/maverick_cheats, new)
 		var/key = cheat["key"]
 		var/list/row = cheat.Copy()
 		row["active"] = !!active[key]
-		row["waiting"] = active[key] && !applied[key] && key != CHEAT_COUNTDOWN
+		row["waiting"] = !!(active[key] && !applied[key] && key != CHEAT_COUNTDOWN)
 		cheats += list(row)
 	return list(
 		"cheats" = cheats,
