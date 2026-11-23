@@ -78,6 +78,15 @@
 			loadout_datums -= item
 			continue
 
+		// MAVERICK EDIT ADDITION BEGIN - Staff and access gates
+		var/gate_failure = item.check_maverick_gates(preference_source, equipping, visuals_only)
+		if(gate_failure)
+			if(preference_source.parent && !visuals_only)
+				to_chat(preference_source.parent, span_warning("You were unable to get a loadout item ([initial(item.item_path.name)]) due to [gate_failure]!"))
+			loadout_datums -= item
+			continue
+		// MAVERICK EDIT ADDITION END
+
 		if(loadout_placement_preference == LOADOUT_OVERRIDE_CASE && !visuals_only)
 			if(!travel_suitcase)
 				travel_suitcase  = new(loc)
