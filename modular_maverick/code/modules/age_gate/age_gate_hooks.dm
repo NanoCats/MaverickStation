@@ -1,5 +1,6 @@
 /// Opens the welcome window (privacy policy and age gate) if this client still needs it. Can sleep.
 /client/proc/prompt_age_gate()
+	SSage_gate.sync_vetted(ckey)
 	if(!SSage_gate.needs_check(src))
 		return
 	if(SSage_gate.lookup(ckey))
@@ -10,6 +11,7 @@
 
 /// Loads this client's stored answers into the cache without opening anything. Can sleep.
 /client/proc/preload_age_gate()
+	SSage_gate.sync_vetted(ckey)
 	if(SSage_gate.needs_check(src))
 		SSage_gate.lookup(ckey)
 

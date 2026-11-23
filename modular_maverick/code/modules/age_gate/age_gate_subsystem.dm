@@ -33,6 +33,8 @@ SUBSYSTEM_DEF(age_gate)
 	var/list/file_underage_ckeys
 	/// Open welcome windows, ckey -> /datum/age_gate_prompt
 	var/list/open_prompts = list()
+	/// ckeys of admins who failed the age check while testing. They may play this round, but it is not a real pass.
+	var/list/test_pass_ckeys = list()
 
 /datum/controller/subsystem/age_gate/Initialize()
 	if(!CONFIG_GET(flag/maverick_age_gate))
@@ -73,6 +75,7 @@ SUBSYSTEM_DEF(age_gate)
 		passed_ckeys[ckey] = TRUE
 	if(file_policy_versions[ckey] >= CONFIG_GET(number/maverick_privacy_policy_version))
 		policy_ckeys[ckey] = TRUE
+	sync_vetted(ckey)
 	if(passed_ckeys[ckey] && policy_ckeys[ckey])
 		return TRUE
 	if(!SSdbcore.IsConnected())
@@ -91,6 +94,7 @@ SUBSYSTEM_DEF(age_gate)
 		else
 			policy_ckeys[ckey] = TRUE
 	qdel(query)
+	sync_vetted(ckey)
 	return passed_ckeys[ckey] && policy_ckeys[ckey]
 
 /// Handles an answer from the welcome window that included an age.
@@ -105,6 +109,7 @@ SUBSYSTEM_DEF(age_gate)
 		// Kept for this round only, so the next real answer still counts.
 		passed_ckeys[player.ckey] = TRUE
 		policy_ckeys[player.ckey] = TRUE
+		test_pass_ckeys[player.ckey] = TRUE
 		to_chat(player, span_notice("Age verification check failed, but you're an admin, so I'll assume you're testing. Nothing was stored."))
 		log_admin("Age gate: [key_name(player)] gave [describe_failed_age(age)] but is an admin or the host, so was not banned.")
 		return
@@ -132,8 +137,11 @@ SUBSYSTEM_DEF(age_gate)
 /// Called when a player gives an age in the allowed range.
 /datum/controller/subsystem/age_gate/proc/record_pass(client/player)
 	passed_ckeys[player.ckey] = TRUE
+	test_pass_ckeys -= player.ckey
 	log_access("Age gate: [key_name(player)] passed.")
 	INVOKE_ASYNC(src, PROC_REF(store_result), player.ckey, AGE_GATE_POLICY_KEY)
+	sync_vetted(player.ckey)
+	INVOKE_ASYNC(src, PROC_REF(store_vetted), player.ckey)
 
 /// Called when a player agrees to the current privacy policy.
 /datum/controller/subsystem/age_gate/proc/record_policy(client/player)

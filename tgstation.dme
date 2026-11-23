@@ -7375,6 +7375,7 @@
 #include "modular_maverick\code\modules\age_gate\age_gate_hooks.dm"
 #include "modular_maverick\code\modules\age_gate\age_gate_prompt.dm"
 #include "modular_maverick\code\modules\age_gate\age_gate_subsystem.dm"
+#include "modular_maverick\code\modules\age_gate\age_gate_vetting.dm"
 #include "modular_maverick\code\modules\age_gate\config.dm"
 #include "modular_maverick\code\modules\branding\space_law_book.dm"
 #include "modular_maverick\code\modules\branding\top_bar_buttons.dm"
