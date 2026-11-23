@@ -7,3 +7,6 @@
 //
 // Then read it in code with CONFIG_GET(flag/maverick_example), and add a matching
 // line to the config file. Start entry names with maverick_ so they never clash with upstream.
+
+/// Turns game debugging on when someone connects from localhost with the localhost admin rank on, so runtimes show in the Debug Log chat tab
+/datum/config_entry/flag/maverick_local_debug

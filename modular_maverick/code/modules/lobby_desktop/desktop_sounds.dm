@@ -30,6 +30,8 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 /**
  * Plays one desktop sound for this player only. kind: click, error, startup or shutdown.
  * The desktop sounds follow the lobby music volume, so the one slider sets both.
+ * The desktop page plays its clicks itself and only comes here when one failed to load.
+ * The startup sound always plays from here.
  * Returns TRUE if a sound played.
  */
 /mob/dead/new_player/proc/maverick_desktop_sfx(kind)
@@ -69,6 +71,12 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 	SEND_SOUND(src, played)
 	return TRUE
 
+/// TRUE if this player hears the shutdown sound
+/mob/dead/new_player/proc/maverick_shutdown_audible()
+	if(!client || client.maverick_desktop_sound_mode() != LOBBY_DESKTOP_SOUNDS_ALL)
+		return FALSE
+	return !!client.prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
+
 /// The old lobby menu's button sound. The desktop plays its own clicks, so this only clicks for the old menu.
 /mob/dead/new_player/proc/maverick_lobby_button_sound()
 	if(CONFIG_GET(flag/maverick_lobby_desktop))
@@ -82,6 +90,7 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 	var/static/list/order = list(LOBBY_DESKTOP_SOUNDS_ALL, LOBBY_DESKTOP_SOUNDS_QUIET, LOBBY_DESKTOP_SOUNDS_OFF)
 	var/next = order[(order.Find(client.maverick_desktop_sound_mode()) % length(order)) + 1]
 	client.prefs.write_preference(GLOB.preference_entries[/datum/preference/choiced/maverick_desktop_sounds], next)
+	client.prefs.save_preferences() // write_preference only changes the copy in memory
 
 /**
  * BYOND keeps the last reverb a client heard until a sound changes it. A ghost that
