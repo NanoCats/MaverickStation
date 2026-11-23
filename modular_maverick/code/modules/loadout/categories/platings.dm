@@ -42,30 +42,14 @@
 /datum/loadout_item/plating/is_greyscale_item()
 	return !isnull(get_gags_entry())
 
-// Only offer the GAGS recolor and suit naming. The simple repaint has nothing to act on.
+// Drop the simple repaint buttons. They act on the plating item, which never spawns.
+// Recolor, Rename and Change description stay, and on_equip_item applies them to the suit.
 /datum/loadout_item/plating/get_ui_buttons()
 	. = ..()
-	var/list/buttons = list()
-	if(loadout_flags & LOADOUT_FLAG_GREYSCALING_ALLOWED)
-		UNTYPED_LIST_ADD(buttons, list(
-			"label" = "Recolor",
-			"act_key" = "select_color",
-			"button_icon" = FA_ICON_PALETTE,
-			"active_key" = INFO_GREYSCALE,
-		))
-	// The name and description go on the protean's suit.
-	UNTYPED_LIST_ADD(buttons, list(
-		"label" = "Name suit",
-		"act_key" = "set_name",
-		"button_icon" = FA_ICON_PEN,
-		"active_key" = INFO_NAMED,
-	))
-	UNTYPED_LIST_ADD(buttons, list(
-		"label" = "Describe suit",
-		"act_key" = "set_desc",
-		"button_icon" = FA_ICON_PEN,
-		"active_key" = INFO_DESCRIBED,
-	))
+	var/list/buttons = .
+	for(var/list/button as anything in buttons.Copy())
+		if(button["act_key"] in list("select_color_simple", "set_color_mode"))
+			buttons -= list(button)
 	return buttons
 
 /// Opens the same paint menu the MOD paint kit uses, for this plating's suit.
