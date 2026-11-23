@@ -10,6 +10,8 @@ GLOBAL_LIST_INIT(maverick_track_names, list(
 
 /// Every lobby track SpaceAmp can play, as file paths.
 GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
+/// Each player's last track this round, by ckey, so reconnecting keeps it.
+GLOBAL_LIST_EMPTY(maverick_music_round_tracks)
 /// Rolls alert-limited tracks for lobby players when the station alert level changes.
 GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener)
 
@@ -421,11 +423,24 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	maverick_music_picked = TRUE
 	if(isnum(hour) && isnum(minute) && isnum(month) && isnum(day))
 		maverick_music_clock = list(clamp(hour, 0, 23) * 60 + clamp(minute, 0, 59), month * 100 + day, world.realtime)
-	var/choice = maverick_music_first_track()
+	var/choice = maverick_music_kept_track() || maverick_music_first_track()
 	if(choice && choice != SSticker.login_music)
 		maverick_music_track = choice
 		maverick_music_base = SSticker.login_music
 	maverick_music_push()
+
+/// The track this player last had this round, if it can still play for them. Null otherwise.
+/client/proc/maverick_music_kept_track()
+	var/list/kept = GLOB.maverick_music_round_tracks[ckey]
+	if(!kept || kept[2] != SSticker.login_music)
+		return null // an admin changed the round's track since
+	var/track = kept[1]
+	if(!(track in maverick_lobby_tracks()))
+		return null
+	var/list/exclusive = maverick_open_exclusive_tracks()
+	if(length(exclusive) ? !(track in exclusive) : !maverick_track_open(track))
+		return null
+	return track
 
 /client/proc/maverick_music_first_track()
 	var/current = maverick_current_track()
@@ -579,6 +594,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	music.environment = LOBBY_DESKTOP_DRY_ENVIRONMENT // no leftover echo from the round
 	SEND_SOUND(src, music)
 	maverick_music_sent = TRUE
+	GLOB.maverick_music_round_tracks[ckey] = list(path, SSticker.login_music)
 	maverick_music_track = path
 	maverick_music_base = SSticker.login_music
 	maverick_music_stopped = FALSE
