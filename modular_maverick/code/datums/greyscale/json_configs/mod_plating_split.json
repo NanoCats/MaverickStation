@@ -1,0 +1,22 @@
+{
+	"plating": [
+		{
+			"type": "icon_state",
+			"icon_state": "plating",
+			"blend_mode": "overlay",
+			"color_ids": [ 1 ]
+		},
+		{
+			"type": "icon_state",
+			"icon_state": "plating_accent_left",
+			"blend_mode": "overlay",
+			"color_ids": [ 2 ]
+		},
+		{
+			"type": "icon_state",
+			"icon_state": "plating_accent_right",
+			"blend_mode": "overlay",
+			"color_ids": [ 3 ]
+		}
+	]
+}
