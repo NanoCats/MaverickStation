@@ -10,6 +10,8 @@ GLOBAL_LIST_INIT(maverick_track_names, list(
 
 /// Every lobby track SpaceAmp can play, as file paths.
 GLOBAL_LIST_EMPTY(maverick_lobby_tracks)
+/// Each player's last track this round, by ckey, so reconnecting keeps it.
+GLOBAL_LIST_EMPTY(maverick_music_round_tracks)
 /// Rolls alert-limited tracks for lobby players when the station alert level changes.
 GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener)
 
@@ -32,6 +34,10 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	var/list/maverick_music_clock
 	/// The player picked a track themselves, so alert changes leave their music alone.
 	var/maverick_music_manual = FALSE
+	/// The first track of this session is picked. It happens once, as soon as the page sends the player's clock.
+	var/maverick_music_picked = FALSE
+	/// A track was actually sent to the player this session. Until then, raising the volume has nothing to turn up.
+	var/maverick_music_sent = FALSE
 
 /**
  * Same pool the round's lobby track is picked from: common config tracks plus this map's tracks.
@@ -388,15 +394,14 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		visible += track
 	return visible
 
-/// Rolls special tracks from candidates. Plays the first winner and returns TRUE.
+/// Rolls special tracks from candidates. Returns the first winner, or null.
 /client/proc/maverick_roll_special_tracks(list/candidates)
 	for(var/track in shuffle(candidates))
 		var/list/rules = maverick_track_window(track)
 		var/chance = isnull(rules["chance"]) ? TRACK_RULE_DEFAULT_CHANCE : rules["chance"]
 		if(prob(chance))
-			maverick_music_play(track)
-			return TRUE
-	return FALSE
+			return track
+	return null
 
 /// Whether we may start a track on our own for this player right now.
 /client/proc/maverick_music_may_autoplay()
@@ -405,27 +410,43 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	return !!prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
 
 /**
- * Picks this player's first lobby track from their own clock.
+ * Picks this player's first lobby track from their own clock, without playing it.
  *
  * Special tracks whose rules match get a roll each. If none wins and the
  * round's track is special but outside its window for this player, they get
- * a regular track instead. Runs once per session, when the lobby first loads.
+ * a regular track instead. Runs once per session, as soon as the lobby page loads,
+ * so SpaceAmp shows the right track before the desktop appears.
  */
-/client/proc/maverick_music_hello(hour, minute, month, day)
-	if(maverick_music_greeted)
+/client/proc/maverick_music_pick(hour, minute, month, day)
+	if(maverick_music_picked)
 		return
-	maverick_music_greeted = TRUE
-	if(!maverick_music_may_autoplay())
-		return
-	// Nothing plays before this point (see playtitlemusic below), so every path here starts a track.
+	maverick_music_picked = TRUE
 	if(isnum(hour) && isnum(minute) && isnum(month) && isnum(day))
 		maverick_music_clock = list(clamp(hour, 0, 23) * 60 + clamp(minute, 0, 59), month * 100 + day, world.realtime)
+	var/choice = maverick_music_kept_track() || maverick_music_first_track()
+	if(choice && choice != SSticker.login_music)
+		maverick_music_track = choice
+		maverick_music_base = SSticker.login_music
+	maverick_music_push()
 
+/// The track this player last had this round, if it can still play for them. Null otherwise.
+/client/proc/maverick_music_kept_track()
+	var/list/kept = GLOB.maverick_music_round_tracks[ckey]
+	if(!kept || kept[2] != SSticker.login_music)
+		return null // an admin changed the round's track since
+	var/track = kept[1]
+	if(!(track in maverick_lobby_tracks()))
+		return null
+	var/list/exclusive = maverick_open_exclusive_tracks()
+	if(length(exclusive) ? !(track in exclusive) : !maverick_track_open(track))
+		return null
+	return track
+
+/client/proc/maverick_music_first_track()
+	var/current = maverick_current_track()
 	var/list/exclusive = maverick_open_exclusive_tracks()
 	if(length(exclusive))
-		var/current_track = maverick_current_track()
-		maverick_music_play((current_track in exclusive) ? current_track : pick(exclusive))
-		return
+		return (current in exclusive) ? current : pick(exclusive)
 
 	var/list/open_specials = list()
 	var/list/regulars = list()
@@ -434,13 +455,25 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 			regulars += track
 		else if(maverick_track_open(track))
 			open_specials += track
-	if(maverick_roll_special_tracks(open_specials))
-		return
+	var/special = maverick_roll_special_tracks(open_specials)
+	if(special)
+		return special
 
-	var/current = maverick_current_track()
 	if(current && !maverick_track_open(current) && length(regulars))
-		current = pick(regulars)
-	maverick_music_play(current)
+		return pick(regulars)
+	return current
+
+/// The desktop is up: start the picked track. Runs once per session.
+/client/proc/maverick_music_hello(hour, minute, month, day)
+	if(maverick_music_greeted)
+		return
+	maverick_music_greeted = TRUE
+	maverick_music_pick(hour, minute, month, day)
+	if(!maverick_music_may_autoplay())
+		maverick_music_push()
+		return
+	// Nothing plays before this point (see playtitlemusic below).
+	maverick_music_play(maverick_current_track())
 
 /**
  * With the desktop lobby on, the stock lobby music waits for the desktop: nothing plays on login
@@ -477,7 +510,9 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 			var/list/rules = maverick_track_window(track)
 			if(rules?["alert"] && track != current && maverick_track_open(track))
 				candidates += track
-		if(maverick_roll_special_tracks(candidates))
+		var/won = maverick_roll_special_tracks(candidates)
+		if(won)
+			maverick_music_play(won)
 			return
 	// the playlist may have gained or lost hidden alert tracks
 	maverick_music_push()
@@ -515,7 +550,8 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		titles += list(list("title" = maverick_track_name(track)))
 	var/enabled = !CONFIG_GET(flag/disallow_title_music) && length(tracks)
 	var/volume = prefs?.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
-	var/playing = enabled && !maverick_music_stopped && volume > 0
+	// Once a track is going, it keeps going at 0%. Before that, 0% means lobby music is off.
+	var/playing = enabled && !maverick_music_stopped && (volume > 0 || maverick_music_sent)
 	// Nothing plays until the desktop says hello (after the boot screen and the startup
 	// sound), so until then the track sits at 0:00. Starting the clock any earlier made
 	// SpaceAmp open partway into the song, then jump back to the start.
@@ -544,19 +580,26 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		state["started"] = TRUE
 	src << output(url_encode(json_encode(state)), "title_browser:music_state")
 
-/client/proc/maverick_music_play(path, offset = 0)
+/**
+ * Starts a track for this player. At 0% volume it plays silently, like any music player.
+ * wake: the player pressed play. At 0% that means "I want music", so the volume goes to 50%.
+ */
+/client/proc/maverick_music_play(path, offset = 0, wake = FALSE)
 	if(!path || CONFIG_GET(flag/disallow_title_music))
 		return
 	var/datum/preference/volume_pref = GLOB.preference_entries[/datum/preference/numeric/volume/sound_lobby_volume]
 	var/volume = prefs.read_preference(/datum/preference/numeric/volume/sound_lobby_volume)
-	if(!volume)
+	if(!volume && wake)
 		// Pressing play with the volume at zero means "I want music". Don't restart it through the pref's own hook.
 		volume = 50
 		prefs.write_preference(volume_pref, volume)
+		prefs.save_preferences() // write_preference only changes the copy in memory
 	var/sound/music = sound(path, repeat = 0, wait = 0, volume = volume, channel = CHANNEL_LOBBYMUSIC)
 	music.offset = offset
 	music.environment = LOBBY_DESKTOP_DRY_ENVIRONMENT // no leftover echo from the round
 	SEND_SOUND(src, music)
+	maverick_music_sent = TRUE
+	GLOB.maverick_music_round_tracks[ckey] = list(path, SSticker.login_music)
 	maverick_music_track = path
 	maverick_music_base = SSticker.login_music
 	maverick_music_stopped = FALSE
@@ -575,14 +618,17 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	var/index = tracks.Find(current)
 	var/next_track = tracks[(index % length(tracks)) + 1]
 	switch(command)
+		if("clock")
+			maverick_music_pick(text2num(href_list["hour"]), text2num(href_list["minute"]), text2num(href_list["month"]), text2num(href_list["day"]))
 		if("hello")
 			maverick_music_hello(text2num(href_list["hour"]), text2num(href_list["minute"]), text2num(href_list["month"]), text2num(href_list["day"]))
 		if("play")
-			maverick_music_play(index ? current : next_track)
+			maverick_music_play(index ? current : next_track, wake = TRUE)
 		if("pause")
 			if(maverick_music_stopped || maverick_music_paused)
 				return
-			var/sound/pause = sound(null, repeat = 0, wait = 0, channel = CHANNEL_LOBBYMUSIC)
+			// an update without a volume resets the channel to full volume, so always send it
+			var/sound/pause = sound(null, repeat = 0, wait = 0, volume = prefs.read_preference(/datum/preference/numeric/volume/sound_lobby_volume), channel = CHANNEL_LOBBYMUSIC)
 			pause.status = SOUND_PAUSED | SOUND_UPDATE
 			SEND_SOUND(src, pause)
 			maverick_music_paused = TRUE
@@ -591,7 +637,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		if("resume")
 			if(!maverick_music_paused)
 				return
-			var/sound/resume = sound(null, repeat = 0, wait = 0, channel = CHANNEL_LOBBYMUSIC)
+			var/sound/resume = sound(null, repeat = 0, wait = 0, volume = prefs.read_preference(/datum/preference/numeric/volume/sound_lobby_volume), channel = CHANNEL_LOBBYMUSIC)
 			resume.status = SOUND_UPDATE
 			SEND_SOUND(src, resume)
 			maverick_music_started += world.time - maverick_music_paused_at
@@ -624,6 +670,12 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 				return
 			volume = clamp(round(volume), 0, 100)
 			prefs.write_preference(GLOB.preference_entries[/datum/preference/numeric/volume/sound_lobby_volume], volume)
+			prefs.save_preferences() // write_preference only changes the copy in memory
+			// Nothing has played yet (the volume was 0 when the desktop came up), so there is
+			// nothing to turn up. Start the track instead.
+			if(volume && !maverick_music_sent && maverick_music_greeted && !maverick_music_stopped)
+				maverick_music_play(current)
+				return
 			mob.set_sound_channel_volume(CHANNEL_LOBBYMUSIC, volume)
 			maverick_music_push()
 		if("ended")
