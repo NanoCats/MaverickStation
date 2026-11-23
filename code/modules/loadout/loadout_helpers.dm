@@ -82,7 +82,7 @@
 		var/gate_failure = item.check_maverick_gates(preference_source, equipped_outfit, visuals_only)
 		if(gate_failure)
 			if(preference_source.parent && !visuals_only)
-				to_chat(preference_source.parent, span_warning("You were unable to get a loadout item ([initial(item.item_path.name)]) due to [gate_failure]!"))
+				to_chat(preference_source.parent, span_warning("You were unable to get a loadout item ([item.name]) due to [gate_failure]!"))
 			loadout_datums -= item
 			continue
 		// MAVERICK EDIT ADDITION END
