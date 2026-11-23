@@ -82,7 +82,7 @@ export const AgeGate = (props) => {
           <Stack.Item>
             <Box>
               {data.ask_age
-                ? 'This server is for adults only, and we keep as little of your data as we can. Read what we collect, then enter your date of birth.'
+                ? 'This server has content unsuitable for minors, and we keep as little of your data as we can. Read and understand our privacy policy, then enter your date of birth.'
                 : 'Our privacy policy has changed. Please read it and agree to continue.'}
             </Box>
           </Stack.Item>
