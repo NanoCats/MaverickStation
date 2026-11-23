@@ -4,8 +4,10 @@
 /datum/loadout_item
 	/// Lowest staff tier that can take this item. See LOADOUT_STAFF_* defines.
 	var/required_staff_tier = LOADOUT_STAFF_NONE
-	/// Access the spawning ID must have this round. The ID needs all of them.
+	/// Access the spawning ID must have this round. The ID needs all of them, or one of them if access_match_any is set.
 	var/list/required_access
+	/// If TRUE, any one access in required_access is enough.
+	var/access_match_any = FALSE
 	/// If FALSE, the item is never spawned as an object, even in the travel case. It only acts in on_equip_item.
 	var/spawns_item = TRUE
 
@@ -51,9 +53,12 @@
 	if(isnull(trim))
 		return FALSE
 	for(var/needed in required_access)
-		if(!(needed in trim.access))
+		var/has_it = (needed in trim.access)
+		if(access_match_any && has_it)
+			return TRUE
+		if(!access_match_any && !has_it)
 			return FALSE
-	return TRUE
+	return !access_match_any
 
 /**
  * Checks the Maverick gates when the character spawns.
@@ -75,7 +80,7 @@
 		var/list/access_names = list()
 		for(var/needed in required_access)
 			access_names += SSid_access.get_access_desc(needed) || needed
-		.[FA_ICON_ID_CARD] = "Access whitelist: [access_names.Join(", ")]"
+		.[FA_ICON_ID_CARD] = "Access whitelist: [access_names.Join(access_match_any ? " or " : ", ")]"
 
 // Sends the staff tier to the loadout UI so it can hide items above the viewer's tier, like ckey locked items.
 /datum/loadout_item/to_ui_data()

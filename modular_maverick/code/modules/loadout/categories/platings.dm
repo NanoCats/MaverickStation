@@ -1,6 +1,7 @@
 // Protean plating loadout section.
 // A picked plating is not spawned as an item. It is copied straight onto the protean's suit at spawn.
 // LustWish is left out, it already lives in the Pocket section.
+// Covert and Infiltrator are left out, proteans are not meant to take those suits.
 // Station platings need the matching department access. Off-station and antag platings are admin only.
 
 /datum/loadout_category/platings
@@ -180,6 +181,12 @@
 	item_path = /obj/item/mod/construction/plating/prototype/hauler
 	required_access = list(ACCESS_CARGO)
 
+/datum/loadout_item/plating/tarkon
+	name = "Tarkon Plating"
+	item_path = /obj/item/mod/construction/plating/tarkon
+	required_access = list(ACCESS_ENGINEERING, ACCESS_CARGO)
+	access_match_any = TRUE
+
 /datum/loadout_item/plating/mining
 	name = "Mining Plating"
 	item_path = /obj/item/mod/construction/plating/mining
@@ -252,11 +259,6 @@
 	item_path = /obj/item/mod/construction/plating/corporate
 	required_staff_tier = LOADOUT_STAFF_ADMIN
 
-/datum/loadout_item/plating/covert
-	name = "Covert Plating"
-	item_path = /obj/item/mod/construction/plating/covert
-	required_staff_tier = LOADOUT_STAFF_ADMIN
-
 /datum/loadout_item/plating/daimyo
 	name = "Daimyo Plating"
 	item_path = /obj/item/mod/construction/plating/daimyo
@@ -290,16 +292,6 @@
 /datum/loadout_item/plating/glitch
 	name = "Glitch Plating"
 	item_path = /obj/item/mod/construction/plating/glitch
-	required_staff_tier = LOADOUT_STAFF_ADMIN
-
-/datum/loadout_item/plating/infiltrator
-	name = "Infiltrator Plating"
-	item_path = /obj/item/mod/construction/plating/infiltrator
-	required_staff_tier = LOADOUT_STAFF_ADMIN
-
-/datum/loadout_item/plating/infiltrator_persistence
-	name = "Infiltrator Persistence Plating"
-	item_path = /obj/item/mod/construction/plating/infiltrator/persistence
 	required_staff_tier = LOADOUT_STAFF_ADMIN
 
 /datum/loadout_item/plating/interdyne
@@ -337,10 +329,6 @@
 	item_path = /obj/item/mod/construction/plating/syndicate
 	required_staff_tier = LOADOUT_STAFF_ADMIN
 
-/datum/loadout_item/plating/tarkon
-	name = "Tarkon Plating"
-	item_path = /obj/item/mod/construction/plating/tarkon
-	required_staff_tier = LOADOUT_STAFF_ADMIN
 
 /datum/loadout_item/plating/voskhod
 	name = "Voskhod Plating"
