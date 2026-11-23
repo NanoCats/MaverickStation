@@ -10,3 +10,6 @@
 
 /// Turns game debugging on when someone connects from localhost with the localhost admin rank on, so runtimes show in the Debug Log chat tab
 /datum/config_entry/flag/maverick_local_debug
+
+/// Brings back the upstream job restrictions: negative quirks, augments, missing hands, missing languages and species lists. Off by default, so every job is open to every character
+/datum/config_entry/flag/maverick_job_restrictions

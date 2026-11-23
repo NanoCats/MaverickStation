@@ -31,3 +31,7 @@ MAVERICK_LOG_RETENTION_DAYS 90
 ## Local test servers: turn game debugging on when someone connects from localhost,
 ## so runtimes show in the Debug Log chat tab. Only with the localhost admin rank on.
 MAVERICK_LOCAL_DEBUG
+
+## Uncomment to bring back the upstream job restrictions (negative quirks, augments, missing hands, missing languages, species lists).
+## Off by default, so every job is open to every character. The flavor text requirement is separate and unchanged.
+#MAVERICK_JOB_RESTRICTIONS

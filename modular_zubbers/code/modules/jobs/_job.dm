@@ -34,6 +34,10 @@
 	var/list/required_languages = list(/datum/language/common = (UNDERSTOOD_LANGUAGE | SPOKEN_LANGUAGE))
 
 /datum/job/proc/has_banned_quirk(datum/preferences/pref)
+	// MAVERICK EDIT BEGIN - Jobs are open to everyone unless maverick_job_restrictions is on
+	if(!CONFIG_GET(flag/maverick_job_restrictions))
+		return FALSE
+	// MAVERICK EDIT END
 	if(!pref) //No preferences? We'll let you pass, this time (just a precautionary check,you dont wanna mess up gamemode setting logic)
 		return FALSE
 	if(banned_quirks)
@@ -45,6 +49,11 @@
 	return FALSE
 
 /datum/job/proc/has_banned_species(datum/preferences/pref)
+	// MAVERICK EDIT BEGIN - Species lists no longer close off jobs unless maverick_job_restrictions is on; species that cannot be played at all are still refused
+	if(!CONFIG_GET(flag/maverick_job_restrictions))
+		var/datum/species/selected_species = pref.read_preference(/datum/preference/choiced/species)
+		return !(initial(selected_species.id) in get_selectable_species())
+	// MAVERICK EDIT END
 	var/species_type = pref.read_preference(/datum/preference/choiced/species)
 	var/datum/species/species = new species_type
 	var/my_id = species.id
@@ -57,6 +66,10 @@
 	return FALSE
 
 /datum/job/proc/has_banned_augment(datum/preferences/pref)
+	// MAVERICK EDIT BEGIN - Jobs are open to everyone unless maverick_job_restrictions is on
+	if(!CONFIG_GET(flag/maverick_job_restrictions))
+		return FALSE
+	// MAVERICK EDIT END
 	if(!pref)
 		return FALSE
 
@@ -71,6 +84,10 @@
 	return FALSE
 
 /datum/job/proc/has_enough_hands(datum/preferences/pref)
+	// MAVERICK EDIT BEGIN - Jobs are open to everyone unless maverick_job_restrictions is on
+	if(!CONFIG_GET(flag/maverick_job_restrictions))
+		return TRUE
+	// MAVERICK EDIT END
 	if(!pref)
 		return TRUE
 
@@ -84,6 +101,10 @@
 	return TRUE
 
 /datum/job/proc/has_required_languages(datum/preferences/pref)
+	// MAVERICK EDIT BEGIN - Jobs are open to everyone unless maverick_job_restrictions is on
+	if(!CONFIG_GET(flag/maverick_job_restrictions))
+		return TRUE
+	// MAVERICK EDIT END
 	if(!required_languages)
 		return TRUE
 
