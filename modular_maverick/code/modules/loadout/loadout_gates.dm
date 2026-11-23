@@ -76,3 +76,12 @@
 		for(var/needed in required_access)
 			access_names += SSid_access.get_access_desc(needed) || needed
 		.[FA_ICON_ID_CARD] = "Needs access: [access_names.Join(", ")]\nChecked against your job when you spawn."
+
+// Sends the staff tier to the loadout UI so it can hide items above the viewer's tier, like ckey locked items.
+/datum/loadout_item/to_ui_data()
+	. = ..()
+	.["staff_tier"] = required_staff_tier
+
+/datum/preference_middleware/loadout/get_ui_static_data(mob/user)
+	. = ..()
+	.["staff_tier"] = get_loadout_staff_tier(user?.client)
