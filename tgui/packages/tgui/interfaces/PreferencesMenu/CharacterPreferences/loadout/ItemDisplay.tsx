@@ -206,6 +206,10 @@ const FilterItemList = (items: LoadoutItem[]) => {
     if (item.ckey_whitelist && item.ckey_whitelist.indexOf(ckey) === -1) {
       return false;
     }
+    // MAVERICK EDIT ADDITION: Hide staff locked items
+    if (item.staff_tier > (data.staff_tier || 0)) {
+      return false;
+    }
     return true;
   });
 };
