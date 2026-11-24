@@ -7391,6 +7391,7 @@
 #include "modular_maverick\code\modules\lobby_desktop\lobby_music.dm"
 #include "modular_maverick\code\modules\lobby_desktop\lobby_topic.dm"
 #include "modular_maverick\code\modules\log_retention\log_retention.dm"
+#include "modular_maverick\code\modules\mob\blast_ear_protection.dm"
 #include "modular_maverick\code\modules\mod\combat_suit_storage.dm"
 #include "modular_maverick\code\modules\mod\freelance_policing.dm"
 #include "modular_maverick\code\modules\mod\magnetic_harness_rebuild.dm"
