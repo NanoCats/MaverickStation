@@ -49,6 +49,8 @@
 
 /// One line for the AMAS status readout
 /datum/amas_watchdog/proc/get_status_line()
+	if(STATION_TIME_PASSED() < warmup)
+		return "[name]: warming up, starts measuring in [DisplayTimeText(warmup - STATION_TIME_PASSED())]"
 	var/state = "OK"
 	if(shortfall_reported)
 		state = "SHORTFALL"

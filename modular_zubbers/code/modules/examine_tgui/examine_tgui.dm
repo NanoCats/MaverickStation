@@ -158,9 +158,11 @@
 				custom_species = holder_human.dna.features["custom_species"]
 		//Custom species lore handling. Reports the species lore with summary if there is not one set. Does this separately so you can name your subrace without the lore changing.
 			if(holder_human.dna.species.lore_protected || !holder_human.dna.features["custom_species_lore"] || holder_human.dna.features["custom_species_lore"] == "")
-				var/list/desc = holder_human.dna.species.get_species_description()
+				// MAVERICK EDIT BEGIN - get_species_description() returns a string, not a list. Calling Join() on it runtimed.
+				var/desc = holder_human.dna.species.get_species_description()
 				var/list/lore = holder_human.dna.species.get_species_lore()
-				custom_species_lore += desc.Join("\n\n")
+				custom_species_lore += desc
+				// MAVERICK EDIT END
 				custom_species_lore += "\n\n\n"
 				custom_species_lore += lore.Join("\n\n")
 			else

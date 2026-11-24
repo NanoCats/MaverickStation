@@ -3,6 +3,8 @@
 	name = "Automaton"
 	id = SPECIES_AMAS_AUTOMATON
 	changesource_flags = MIRROR_BADMIN
+	// Always show the real species name and lore in the examine panel. Automatons have no character prefs to fill them in.
+	lore_protected = TRUE
 	// Synth brain and synthetic parts, so the same reboot surgery that revives synths revives automatons
 	mutantbrain = /obj/item/organ/brain/synth
 	bodypart_overrides = list(
