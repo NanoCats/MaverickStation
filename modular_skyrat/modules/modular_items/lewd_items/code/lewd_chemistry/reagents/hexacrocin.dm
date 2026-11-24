@@ -37,6 +37,12 @@
 		to_chat(exposed_mob, span_purple("[displayed_extreme_thought]"))
 
 /datum/reagent/drug/aphrodisiac/crocin/hexacrocin/overdose_effects(mob/living/carbon/human/exposed_mob)
+	// MAVERICK EDIT BEGIN - The old bimbo trauma is switched off. The overdose feeds the bimbo component instead.
+	if(!CONFIG_GET(flag/maverick_legacy_bimbo_trauma))
+		if(!prob(OD_CHANCE_NO_TRAUMA))
+			bimbo_hit(exposed_mob)
+		return ..()
+	// MAVERICK EDIT END
 	if(prob(OD_CHANCE_NO_TRAUMA) || HAS_TRAIT(exposed_mob, TRAIT_BIMBO))
 		return ..()
 

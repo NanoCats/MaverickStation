@@ -31,3 +31,6 @@ MAVERICK_LOG_RETENTION_DAYS 90
 ## Local test servers: turn game debugging on when someone connects from localhost,
 ## so runtimes show in the Debug Log chat tab. Only with the localhost admin rank on.
 MAVERICK_LOCAL_DEBUG
+
+## Uncomment to bring back the old hexacrocin overdose bimbo trauma. Off by default, the overdose feeds the new bimbo system instead.
+#MAVERICK_LEGACY_BIMBO_TRAUMA
