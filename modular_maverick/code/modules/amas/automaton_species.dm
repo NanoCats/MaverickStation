@@ -43,6 +43,19 @@
 /datum/species/android/amas_automaton/get_species_lore()
 	return list(AMAS_AUTOMATON_FLAVOR_TEXT)
 
+/datum/species/android/amas_automaton/on_species_gain(mob/living/carbon/human/human_who_gained_species, datum/species/old_species, pref_load, regenerate_icons = TRUE, replace_missing = TRUE)
+	. = ..()
+	RegisterSignal(human_who_gained_species, COMSIG_ATOM_EXAMINE, PROC_REF(on_examine))
+
+/datum/species/android/amas_automaton/on_species_loss(mob/living/carbon/human/human, datum/species/new_species, pref_load)
+	UnregisterSignal(human, COMSIG_ATOM_EXAMINE)
+	return ..()
+
+/// Every automaton is clearly marked on examine, so nobody mistakes one for a crewmember
+/datum/species/android/amas_automaton/proc/on_examine(mob/living/carbon/human/source, mob/user, list/examine_list)
+	SIGNAL_HANDLER
+	examine_list += span_notice("[source.p_They()] [source.p_are()] an AMAS automaton, built by Micron Control Systems.")
+
 /// Returns TRUE if the mob is an AMAS automaton
 /proc/is_amas_automaton(mob/living/target)
 	if(!ishuman(target))
