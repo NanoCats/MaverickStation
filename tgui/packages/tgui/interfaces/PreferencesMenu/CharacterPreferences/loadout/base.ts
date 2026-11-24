@@ -41,6 +41,7 @@ export type LoadoutItem = {
   reskins: ReskinOption[] | null;
   information: LoadoutTooltip[];
   ckey_whitelist: string[] | null; // BUBBER EDIT ADDITION: Filter ckey-locked items
+  staff_tier: number; // MAVERICK EDIT ADDITION: Hide staff locked items
 };
 
 // Category of items in the loadout

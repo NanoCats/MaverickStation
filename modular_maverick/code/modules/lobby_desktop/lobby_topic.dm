@@ -27,6 +27,12 @@
 				COOLDOWN_START(client, maverick_icon_honk_cooldown, 1.2 SECONDS)
 				SEND_SOUND(src, sound('modular_zubbers/sound/effects/clown/clown_rift_high.ogg'))
 			return TRUE
+		// The Clown.exe clown's shoes, one squeak per step
+		if(kind == "step")
+			if(COOLDOWN_FINISHED(client, maverick_clown_step_cooldown))
+				COOLDOWN_START(client, maverick_clown_step_cooldown, 0.1 SECONDS)
+				SEND_SOUND(src, sound(pick('sound/effects/footstep/clownstep1.ogg', 'sound/effects/footstep/clownstep2.ogg'), volume = 50))
+			return TRUE
 		// Clown.exe's error windows each make one silly noise as they pop up
 		var/static/list/clown_noises = list(
 			"bikehorn" = 'sound/items/bikehorn.ogg',
@@ -46,17 +52,35 @@
 		return TRUE
 
 	// The BIOS boot screen dares you to touch a button. Touching one gets you an explosion,
-	// for your ears only. Shares the Clown.exe icon cooldown so mashing keys stays bearable.
+	// for your ears only. Every touch, no cooldown: mash it and you get what you asked for.
 	if(href_list["lobby_kaboom"])
-		if(COOLDOWN_FINISHED(client, maverick_icon_honk_cooldown))
-			COOLDOWN_START(client, maverick_icon_honk_cooldown, 1.2 SECONDS)
-			SEND_SOUND(src, sound(pick('sound/effects/explosion/explosion1.ogg', 'sound/effects/explosion/explosion2.ogg')))
+		SEND_SOUND(src, sound(pick('sound/effects/explosion/explosion1.ogg', 'sound/effects/explosion/explosion2.ogg')))
 		return TRUE
 
 	// Start > Shut Down. It really does shut down. Rejoining is one click.
+	// With the shutdown sound on, the kick waits for the sound to finish.
 	if(href_list["lobby_shutdown"])
 		log_game("[key_name(src)] shut down their lobby desktop and was disconnected.")
-		addtimer(CALLBACK(src, PROC_REF(maverick_shutdown_kick)), 2 SECONDS)
+		stop_sound_channel(CHANNEL_LOBBYMUSIC) // the computer is off, so SpaceAmp is too
+		// the page plays the shutdown sound itself when it has it, and says so with "local"
+		var/played = href_list["local"] ? maverick_shutdown_audible() : maverick_desktop_sfx("shutdown")
+		addtimer(CALLBACK(src, PROC_REF(maverick_shutdown_kick)), played ? 4.6 SECONDS : 2 SECONDS)
+		return TRUE
+
+	// Desktop clicks, error chimes and the startup sound
+	if(href_list["lobby_sfx"])
+		maverick_desktop_sfx(href_list["lobby_sfx"])
+		return TRUE
+
+	// The Cheat Engine desktop icon. The panel checks admin rights itself too.
+	if(href_list["open_cheats"])
+		if(check_rights_for(client, R_DEBUG))
+			GLOB.maverick_cheats.ui_interact(src)
+		return TRUE
+
+	// Start > Sounds
+	if(href_list["lobby_sfx_mode"])
+		maverick_cycle_desktop_sounds()
 		return TRUE
 
 	// Remember that this connection already saw the boot screens and the CRT power-on.

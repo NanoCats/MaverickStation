@@ -61,6 +61,10 @@ with open(file_reference, 'r') as file:
         elif line == "// SKYRAT EDIT END":
             continue
         # SKYRAT EDIT END
+        # MAVERICK EDIT BEGIN - skip our edit markers in the include list
+        elif line.startswith("// MAVERICK EDIT"):
+            continue
+        # MAVERICK EDIT END
 
         lines.append(line)
 
@@ -92,6 +96,10 @@ for code_file in scannable_files:
         if("~zubbers/" in code_file):
             dm_path = "~zubbers\\" + dm_path
         # BUBBER EDIT END
+        # MAVERICK EDIT BEGIN - our modular unit test subfolder too
+        if("~maverick/" in code_file):
+            dm_path = "~maverick\\" + dm_path
+        # MAVERICK EDIT END
 
     included = f"#include \"{dm_path}\"" in lines
 
