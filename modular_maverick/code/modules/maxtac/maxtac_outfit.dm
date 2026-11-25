@@ -134,7 +134,7 @@
 
 	id_trim = /datum/id_trim/centcom/deathsquad/maxtac/commander
 	ears = /obj/item/radio/headset/headset_cent/alt/maxtac/leader
-	r_hand = /obj/item/gun/energy/ionrifle
+	r_hand = /obj/item/gun/energy/ionrifle/carbine
 	backpack_contents = list(
 		/obj/item/gun/ballistic/automatic/pistol/robohand = 1,
 		/obj/item/ammo_box/magazine/c40sol_rifle/standard = 2,
