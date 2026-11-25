@@ -132,6 +132,7 @@ GLOBAL_LIST_EMPTY_TYPED(interaction_instances, /datum/interaction)
 		target.adjust_pleasure(target_pleasure)
 		target.adjust_arousal(target_arousal)
 		target.adjust_pain(target_pain)
+		SEND_SIGNAL(target, COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED, user, src) // MAVERICK EDIT - Hook for the bimbo quirk
 		if(body_relay)
 			var/obj/lewd_portal_relay/body_portal_relay = body_relay
 			body_portal_relay.update_visuals()

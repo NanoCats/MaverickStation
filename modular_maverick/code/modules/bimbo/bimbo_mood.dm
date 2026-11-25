@@ -24,6 +24,8 @@
 
 /datum/component/bimbo/proc/is_wearing_cute_outfit()
 	var/mob/living/carbon/human/holder = parent
+	if(has_synergy(/datum/quirk/equipping/seamless_clothes))
+		return TRUE
 	if(istype(holder.w_uniform, /obj/item/clothing/under/dress))
 		return TRUE
 	var/uniform_name = LOWER_TEXT(holder.w_uniform?.name)

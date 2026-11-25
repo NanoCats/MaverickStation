@@ -26,8 +26,8 @@
 #define BIMBO_BIMBO_INTENSITY 50
 #define BIMBO_BUBBLEHEADED_INTENSITY 75
 
-/// Effects act this much stronger while very aroused
-#define BIMBO_PENT_UP_MULTIPLIER 1.15
+/// Effects act this much stronger at full arousal. Scales up from AROUSAL_LOW.
+#define BIMBO_AROUSAL_MAX_MULTIPLIER 1.25
 /// Effects act this much weaker during the clarity window after climax
 #define BIMBO_CLARITY_MULTIPLIER 0.75
 /// How long the clarity window lasts
@@ -37,6 +37,14 @@
 #define BIMBO_AROUSAL_FLOOR_MAX 40
 /// Arousal gained when someone examines you while you are exposed
 #define BIMBO_EXAMINE_AROUSAL 8
+/// Arousal gained when you examine something lewd
+#define BIMBO_EXAMINING_AROUSAL 5
+/// Stamina lost per lewd interaction on you at full intensity
+#define BIMBO_LEWD_STAMINA_MAX 30
+/// How long hypnosis lasts on a mindshielded bimbo before the implant clears it
+#define BIMBO_MINDSHIELD_SHAKE_OFF (2 MINUTES)
+/// Alert category for the heat icon
+#define ALERT_BIMBO_HEAT "bimbo_heat"
 
 /// Breast size floor at full intensity. 19 is BREAST_SIZE_S, the largest the prefs allow.
 #define BIMBO_BREAST_FLOOR_MAX 19
@@ -50,3 +58,6 @@
 #define BIMBO_BLISS_MAX 0.5
 /// Do-after slowdown at full intensity
 #define BIMBO_MAX_ACTION_SLOWDOWN 0.4
+
+/// From /datum/interaction/act() on the target of a lewd interaction: (mob/living/carbon/human/user, datum/interaction/interaction)
+#define COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED "human_lewd_interaction_received"

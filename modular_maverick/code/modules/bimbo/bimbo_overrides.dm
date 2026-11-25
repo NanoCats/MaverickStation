@@ -1,15 +1,17 @@
 // Small overrides of upstream procs for the bimbo component.
 
-/// Bimbos are easy to hypnotize. Mindshields still protect them.
+/// Bimbos are easy to hypnotize. A mindshield halves the chance, and the bimbo component clears the hypnosis after a while.
 /mob/living/carbon/human/hypnosis_vulnerable()
 	. = ..()
-	if(. || HAS_MIND_TRAIT(src, TRAIT_UNCONVERTABLE))
+	if(.)
 		return
 	var/datum/component/bimbo/bimbo = GetComponent(/datum/component/bimbo)
 	if(!bimbo)
 		return
-	var/intensity = bimbo.get_effective_intensity()
-	return intensity >= BIMBO_BIMBO_INTENSITY || prob(intensity)
+	var/chance = bimbo.get_effective_intensity()
+	if(HAS_MIND_TRAIT(src, TRAIT_UNCONVERTABLE))
+		return prob(chance / 2)
+	return chance >= BIMBO_BIMBO_INTENSITY || prob(chance)
 
 /// Long papers stop after a word limit.
 /obj/item/paper/ui_static_data(mob/user)

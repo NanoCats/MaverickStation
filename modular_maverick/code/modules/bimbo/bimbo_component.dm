@@ -22,6 +22,7 @@
 	/// Counts life ticks so the slow checks only run every few ticks
 	var/life_ticks = 0
 	COOLDOWN_DECLARE(examine_arousal_cooldown)
+	COOLDOWN_DECLARE(examining_arousal_cooldown)
 	COOLDOWN_DECLARE(distraction_cooldown)
 
 /datum/component/bimbo/Initialize(baseline = 0, from_quirk = FALSE, lipstick_color)
@@ -38,28 +39,33 @@
 	RegisterSignal(parent, COMSIG_ATOM_EXAMINE, PROC_REF(on_examine))
 	RegisterSignal(parent, COMSIG_CARBON_HELP_ACT, PROC_REF(on_helped))
 	RegisterSignal(parent, COMSIG_LIVING_LIFE, PROC_REF(on_life))
+	RegisterSignal(parent, COMSIG_MOB_EXAMINATE, PROC_REF(on_examinate))
+	RegisterSignal(parent, COMSIG_CARBON_GAIN_TRAUMA, PROC_REF(on_gain_trauma))
+	RegisterSignal(parent, COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED, PROC_REF(on_lewd_interaction))
 	refresh(instant = TRUE)
 
 /datum/component/bimbo/UnregisterFromParent()
 	var/mob/living/carbon/human/holder = parent
-	UnregisterSignal(holder, list(COMSIG_MOB_SAY, COMSIG_ATOM_EXAMINE, COMSIG_CARBON_HELP_ACT, COMSIG_LIVING_LIFE))
+	UnregisterSignal(holder, list(COMSIG_MOB_SAY, COMSIG_ATOM_EXAMINE, COMSIG_CARBON_HELP_ACT, COMSIG_LIVING_LIFE, COMSIG_MOB_EXAMINATE, COMSIG_CARBON_GAIN_TRAUMA, COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED))
 	REMOVE_TRAIT(holder, TRAIT_BIMBO, BIMBO_TRAIT_SOURCE)
 	holder.remove_actionspeed_modifier(/datum/actionspeed_modifier/bimbo)
 	holder.clear_mood_event("bimbo_fashion")
 	holder.clear_mood_event("bimbo_bliss")
+	holder.clear_alert(ALERT_BIMBO_HEAT)
 
 /// Intensity without the arousal state. Tiers come from this so they don't flicker.
 /datum/component/bimbo/proc/get_intensity()
 	return clamp(baseline + bonus, 0, BIMBO_MAX_INTENSITY)
 
 /// Intensity after arousal is taken into account. Effect strength comes from this.
+/// Arousal above AROUSAL_LOW makes everything a little worse, up to BIMBO_AROUSAL_MAX_MULTIPLIER.
 /datum/component/bimbo/proc/get_effective_intensity()
 	var/mob/living/carbon/human/holder = parent
 	var/multiplier = 1
 	if(world.time < clarity_until)
 		multiplier = BIMBO_CLARITY_MULTIPLIER
-	else if(holder.arousal >= AROUSAL_HIGH)
-		multiplier = BIMBO_PENT_UP_MULTIPLIER
+	else if(holder.arousal > AROUSAL_LOW)
+		multiplier += (BIMBO_AROUSAL_MAX_MULTIPLIER - 1) * (holder.arousal - AROUSAL_LOW) / (AROUSAL_LIMIT - AROUSAL_LOW)
 	return clamp(get_intensity() * multiplier, 0, BIMBO_MAX_INTENSITY)
 
 /datum/component/bimbo/proc/get_tier()
@@ -115,6 +121,7 @@
 		return
 	check_climax()
 	handle_arousal(seconds_per_tick)
+	update_heat(seconds_per_tick)
 	try_lose_focus()
 	try_get_distracted()
 
@@ -169,6 +176,21 @@
 	if(holder.arousal >= AROUSAL_HIGH && SPT_PROB(1, seconds_per_tick))
 		to_chat(holder, span_purple(pick("It's sooo hard to think straight like this.", "Everything feels warm and fuzzy and distracting.")))
 
+/// Heat icon and sweat while aroused. A nudge to go take care of it, never a punishment.
+/datum/component/bimbo/proc/update_heat(seconds_per_tick)
+	var/mob/living/carbon/human/holder = parent
+	if(world.time < clarity_until || holder.arousal < AROUSAL_MEDIUM)
+		holder.clear_alert(ALERT_BIMBO_HEAT)
+		return
+	holder.throw_alert(ALERT_BIMBO_HEAT, /atom/movable/screen/alert/bimbo_heat)
+	if(!SPT_PROB(3, seconds_per_tick))
+		return
+	var/mutable_appearance/sweat = mutable_appearance('modular_skyrat/master_files/icons/effects/overlay_effects.dmi', "sweatdrop", ABOVE_MOB_LAYER)
+	sweat.pixel_x = 10
+	sweat.pixel_y = 10
+	holder.flick_overlay_static(sweat, 5 SECONDS)
+	to_chat(holder, span_purple(pick("You're getting all hot and sweaty.", "A bead of sweat rolls down your neck.", "Is it warm in here, or is it just you?")))
+
 /// Long do_afters can get dropped halfway through.
 /datum/component/bimbo/proc/try_lose_focus()
 	var/intensity = get_effective_intensity()
@@ -190,18 +212,25 @@
 			. = TRUE
 
 /// Shiny things nearby can pull your attention away from whatever you were doing.
+/// While aroused, people nearby can too, and it happens twice as often.
 /datum/component/bimbo/proc/try_get_distracted()
 	if(!COOLDOWN_FINISHED(src, distraction_cooldown))
 		return
 	var/intensity = get_effective_intensity()
 	if(intensity < BIMBO_AIRHEAD_INTENSITY || !prob(intensity / 20))
 		return
+	var/mob/living/carbon/human/holder = parent
+	var/aroused = holder.arousal >= AROUSAL_MEDIUM
 	var/atom/shiny = find_shiny_thing()
+	if(aroused && (!shiny || prob(50)))
+		shiny = find_eye_candy() || shiny
 	if(!shiny)
 		return
-	COOLDOWN_START(src, distraction_cooldown, 1 MINUTES)
-	var/mob/living/carbon/human/holder = parent
+	COOLDOWN_START(src, distraction_cooldown, aroused ? 30 SECONDS : 1 MINUTES)
 	interrupt_long_actions()
+	if(ishuman(shiny))
+		to_chat(holder, span_purple("You catch yourself staring at [shiny]. Um, what were you doing?"))
+		return
 	if(istype(shiny, /obj/structure/mirror))
 		holder.manual_emote("stops to admire [holder.p_them()]self in \the [shiny].")
 		holder.add_mood_event("bimbo_mirror", /datum/mood_event/bimbo_mirror)
@@ -221,6 +250,13 @@
 	for(var/atom/movable/thing in view(BIMBO_SHINY_RANGE, parent))
 		if(is_type_in_typecache(thing, shiny_things))
 			return thing
+	return null
+
+/// Someone nearby worth staring at.
+/datum/component/bimbo/proc/find_eye_candy()
+	for(var/mob/living/carbon/human/other in view(3, parent))
+		if(other != parent && !other.stat)
+			return other
 	return null
 
 /datum/component/bimbo/proc/on_examine(datum/source, mob/user, list/examine_list)
@@ -244,9 +280,25 @@
 	if(holder.adjust_arousal(BIMBO_EXAMINE_AROUSAL))
 		to_chat(holder, span_purple("You feel someone's eyes on you, and you kind of like it."))
 
-/datum/component/bimbo/proc/has_exposed_genitals()
+/// Looking at lewd things gets you going.
+/datum/component/bimbo/proc/on_examinate(datum/source, atom/target)
+	SIGNAL_HANDLER
+	var/static/list/lewd_items
+	if(!lewd_items)
+		lewd_items = typecacheof(GLOB.erp_items)
+	if(target == parent || !COOLDOWN_FINISHED(src, examining_arousal_cooldown))
+		return
+	var/arousing = is_type_in_typecache(target, lewd_items)
+	if(!arousing && ishuman(target))
+		arousing = has_exposed_genitals(target)
+	if(!arousing)
+		return
+	COOLDOWN_START(src, examining_arousal_cooldown, 15 SECONDS)
 	var/mob/living/carbon/human/holder = parent
-	for(var/obj/item/organ/genital/genital in holder.organs)
+	holder.adjust_arousal(BIMBO_EXAMINING_AROUSAL)
+
+/datum/component/bimbo/proc/has_exposed_genitals(mob/living/carbon/human/who = parent)
+	for(var/obj/item/organ/genital/genital in who.organs)
 		if(istype(genital, /obj/item/organ/genital/belly))
 			continue
 		if(genital.is_exposed())
@@ -257,6 +309,48 @@
 	SIGNAL_HANDLER
 	var/mob/living/carbon/human/holder = parent
 	holder.add_mood_event("bimbo_attention", /datum/mood_event/bimbo_attention)
+
+/// Lewd interactions that use your body leave you weak at the knees. Ported in spirit from VENUS Station.
+/datum/component/bimbo/proc/on_lewd_interaction(datum/source, mob/living/carbon/human/user, datum/interaction/interaction)
+	SIGNAL_HANDLER
+	var/mob/living/carbon/human/holder = parent
+	if(user == holder || !length(interaction.target_required_parts))
+		return
+	var/stamina = BIMBO_LEWD_STAMINA_MAX * get_effective_intensity() / BIMBO_MAX_INTENSITY
+	if(has_synergy(/datum/quirk/masochism))
+		stamina /= 2
+	holder.adjust_stamina_loss(stamina)
+	if(!prob(15))
+		return
+	if(holder.has_status_effect(/datum/status_effect/incapacitating/stamcrit))
+		to_chat(holder, span_purple("It feels too good..."))
+	else
+		to_chat(holder, span_purple("You feel so helpless..."))
+
+/// Mindshields do not keep hypnosis out of a bimbo, but they do clear it after a while.
+/datum/component/bimbo/proc/on_gain_trauma(datum/source, datum/brain_trauma/trauma, resilience)
+	SIGNAL_HANDLER
+	var/mob/living/carbon/human/holder = parent
+	if(!istype(trauma, /datum/brain_trauma/hypnosis) || !HAS_MIND_TRAIT(holder, TRAIT_UNCONVERTABLE))
+		return
+	addtimer(CALLBACK(src, PROC_REF(shake_off_hypnosis)), BIMBO_MINDSHIELD_SHAKE_OFF, TIMER_UNIQUE | TIMER_OVERRIDE)
+
+/datum/component/bimbo/proc/shake_off_hypnosis()
+	var/mob/living/carbon/human/holder = parent
+	if(!HAS_MIND_TRAIT(holder, TRAIT_UNCONVERTABLE) || !holder.has_trauma_type(/datum/brain_trauma/hypnosis))
+		return
+	holder.cure_trauma_type(/datum/brain_trauma/hypnosis, TRAUMA_RESILIENCE_SURGERY)
+	to_chat(holder, span_notice("Your mindshield implant hums, and the voice in your head finally fades."))
+
+/// Quirks that dovetail with Bimbo. Each one softens a downside a little.
+/datum/component/bimbo/proc/has_synergy(quirk_type)
+	var/mob/living/carbon/human/holder = parent
+	return holder.has_quirk(quirk_type)
+
+/atom/movable/screen/alert/bimbo_heat
+	name = "Hot and Bothered"
+	desc = "You're all warm and flustered, and it's making it really hard to think. Maybe you should take care of that."
+	icon_state = "hot"
 
 /datum/actionspeed_modifier/bimbo
 	variable = TRUE
