@@ -11,6 +11,7 @@
 	belt = /obj/item/storage/belt/military/assault
 	gloves = /obj/item/clothing/gloves/tackler/combat/insulated
 	mask = null // The breathing tube implant covers internals.
+	r_pocket = /obj/item/tank/internals/emergency_oxygen/double // Ready to hand for a hull breach. Plasmamen get their own tank.
 	l_hand = /obj/item/gun/ballistic/automatic/sol_rifle
 	box = /obj/item/storage/box/survival/centcom
 	backpack_contents = list(
