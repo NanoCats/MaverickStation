@@ -5,7 +5,10 @@
 
 	id = /obj/item/card/id/advanced/black/deathsquad
 	id_trim = /datum/id_trim/centcom/deathsquad/maxtac
-	uniform = /obj/item/clothing/under/colonial/nri_police
+	uniform = /obj/item/clothing/under/rank/security/officer/beatcop
+	head = /obj/item/clothing/head/beret/sec/navyofficer
+	// Shove resistance for when the suit is folded away. The suit gives the real protection.
+	suit = /obj/item/clothing/suit/armor/riot
 	glasses = /obj/item/clothing/glasses/night
 	back = /obj/item/mod/control/pre_equipped/maxtac
 	belt = /obj/item/storage/belt/military/assault
@@ -95,7 +98,8 @@
  *
  * Some species depend on their own organs: the protean orchestrator and refactory, plasmaman and vox lungs,
  * the ethereal stomach, synth organs. For the heart, lungs, liver and stomach we only swap in chrome when the species
- * uses the plain organ. For implant slots we keep any robotic organ the species gives, like the synth power cord.
+ * uses the plain organ. Arm implants always go in, even over the synth power cord. For other implant slots
+ * we keep any robotic organ the species gives.
  */
 /datum/outfit/centcom/ert/maxtac/proc/can_install_chrome(mob/living/carbon/human/operative, obj/item/organ/implant)
 	var/static/list/standard_organs = list(
@@ -112,6 +116,9 @@
 	// Proteans grow their own back only if those are missing, so they keep the chrome.
 	if(istype(implant, /obj/item/organ/heart/cybernetic/anomalock) || (implant.slot in list(ORGAN_SLOT_EYES, ORGAN_SLOT_EARS)))
 		return TRUE
+	// The toolset and blades are the squad's kit. They win over whatever the species put in that arm.
+	if(istype(implant, /obj/item/organ/cyberimp/arm))
+		return TRUE
 	var/species_type = operative.dna.species.get_mutant_organ_type_for_slot(implant.slot)
 	var/standard_type = standard_organs[implant.slot]
 	if(standard_type)
@@ -125,6 +132,7 @@
 	name = "MaxTac Commander"
 
 	id_trim = /datum/id_trim/centcom/deathsquad/maxtac/commander
+	head = /obj/item/clothing/head/beret/sec/navywarden
 	ears = /obj/item/radio/headset/headset_cent/alt/leader
 	r_hand = /obj/item/gun/energy/ionrifle
 	backpack_contents = list(

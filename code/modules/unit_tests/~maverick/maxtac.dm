@@ -38,12 +38,12 @@
 	var/obj/item/mod/control/medic_suit = medic.back
 	TEST_ASSERT(locate(/obj/item/mod/module/medbeam) in medic_suit.modules, "Medic suit has no medbeam.")
 
-	// Synths keep their own organs and power cord, and still take the voltaic heart.
+	// Synths keep their own organs, and still take the voltaic heart. The toolset replaces the power cord.
 	var/mob/living/carbon/human/synth = equip_operative(/datum/outfit/centcom/ert/maxtac/commander, /datum/species/synthetic)
 	TEST_ASSERT(istype(synth.get_organ_slot(ORGAN_SLOT_HEART), /obj/item/organ/heart/cybernetic/anomalock/prebuilt), "Synth commander has no voltaic heart.")
 	TEST_ASSERT(istype(synth.get_organ_slot(ORGAN_SLOT_STOMACH), /obj/item/organ/stomach/synth), "Synth stomach was replaced.")
 	TEST_ASSERT(istype(synth.get_organ_slot(ORGAN_SLOT_LUNGS), /obj/item/organ/lungs/synth), "Synth lungs were replaced.")
-	TEST_ASSERT(istype(synth.get_organ_slot(ORGAN_SLOT_LEFT_ARM_AUG), /obj/item/organ/cyberimp/arm/toolkit/power_cord), "Synth power cord was replaced.")
+	TEST_ASSERT(istype(synth.get_organ_slot(ORGAN_SLOT_LEFT_ARM_AUG), /obj/item/organ/cyberimp/arm/toolkit/toolset), "Synth commander has no toolset.")
 	TEST_ASSERT(!istype(synth.get_bodypart(BODY_ZONE_R_ARM), /obj/item/bodypart/arm/right/robot/advanced), "Synth arm was replaced.")
 
 	// Proteans keep the orchestrator and refactory, get no lungs, and keep the suit's EMP shield.
@@ -71,11 +71,17 @@
 	var/obj/item/card/id/card = operative.wear_id
 	TEST_ASSERT(istype(card, /obj/item/card/id/advanced/black/deathsquad), "[role]: wrong ID card [card?.type].")
 	TEST_ASSERT_EQUAL(card.assignment, "MaxTac [capitalize(role)]", "[role]: wrong ID assignment.")
-	TEST_ASSERT(istype(operative.w_uniform, /obj/item/clothing/under/colonial/nri_police), "[role]: wrong uniform.")
+	TEST_ASSERT(istype(operative.w_uniform, /obj/item/clothing/under/rank/security/officer/beatcop), "[role]: wrong uniform.")
 	TEST_ASSERT(istype(operative.glasses, /obj/item/clothing/glasses/night), "[role]: no night vision goggles.")
 	var/obj/item/mod/control/pre_equipped/suit = operative.back
 	TEST_ASSERT(istype(suit), "[role]: no MODsuit.")
 	TEST_ASSERT_EQUAL(length(suit.modules), length(suit.applied_modules), "[role]: suit is missing modules.")
+	TEST_ASSERT(locate(/obj/item/mod/module/holster) in suit.modules, "[role]: suit has no holster.")
+	// The suit deploys at spawn, so the beret and riot armor sit inside the helmet and chestplate until it folds away.
+	var/datum/mod_part/helmet_part = suit.get_part_datum_from_slot(ITEM_SLOT_HEAD)
+	var/datum/mod_part/chest_part = suit.get_part_datum_from_slot(ITEM_SLOT_OCLOTHING)
+	TEST_ASSERT(istype(helmet_part?.overslotting, /obj/item/clothing/head/beret/sec), "[role]: no beret under the helmet.")
+	TEST_ASSERT(istype(chest_part?.overslotting, /obj/item/clothing/suit/armor/riot), "[role]: no riot armor under the chestplate.")
 	TEST_ASSERT(istype(operative.get_organ_slot(ORGAN_SLOT_RIGHT_ARM_AUG), /obj/item/organ/cyberimp/arm/toolkit/armblade/maxtac), "[role]: no right mantis blade.")
 	TEST_ASSERT(istype(operative.get_organ_slot(ORGAN_SLOT_EYES), /obj/item/organ/eyes/robotic/thermals), "[role]: no thermal eyes.")
 	TEST_ASSERT(istype(operative.get_organ_slot(ORGAN_SLOT_EARS), /obj/item/organ/ears/cybernetic/volume), "[role]: no volume ears.")
