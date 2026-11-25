@@ -50,6 +50,45 @@
 		/obj/item/mod/module/magboot,
 	)
 
+// Heavy: trades the jump jet and shooting assistant for the suit-mounted smartgun and the bulwark. 19 of 20 complexity.
+/obj/item/mod/control/pre_equipped/maxtac/heavy
+	applied_modules = list(
+		/obj/item/mod/module/emp_shield/advanced,
+		/obj/item/mod/module/storage/large_capacity,
+		/obj/item/mod/module/status_readout/operational,
+		/obj/item/mod/module/magnetic_harness,
+		/obj/item/mod/module/smartgun,
+		/obj/item/mod/module/shove_blocker,
+		/obj/item/mod/module/thermal_regulator,
+		/obj/item/mod/module/flashlight,
+		/obj/item/mod/module/magboot,
+		/obj/item/mod/module/visor/thermal,
+	)
+	default_pins = list(
+		/obj/item/mod/module/smartgun,
+		/obj/item/mod/module/magboot,
+	)
+
+// Medic: trades the flashlight for the medical beamgun. 19 of 20 complexity.
+/obj/item/mod/control/pre_equipped/maxtac/medic
+	applied_modules = list(
+		/obj/item/mod/module/emp_shield/advanced,
+		/obj/item/mod/module/storage/large_capacity,
+		/obj/item/mod/module/status_readout/operational,
+		/obj/item/mod/module/magnetic_harness,
+		/obj/item/mod/module/jump_jet,
+		/obj/item/mod/module/shooting_assistant,
+		/obj/item/mod/module/medbeam,
+		/obj/item/mod/module/thermal_regulator,
+		/obj/item/mod/module/magboot,
+		/obj/item/mod/module/visor/thermal,
+	)
+	default_pins = list(
+		/obj/item/mod/module/medbeam,
+		/obj/item/mod/module/jump_jet,
+		/obj/item/mod/module/magboot,
+	)
+
 // Implants
 
 /obj/item/organ/cyberimp/arm/toolkit/armblade/maxtac
@@ -80,13 +119,3 @@
 	name = "MaxTac combat HUD implant"
 	desc = "A HUD implant that shows security records and vitals at the same time. Squad, target, everyone."
 	HUD_traits = list(TRAIT_SECURITY_HUD, TRAIT_MEDICAL_HUD)
-
-// Belt
-
-/obj/item/storage/belt/military/assault/maxtac
-
-/obj/item/storage/belt/military/assault/maxtac/PopulateContents()
-	generate_items_inside(list(
-		/obj/item/ammo_box/magazine/smartgun = 4,
-		/obj/item/grenade/empgrenade = 2,
-	), src)
