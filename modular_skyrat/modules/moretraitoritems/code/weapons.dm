@@ -158,8 +158,10 @@
 		playsound(src, eject_sound, eject_sound_volume, eject_sound_volume) //This is why we've copied this proc, it should play the eject sound when ejecting.
 	else
 		playsound(src, eject_empty_sound, eject_sound_volume, eject_sound_volume)
-	magazine.forceMove(drop_location())
+	// MAVERICK EDIT BEGIN - grab the magazine before it leaves, Exited() clears the magazine var
 	var/obj/item/ammo_box/magazine/old_mag = magazine
+	magazine.forceMove(drop_location())
+	// MAVERICK EDIT END
 	if(tac_load)
 		if (insert_magazine(user, tac_load, FALSE))
 			to_chat(user, span_notice("You perform an elite tactical reload on \the [src]."))
