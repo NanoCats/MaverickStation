@@ -10,13 +10,13 @@
 
 /datum/greyscale_config/mod_plating
 	name = "MOD External Plating"
-	icon_file = 'modular_maverick/icons/obj/clothing/modsuit/mod_plating_greyscale.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/mod_plating.json'
+	icon_file = 'modular_~maverick/icons/obj/clothing/modsuit/mod_plating_greyscale.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/mod_plating.json'
 
 /// Same plating with a two-tone stripe.
 /datum/greyscale_config/mod_plating/split
 	name = "MOD External Plating (Split Stripe)"
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/mod_plating_split.json'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/mod_plating_split.json'
 
 /datum/mod_theme
 	/// GAGS colors ("#body#accent") for the generated plating sprite.
