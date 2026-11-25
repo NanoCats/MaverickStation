@@ -113,3 +113,24 @@
 	name = "MaxTac combat HUD implant"
 	desc = "A HUD implant that shows security records and vitals at the same time. Squad, target, everyone."
 	HUD_traits = list(TRAIT_SECURITY_HUD, TRAIT_MEDICAL_HUD)
+
+// Headsets. The CentCom bowman, on the guard bowman frame in MaxTac colors: dark body, police blue stripe.
+/obj/item/radio/headset/headset_cent/alt/maxtac
+	name = "MaxTac bowman headset"
+	desc = "A bowman headset for MaxTac operatives. Protects ears from flashbangs."
+	icon = 'modular_zubbers/icons/obj/devices/guard_bowman.dmi'
+	worn_icon = 'modular_zubbers/icons/mob/clothing/guard_bowman_worn.dmi'
+	icon_state = "guard_bowman"
+	worn_icon_state = "guard_bowman"
+	post_init_icon_state = "guard_bowman"
+	greyscale_config = /datum/greyscale_config/guard_bowman
+	greyscale_config_worn = /datum/greyscale_config/guard_bowman/worn
+	greyscale_colors = "#2a2b38#2f62d8"
+
+/obj/item/radio/headset/headset_cent/alt/maxtac/Initialize(mapload)
+	. = ..()
+	update_icon(UPDATE_OVERLAYS)
+
+/obj/item/radio/headset/headset_cent/alt/maxtac/leader
+	name = "MaxTac commander bowman headset"
+	command = TRUE

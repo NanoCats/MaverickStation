@@ -6,7 +6,8 @@
 	id = /obj/item/card/id/advanced/black/deathsquad
 	id_trim = /datum/id_trim/centcom/deathsquad/maxtac
 	uniform = /obj/item/clothing/under/rank/security/officer/beatcop
-	head = /obj/item/clothing/head/beret/sec/navyofficer
+	head = /obj/item/clothing/head/helmet/toggleable/riot
+	ears = /obj/item/radio/headset/headset_cent/alt/maxtac
 	// Shove resistance for when the suit is folded away. The suit gives the real protection.
 	suit = /obj/item/clothing/suit/armor/riot
 	glasses = /obj/item/clothing/glasses/night
@@ -132,8 +133,7 @@
 	name = "MaxTac Commander"
 
 	id_trim = /datum/id_trim/centcom/deathsquad/maxtac/commander
-	head = /obj/item/clothing/head/beret/sec/navywarden
-	ears = /obj/item/radio/headset/headset_cent/alt/leader
+	ears = /obj/item/radio/headset/headset_cent/alt/maxtac/leader
 	r_hand = /obj/item/gun/energy/ionrifle
 	backpack_contents = list(
 		/obj/item/gun/ballistic/automatic/pistol/robohand = 1,

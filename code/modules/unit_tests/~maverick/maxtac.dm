@@ -77,10 +77,11 @@
 	TEST_ASSERT(istype(suit), "[role]: no MODsuit.")
 	TEST_ASSERT_EQUAL(length(suit.modules), length(suit.applied_modules), "[role]: suit is missing modules.")
 	TEST_ASSERT(locate(/obj/item/mod/module/holster) in suit.modules, "[role]: suit has no holster.")
-	// The suit deploys at spawn, so the beret and riot armor sit inside the helmet and chestplate until it folds away.
+	TEST_ASSERT(istype(operative.ears, /obj/item/radio/headset/headset_cent/alt/maxtac), "[role]: wrong headset.")
+	// The suit deploys at spawn, so the riot helmet and riot armor sit inside the helmet and chestplate until it folds away.
 	var/datum/mod_part/helmet_part = suit.get_part_datum_from_slot(ITEM_SLOT_HEAD)
 	var/datum/mod_part/chest_part = suit.get_part_datum_from_slot(ITEM_SLOT_OCLOTHING)
-	TEST_ASSERT(istype(helmet_part?.overslotting, /obj/item/clothing/head/beret/sec), "[role]: no beret under the helmet.")
+	TEST_ASSERT(istype(helmet_part?.overslotting, /obj/item/clothing/head/helmet/toggleable/riot), "[role]: no riot helmet under the suit helmet.")
 	TEST_ASSERT(istype(chest_part?.overslotting, /obj/item/clothing/suit/armor/riot), "[role]: no riot armor under the chestplate.")
 	TEST_ASSERT(istype(operative.get_organ_slot(ORGAN_SLOT_RIGHT_ARM_AUG), /obj/item/organ/cyberimp/arm/toolkit/armblade/maxtac), "[role]: no right mantis blade.")
 	TEST_ASSERT(istype(operative.get_organ_slot(ORGAN_SLOT_EYES), /obj/item/organ/eyes/robotic/thermals), "[role]: no thermal eyes.")
