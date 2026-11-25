@@ -30,13 +30,12 @@
 	starting_frequency = MODLINK_FREQ_CENTCOM
 	applied_cell = /obj/item/stock_parts/power_store/cell/bluespace
 	req_access = list(ACCESS_CENT_SPECOPS)
-	// 20 of 22 complexity. Keep at least 1 free for the plasma stabilizer plasmamen get on spawn.
+	// 17 of 22 complexity. Always keep at least 1 free for the plasma stabilizer plasmamen get on spawn.
 	applied_modules = list(
 		/obj/item/mod/module/emp_shield/advanced,
 		/obj/item/mod/module/storage/large_capacity,
 		/obj/item/mod/module/status_readout/operational,
 		/obj/item/mod/module/magnetic_harness,
-		/obj/item/mod/module/jump_jet,
 		/obj/item/mod/module/shooting_assistant,
 		/obj/item/mod/module/thermal_regulator,
 		/obj/item/mod/module/holster,
@@ -45,12 +44,13 @@
 		/obj/item/mod/module/visor/thermal,
 	)
 	default_pins = list(
-		/obj/item/mod/module/jump_jet,
 		/obj/item/mod/module/shooting_assistant,
+		/obj/item/mod/module/holster,
 		/obj/item/mod/module/magboot,
+		/obj/item/mod/module/visor/thermal,
 	)
 
-// Heavy: trades the jump jet and shooting assistant for the suit-mounted smartgun and the bulwark. 20 of 22 complexity.
+// Heavy: trades the shooting assistant for the suit-mounted smartgun and the bulwark. 20 of 22 complexity.
 /obj/item/mod/control/pre_equipped/maxtac/heavy
 	applied_modules = list(
 		/obj/item/mod/module/emp_shield/advanced,
@@ -66,17 +66,18 @@
 	)
 	default_pins = list(
 		/obj/item/mod/module/smartgun,
+		/obj/item/mod/module/holster,
 		/obj/item/mod/module/magboot,
+		/obj/item/mod/module/visor/thermal,
 	)
 
-// Medic: adds the medical beamgun. 21 of 22 complexity.
+// Medic: adds the medical beamgun. 18 of 22 complexity.
 /obj/item/mod/control/pre_equipped/maxtac/medic
 	applied_modules = list(
 		/obj/item/mod/module/emp_shield/advanced,
 		/obj/item/mod/module/storage/large_capacity,
 		/obj/item/mod/module/status_readout/operational,
 		/obj/item/mod/module/magnetic_harness,
-		/obj/item/mod/module/jump_jet,
 		/obj/item/mod/module/shooting_assistant,
 		/obj/item/mod/module/medbeam,
 		/obj/item/mod/module/holster,
@@ -86,8 +87,10 @@
 	)
 	default_pins = list(
 		/obj/item/mod/module/medbeam,
-		/obj/item/mod/module/jump_jet,
+		/obj/item/mod/module/shooting_assistant,
+		/obj/item/mod/module/holster,
 		/obj/item/mod/module/magboot,
+		/obj/item/mod/module/visor/thermal,
 	)
 
 // Implants
