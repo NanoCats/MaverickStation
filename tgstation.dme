@@ -7382,6 +7382,7 @@
 #include "modular_maverick\code\modules\age_gate\config.dm"
 #include "modular_maverick\code\modules\branding\space_law_book.dm"
 #include "modular_maverick\code\modules\branding\top_bar_buttons.dm"
+#include "modular_maverick\code\modules\customization\custom_shading.dm"
 #include "modular_maverick\code\modules\loadout\loadout_gates.dm"
 #include "modular_maverick\code\modules\loadout\categories\platings.dm"
 #include "modular_maverick\code\modules\loadout\categories\weaponry.dm"
