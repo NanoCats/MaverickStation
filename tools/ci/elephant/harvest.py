@@ -28,6 +28,7 @@ FAILURE = re.compile(r"^\t?FAILURE #\d+: (?P<headline>.+)")
 RUNTIME = re.compile(r"Runtime in (?P<where>[^:]+?,\d+): (?P<message>.+)")
 HARDDEL = re.compile(r"(?:hard delete|hard deleted|failed to (?:qdel|gc)).*?(?P<type>/[a-z_/0-9]+)", re.I)
 TOTAL_RUNTIMES = re.compile(r"^Total runtimes: (?P<count>\d+)")
+PROBE = re.compile(r"ELEPHANT (?P<probe>\w+) (?P<type>\S+) at [^:]*: (?P<stack>.*)")
 
 
 def gh(*args, raw=False):
@@ -57,6 +58,14 @@ def parse_log(log):
         group_match = GROUP.match(line)
         if group_match:
             group = group_match["group"].strip().replace("/datum/unit_test/", "")
+            continue
+
+        probe_match = PROBE.search(line)
+        if probe_match:
+            first_frame = probe_match["stack"].split(" <- ")[0]
+            first_frame = re.sub(r" src=\S+", "", first_frame)
+            signature = f"{probe_match['type']} from {first_frame}"
+            found.append(("probe:" + probe_match["probe"], group, signature, probe_match["stack"][:400]))
             continue
 
         failure_match = FAILURE.match(line)
