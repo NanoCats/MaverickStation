@@ -16,7 +16,10 @@
 	)
 	additional_radio = /obj/item/encryptionkey/heads/hos
 
-	/// Cybernetics installed at spawn. Every one of them is EMP hardened.
+	/// Heart installed at spawn. The leader gets the voltaic heart.
+	var/heart_type = /obj/item/organ/heart/cybernetic/tier3
+
+	/// Cybernetics installed at spawn. The suit's advanced EMP shield protects them while it is active.
 	var/list/chrome = list(
 		/obj/item/organ/cyberimp/brain/anti_stun,
 		/obj/item/organ/cyberimp/brain/anti_drop,
@@ -27,7 +30,6 @@
 		/obj/item/organ/cyberimp/mouth/breathing_tube,
 		/obj/item/organ/eyes/robotic/thermals,
 		/obj/item/organ/ears/cybernetic/upgraded,
-		/obj/item/organ/heart/cybernetic/tier3,
 		/obj/item/organ/lungs/cybernetic/tier3,
 		/obj/item/organ/liver/cybernetic/tier3,
 		/obj/item/organ/stomach/cybernetic/tier3,
@@ -38,7 +40,7 @@
 	if(visuals_only)
 		return
 
-	for(var/organ_type in chrome)
+	for(var/organ_type in chrome + heart_type)
 		install_chrome(operative, new organ_type())
 
 	// Strong-Arm musculature in both arms, the mantis blade in the right and a toolset in the left.
@@ -53,24 +55,42 @@
 			arm_implant.swap_zone(arm_zone)
 			install_chrome(operative, arm_implant)
 
-	harden_against_emp(operative)
 
-/// Installs an implant, unless that slot holds a robotic organ the species needs (synth power cord, protean heart, and so on).
+/// Installs an implant if it is safe for this species, deletes it if not.
 /datum/outfit/centcom/ert/maxtac/proc/install_chrome(mob/living/carbon/human/operative, obj/item/organ/implant)
-	var/obj/item/organ/current = operative.get_organ_slot(implant.slot)
-	if(current && IS_ROBOTIC_ORGAN(current))
-		var/species_type = operative.dna.species.get_mutant_organ_type_for_slot(implant.slot)
-		if(species_type && istype(current, species_type))
-			qdel(implant)
-			return
+	if(!can_install_chrome(operative, implant))
+		qdel(implant)
+		return
 	implant.Insert(operative, movement_flags = DELETE_IF_REPLACED)
 
-/// Makes every organ and limb the operative has EMP proof, so their chrome (and a synth's whole body) keeps working.
-/datum/outfit/centcom/ert/maxtac/proc/harden_against_emp(mob/living/carbon/human/operative)
-	for(var/obj/item/organ/organ as anything in operative.organs)
-		organ.AddElement(/datum/element/empprotection, EMP_PROTECT_SELF)
-	for(var/obj/item/bodypart/limb as anything in operative.bodyparts)
-		limb.AddElement(/datum/element/empprotection, EMP_PROTECT_SELF)
+/**
+ * Checks if an implant can go in without breaking the operative's body.
+ *
+ * Some species depend on their own organs: the protean orchestrator and refactory, plasmaman and vox lungs,
+ * the ethereal stomach, synth organs. For the standard organ slots we only swap in chrome when the species uses
+ * the plain organ. For implant slots we keep any robotic organ the species gives, like the synth power cord.
+ */
+/datum/outfit/centcom/ert/maxtac/proc/can_install_chrome(mob/living/carbon/human/operative, obj/item/organ/implant)
+	var/static/list/standard_organs = list(
+		ORGAN_SLOT_HEART = /obj/item/organ/heart,
+		ORGAN_SLOT_LUNGS = /obj/item/organ/lungs,
+		ORGAN_SLOT_LIVER = /obj/item/organ/liver,
+		ORGAN_SLOT_STOMACH = /obj/item/organ/stomach,
+		ORGAN_SLOT_EYES = /obj/item/organ/eyes,
+		ORGAN_SLOT_EARS = /obj/item/organ/ears,
+	)
+	var/obj/item/organ/current = operative.get_organ_slot(implant.slot)
+	// Protean core organs. Without the orchestrator they cannot stand, without the refactory they cannot repair.
+	if(current && (current.organ_flags & (ORGAN_NANOMACHINE | ORGAN_UNREMOVABLE)))
+		return FALSE
+	// The voltaic heart runs any other body.
+	if(istype(implant, /obj/item/organ/heart/cybernetic/anomalock))
+		return TRUE
+	var/species_type = operative.dna.species.get_mutant_organ_type_for_slot(implant.slot)
+	var/standard_type = standard_organs[implant.slot]
+	if(standard_type)
+		return species_type == standard_type
+	return !(current && IS_ROBOTIC_ORGAN(current) && species_type && istype(current, species_type))
 
 /datum/outfit/centcom/ert/maxtac/leader
 	name = "MaxTac Squad Leader"
@@ -79,3 +99,4 @@
 	id_trim = /datum/id_trim/centcom/ert/commander/maxtac
 	ears = /obj/item/radio/headset/headset_cent/alt/leader
 	r_hand = /obj/item/gun/energy/ionrifle
+	heart_type = /obj/item/organ/heart/cybernetic/anomalock/prebuilt
