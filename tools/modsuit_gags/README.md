@@ -2,9 +2,9 @@
 
 This tool makes the paintable versions of the MODsuit sprites. It reads the original sprite files and writes:
 
-- `modular_maverick/icons/mob/clothing/modsuit/gags/<skin>.dmi` (the greyscale layers)
-- `modular_maverick/code/datums/greyscale/json_configs/modsuit/<skin>_<role>.json` (the GAGS configs)
-- `modular_maverick/code/modules/mod/gags/mod_gags_skins.dm` (the config datums and the skin registry)
+- `modular_~maverick/icons/mob/clothing/modsuit/gags/<skin>.dmi` (the greyscale layers)
+- `modular_~maverick/code/datums/greyscale/json_configs/modsuit/<skin>_<role>.json` (the GAGS configs)
+- `modular_~maverick/code/modules/mod/gags/mod_gags_skins.dm` (the config datums and the skin registry)
 
 Do not edit those files by hand. Edit the original sprites or the rules here, then rebuild.
 
