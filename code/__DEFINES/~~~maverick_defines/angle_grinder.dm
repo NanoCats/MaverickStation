@@ -10,3 +10,5 @@
 #define MAVERICK_CUT_VOX
 /// Cursekin and their lycan form
 #define MAVERICK_CUT_CURSEKIN
+/// Shadekin species
+#define MAVERICK_CUT_SHADEKIN

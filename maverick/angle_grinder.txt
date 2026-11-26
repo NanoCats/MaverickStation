@@ -40,3 +40,10 @@ modular_zubbers/code/modules/mob/living/carbon/human/species_types/vox_primalis.
 #   The species stays unpickable through MAVERICK_SPECIES_DISABLED instead.
 # - Anthro Syndicate troopers: ruins and maint rooms place them, so they are reskinned as regular
 #   troopers in modular_~maverick/code/modules/mob/living/basic/anthro_troopers.dm instead.
+
+# Shadekin species, its brain and its regeneration. Shadekin ears, bodyparts, tails and loadout items stay, other code uses them.
+modular_zubbers/code/modules/mob/living/carbon/human/species_types/shadekin.dm
+
+# Quirks leadership cut: Hydra Heads (no sprites back it up) and Jerk (always on, and players end up apologizing for it).
+modular_skyrat/modules/hydra/code/neutral.dm
+modular_zubbers/code/datums/quirks/positive_quirks/defensive.dm

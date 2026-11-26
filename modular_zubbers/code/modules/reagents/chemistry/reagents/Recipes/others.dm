@@ -96,10 +96,14 @@
 	required_reagents  = list(/datum/reagent/cellulose = 20, /datum/reagent/consumable/ethanol/mush_crush = 3, /datum/reagent/plantnutriment/robustharvestnutriment = 3, /datum/reagent/mutationtoxin = 1)
 	required_temp = 320
 
+// MAVERICK EDIT BEGIN - Shadekin are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_SHADEKIN
 /datum/chemical_reaction/mutationtoxin/shadekin
 	results = list(/datum/reagent/mutationtoxin/shadekin = 1)
 	required_reagents  = list(/datum/reagent/consumable/bananashake = 3, /datum/reagent/medicine/mannitol = 2, /datum/reagent/drug/happiness = 2, /datum/reagent/mutationtoxin = 1)
 	required_temp = 320
+#endif
+// MAVERICK EDIT END
 
 /datum/chemical_reaction/mutationtoxin/skeleton
 	results = list(/datum/reagent/mutationtoxin/skeleton = 1)

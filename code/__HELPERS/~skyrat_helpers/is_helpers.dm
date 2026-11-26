@@ -17,7 +17,7 @@
 #define issnail(A) (is_species(A, /datum/species/snail))
 #define isluminescent(A) (is_species(A, /datum/species/jelly/luminescent))
 #define isprimitivedemihuman(A) (is_species(A, /datum/species/human/felinid/primitive))
-#define isshadekin(A) (is_species(A, /datum/species/shadekin))
+#define isshadekin(A) (is_species(A, null)) // MAVERICK EDIT - Shadekin are cut (Operation Angle Grinder) - Original: #define isshadekin(A) (is_species(A, /datum/species/shadekin))
 #define isprotean(A) (is_species(A, /datum/species/protean))
 #define iscursekin(A) (is_species(A, null)) // MAVERICK EDIT - Cursekin are cut (Operation Angle Grinder) - Original: #define iscursekin(A) (is_species(A, /datum/species/human/cursekin))
 #define islycan(A) (is_species(A, null)) // MAVERICK EDIT - lycans are cut (Operation Angle Grinder) - Original: #define islycan(A) (is_species(A, /datum/species/lycan))

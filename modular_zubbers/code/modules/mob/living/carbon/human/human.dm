@@ -15,8 +15,12 @@
 		blooper_pitch = rand(0, 100)
 		blooper_pitch_range = rand(0, 100)
 
+// MAVERICK EDIT BEGIN - Shadekin are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_SHADEKIN
 /mob/living/carbon/human/species/shadekin
 	race = /datum/species/shadekin
+#endif
+// MAVERICK EDIT END
 
 // Just blanket apply the footstep pref on limb addition, it gets far too complicated otherwise as limbs are getting replaced more often than you'd think
 /obj/item/bodypart/leg/on_adding(mob/living/carbon/new_owner)

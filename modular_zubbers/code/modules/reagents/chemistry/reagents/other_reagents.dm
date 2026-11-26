@@ -235,6 +235,8 @@
 		"You feel very weak in the darkness." = MUT_MSG_EXTENDED,
 		"You feel like basking in the sunlight." = MUT_MSG_ABOUT2TURN)
 
+// MAVERICK EDIT BEGIN - Shadekin are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_SHADEKIN
 /datum/reagent/mutationtoxin/shadekin
 	name = "Shadekin Mutation Toxin"
 	description = "A shadekin toxin."
@@ -248,6 +250,8 @@
 		"You are getting furrier." = MUT_MSG_EXTENDED,
 		"Your ears flop over your head." = MUT_MSG_EXTENDED,
 		"You hear a cacophony of voices in your head." = MUT_MSG_ABOUT2TURN)
+#endif
+// MAVERICK EDIT END
 
 /datum/reagent/mutationtoxin/shadow
 	name = "Shadow Mutation Toxin"
