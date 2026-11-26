@@ -53,7 +53,7 @@
 	if(client.interviewee)
 		return FALSE
 
-	// MAVERICK EDIT BEGIN - Desktop lobby links, see modular_maverick/code/modules/lobby_desktop
+	// MAVERICK EDIT BEGIN - Desktop lobby links, see modular_~maverick/code/modules/lobby_desktop
 	if(maverick_lobby_topic(href_list))
 		return
 	// MAVERICK EDIT END
@@ -174,7 +174,7 @@
  * Hard updates the title screen HTML, it causes visual glitches if used.
  */
 /mob/dead/new_player/proc/update_title_screen()
-	// MAVERICK EDIT BEGIN - Desktop lobby, see modular_maverick/code/modules/lobby_desktop
+	// MAVERICK EDIT BEGIN - Desktop lobby, see modular_~maverick/code/modules/lobby_desktop
 	if(maverick_update_title_screen())
 		return
 	// MAVERICK EDIT END

@@ -133,6 +133,23 @@
 		RND_CATEGORY_MODSUIT_MODULES + RND_SUBCATEGORY_MODSUIT_MODULES_SECURITY
 	)
 
+// These modules were never printable before, so they had no materials. Match them to their designs for the design_mats test.
+/obj/item/mod/module/megaphone
+	custom_materials = list(/datum/material/iron = HALF_SHEET_MATERIAL_AMOUNT, /datum/material/glass = HALF_SHEET_MATERIAL_AMOUNT)
+
+/obj/item/mod/module/quick_cuff
+	custom_materials = list(/datum/material/iron = HALF_SHEET_MATERIAL_AMOUNT, /datum/material/titanium = HALF_SHEET_MATERIAL_AMOUNT)
+
+/obj/item/mod/module/pepper_shoulders
+	custom_materials = list(/datum/material/iron = HALF_SHEET_MATERIAL_AMOUNT, /datum/material/glass = HALF_SHEET_MATERIAL_AMOUNT)
+
+/obj/item/mod/module/paper_dispenser
+	custom_materials = list(/datum/material/iron = HALF_SHEET_MATERIAL_AMOUNT, /datum/material/glass = HALF_SHEET_MATERIAL_AMOUNT)
+
+// The stamper holds a real stamp, which has more iron than the design costs. Keep the printed materials, skip the strict test check.
+/datum/design/module/stamp
+	inherit_materials = DESIGN_INHERIT_MATS_SPECIAL
+
 // Maint loot. Does nothing on its own; science can dismantle it to research the node above.
 /obj/item/salvaged_policing_chestplate
 	name = "battered policing chestplate"

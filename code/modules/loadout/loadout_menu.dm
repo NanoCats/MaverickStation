@@ -80,6 +80,12 @@
 	if(selected_item.donator_only && !SSplayer_ranks.is_donator(preferences.parent))
 		to_chat(preferences.parent, span_warning("This item is for donators only."))
 		return
+
+	// MAVERICK EDIT ADDITION BEGIN - Staff gate
+	if(!selected_item.passes_staff_tier(preferences.parent))
+		to_chat(preferences.parent, span_warning("This item is for [LOWER_TEXT(loadout_staff_tier_name(selected_item.required_staff_tier))] only."))
+		return
+	// MAVERICK EDIT ADDITION END
 	// SKYRAT EDIT END
 
 	LAZYSET(loadout, selected_item.item_path, list())

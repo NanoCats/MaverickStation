@@ -11,12 +11,12 @@ MaverickStation is the personal SS13 fork of commander Aeri. Upstream chain: /tg
 
 ## Code rules
 
-- New code, icons and sounds go in `modular_maverick/`, mirroring the layout of `modular_zubbers/`.
+- New code, icons and sounds go in `modular_~maverick/`, mirroring the layout of `modular_zubbers/`.
 - To the extent possible, override and inject in favor of editing. We should predominantly alter upstream behavior with var overrides, proc overrides that call `..()`, signals, and roundstart injection. Map file edits should be avoided, because upstream syncs overwrite them. It is still possible to edit them via the automapper, however it requires enhanced effort.
 - If an upstream file must be edited, keep the edit small and wrap it:
   `// MAVERICK EDIT BEGIN - <reason>` ... `// MAVERICK EDIT END`
   For a one-line change, use `// MAVERICK EDIT - <reason>` at the end of the line.
-- Files in `modular_maverick/` must be added to `tgstation.dme` like any other modular file.
+- Files in `modular_~maverick/` must be added to `tgstation.dme` like any other modular file. The `~` makes the folder sort and compile last, so our overrides win over TG, Skyrat and Bubber code.
 - No player-facing mention of Bubberstation. Keep the license files, copyright notices and asset credits.
 
 ## Upstream sync

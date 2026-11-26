@@ -19,7 +19,7 @@ window "mainwindow"
 		is-default = true
 		saved-params = "pos;size;is-minimized;is-maximized"
 		statusbar = false
-		icon = 'modular_maverick\\icons\\ui\\maverick_window.png'
+		icon = 'modular_~maverick\\icons\\ui\\maverick_window.png'
 		macro = "default"
 	elem "split"
 		type = CHILD
