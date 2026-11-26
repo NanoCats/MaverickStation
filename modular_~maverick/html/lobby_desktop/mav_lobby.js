@@ -1238,11 +1238,15 @@
 		var vol_knob = el("b", null, vol);
 		var rpt = el("div", "amp_tog", row, REPEAT_LABEL[amp_repeat]);
 		rpt.title = REPEAT_TIP[amp_repeat];
+		// Shuffle lives on the server, since the server picks the next track. This only asks it to flip.
+		var shuf = el("div", "amp_tog", row, "SHUF");
+		shuf.title = "Shuffle: play the playlist in random order. Click to toggle.";
+		shuf.addEventListener("click", function () { byond("music=shuffle"); });
 		var list = el("div", "amp_list", body);
 
 		amp = {
 			time: time, marquee_text: marquee_text, seek_fill: seek_fill, vol_fill: vol_fill, vol_knob: vol_knob,
-			btns: btns, list: list, rpt: rpt, spec: spec,
+			btns: btns, list: list, rpt: rpt, shuf: shuf, spec: spec,
 		};
 
 		rpt.classList.toggle("on", amp_repeat !== "off");
@@ -1329,6 +1333,7 @@
 		amp.time.classList.toggle("paused", !!M.paused);
 		amp.btns.play.classList.toggle("on", M.playing && !M.paused);
 		amp.btns.pause.classList.toggle("on", !!M.paused);
+		amp.shuf.classList.toggle("on", !!M.shuffle);
 		amp.vol_fill.style.width = M.vol + "%";
 		amp.vol_knob.style.left = M.vol + "%";
 		if (rebuild_list) {
