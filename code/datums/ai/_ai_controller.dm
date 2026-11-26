@@ -86,6 +86,10 @@ multiple modular subtrees with behaviors
 	if(ai_movement.moving_controllers[src])
 		ai_movement.stop_moving_towards(src)
 	QDEL_LIST(behavior_nodes)
+	// MAVERICK EDIT BEGIN - These lists point at the nodes we just deleted. Clear them, or the nodes wait on us in the GC queue and fail as hard deletes.
+	override_slots = null
+	polling_observers = null
+	// MAVERICK EDIT END
 	return ..()
 
 ///Overrides the current ai_movement of this controller with a new one
