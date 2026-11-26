@@ -28,6 +28,10 @@
 	var/range = 1
 	///Ceiling of range, integer without decimal entries.
 	var/lumcount_range = 0
+	// MAVERICK EDIT BEGIN - track our grid cells so cleanup cannot miss any
+	/// Spatial grid cells we are registered in. Cleanup removes us from exactly these.
+	var/list/datum/spatial_grid_cell/registered_cells
+	// MAVERICK EDIT END
 	///How much this light affects the dynamic_lumcount of turfs.
 	var/lum_power = 0.5
 	///Transparency value.
@@ -162,28 +166,35 @@
 /datum/component/overlay_lighting/Destroy()
 	set_parent_attached_to(null)
 	set_holder(null)
+	clean_old_cells() // MAVERICK EDIT - never leave a ref in a grid cell
 	visible_mask = null
 	cone = null
 	parent_attached_to = null
 	return ..()
 
 /// Clears ourselves from spatial grid's dynlights lists
+// MAVERICK EDIT BEGIN - clean the cells we registered in, not the cells around holder_loc.
+// Recomputing them missed cells whenever lumcount_range shrank or the holder moved first,
+// which left hard refs in dynamic_light_sources. holder_loc is kept so callers need no edits.
 /datum/component/overlay_lighting/proc/clean_old_cells(atom/holder_loc)
-	var/turf/holder_turf = get_turf(holder_loc)
-	if (isnull(holder_turf))
-		return
-	for (var/datum/spatial_grid_cell/grid_cell as anything in SSspatial_grid.get_cells_in_range(holder_turf, lumcount_range))
+	for (var/datum/spatial_grid_cell/grid_cell as anything in registered_cells)
 		GRID_CELL_REMOVE(grid_cell.dynamic_light_sources, src)
+	registered_cells = null
+// MAVERICK EDIT END
 
 /// Populates the affected_turfs lazylist, adding to its contents the effects of being near the light.
 /datum/component/overlay_lighting/proc/register_new_cells()
+	clean_old_cells() // MAVERICK EDIT - drop the old registration first, even if we bail below
 	if(!current_holder)
 		return
 	var/turf/holder_turf = get_turf(current_holder)
 	if (isnull(holder_turf))
 		return
-	for (var/datum/spatial_grid_cell/grid_cell as anything in SSspatial_grid.get_cells_in_range(holder_turf, lumcount_range))
+	// MAVERICK EDIT BEGIN - remember the cells so cleanup is exact
+	registered_cells = SSspatial_grid.get_cells_in_range(holder_turf, lumcount_range)
+	for (var/datum/spatial_grid_cell/grid_cell as anything in registered_cells)
 		GRID_CELL_ASSOC_SET(grid_cell.dynamic_light_sources, src, lum_power)
+	// MAVERICK EDIT END
 
 /// Clears the old affected cells and populates the new ones.
 /datum/component/overlay_lighting/proc/make_luminosity_update(atom/old_loc)
