@@ -506,6 +506,7 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen) // I hate this place
 				maptext = null
 			else
 				icon_state = "spacesuit_[cell_state]"
+		apply_maverick_cell_bar(cell_state, cell_percent) // MAVERICK EDIT - Finer cell bar
 	if(cell_percent && hovering)
 		maptext = MAPTEXT("<div align='right'>[round(cell_percent, 0.1)]%</div>")
 	else

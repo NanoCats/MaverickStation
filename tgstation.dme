@@ -10835,6 +10835,7 @@
 #include "modular_~maverick\code\modules\branding\space_law_book.dm"
 #include "modular_~maverick\code\modules\branding\top_bar_buttons.dm"
 #include "modular_~maverick\code\modules\cargo\packs\shotgun_packs.dm"
+#include "modular_~maverick\code\modules\clothing\spacesuit_cell_hud.dm"
 #include "modular_~maverick\code\modules\customization\custom_shading.dm"
 #include "modular_~maverick\code\modules\loadout\loadout_gates.dm"
 #include "modular_~maverick\code\modules\loadout\categories\platings.dm"

@@ -749,7 +749,12 @@
 
 	var/atom/movable/screen/spacesuit/spacesuit_hud = wearer.hud_used?.screen_objects[HUD_MOB_SPACESUIT]
 	if (spacesuit_hud)
-		spacesuit_hud.update_spacesuit_hud_icon(state_to_use || SPACESUIT_NO_ICON)
+		// MAVERICK EDIT BEGIN - Pass the exact charge so the HUD can draw the finer cell bar
+		var/core_percent = null
+		if(core && core.max_charge_amount())
+			core_percent = 100 * core.charge_amount() / core.max_charge_amount()
+		spacesuit_hud.update_spacesuit_hud_icon(state_to_use || SPACESUIT_NO_ICON, core_percent)
+		// MAVERICK EDIT END
 
 /obj/item/mod/control/proc/update_speed()
 	var/total_slowdown = 0
