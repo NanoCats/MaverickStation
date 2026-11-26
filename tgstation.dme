@@ -10858,5 +10858,6 @@
 #include "modular_~maverick\code\modules\mod\gags\mod_gags_hooks.dm"
 #include "modular_~maverick\code\modules\mod\gags\mod_gags_skins.dm"
 #include "modular_~maverick\code\modules\research\research_on_deconstruct.dm"
+#include "modular_~maverick\code\modules\security\fine_evasion.dm"
 #include "modular_~maverick\modules\robotics_surgery_tray\code\robotics_surgery_tray.dm"
 // END_INCLUDE
