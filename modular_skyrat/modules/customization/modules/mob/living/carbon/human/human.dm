@@ -26,11 +26,15 @@
 				tgui.holder = src
 				tgui.ui_interact(usr) //datum has a tgui component, here we open the window
 
+// MAVERICK EDIT BEGIN - Vox are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_VOX
 /mob/living/carbon/human/species/vox
 	race = /datum/species/vox
 
 /mob/living/carbon/human/species/vox_primalis
 	race = /datum/species/vox_primalis
+#endif
+// MAVERICK EDIT END
 
 /mob/living/carbon/human/species/synth
 	race = /datum/species/synthetic
@@ -62,8 +66,12 @@
 /mob/living/carbon/human/species/roundstartslime
 	race = /datum/species/jelly/roundstartslime
 
+// MAVERICK EDIT BEGIN - Teshari are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_TESHARI
 /mob/living/carbon/human/species/teshari
 	race = /datum/species/teshari
+#endif
+// MAVERICK EDIT END
 
 /mob/living/carbon/human/species/akula
 	race = /datum/species/akula

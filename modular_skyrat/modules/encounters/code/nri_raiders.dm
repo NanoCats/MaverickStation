@@ -187,9 +187,9 @@ GLOBAL_VAR(first_officer)
 	faction = list(FACTION_RAIDER)
 	you_are_text = "You are a Pan-Slavic Commonwealth task force."
 	flavour_text = "The station has refused to pay the fine for breaking Imperial regulations, you are here to recover the debt. Do so by demanding the funds. Force approach is usually recommended, but isn't the only method."
-	important_text = "Allowed races are Humans, Akula, Teshari and Synths. Follow your field officer's orders. Important mention - while you are listed as the pirates gamewise, you really aren't lore-and-everything-else-wise. Roleplay accordingly."
+	important_text = "Allowed races are Humans, Akula and Synths. Follow your field officer's orders. Important mention - while you are listed as the pirates gamewise, you really aren't lore-and-everything-else-wise. Roleplay accordingly." // MAVERICK EDIT - Teshari are cut (Operation Angle Grinder)
 	outfit = /datum/outfit/pirate/nri
-	restricted_species = list(/datum/species/human, /datum/species/akula, /datum/species/synthetic, /datum/species/teshari)
+	restricted_species = list(/datum/species/human, /datum/species/akula, /datum/species/synthetic) // MAVERICK EDIT - Teshari are cut (Operation Angle Grinder) - Original: list(/datum/species/human, /datum/species/akula, /datum/species/synthetic, /datum/species/teshari)
 	random_appearance = FALSE
 	show_flavor = TRUE
 
@@ -221,7 +221,7 @@ GLOBAL_VAR(first_officer)
 	mob_name = "Pan-Slavic Commonwealth police patrol's field officer"
 	outfit = /datum/outfit/pirate/nri/officer
 	flavour_text = "The station has refused to pay the fine for breaking Imperial regulations, as a consequence you are here to perform a prolonged inspection."
-	important_text = "Allowed races are Humans, Akula, Teshari and Synths. Roleplay accordingly. There is an important document in your pocket I'd advise you to read and keep safe."
+	important_text = "Allowed races are Humans, Akula and Synths. Roleplay accordingly. There is an important document in your pocket I'd advise you to read and keep safe." // MAVERICK EDIT - Teshari are cut (Operation Angle Grinder)
 
 /obj/effect/mob_spawn/ghost_role/human/nri_raider/officer/apply_codename(mob/living/carbon/human/spawned_human)
 	var/callsign = pick(GLOB.callsigns_nri)

@@ -26,6 +26,16 @@ subdirectories = schema["subdirectories"]
 FORBIDDEN_INCLUDES = schema["forbidden_includes"]
 excluded_files = schema["excluded_files"]
 
+# MAVERICK EDIT BEGIN - Operation Angle Grinder: files listed in maverick/angle_grinder.txt are cut from the build
+ANGLE_GRINDER_LIST = "maverick/angle_grinder.txt"
+if file_reference == "tgstation.dme" and os.path.isfile(ANGLE_GRINDER_LIST):
+    with open(ANGLE_GRINDER_LIST, 'r') as grinder_file:
+        for grinder_line in grinder_file:
+            grinder_line = grinder_line.strip()
+            if grinder_line and not grinder_line.startswith("#"):
+                FORBIDDEN_INCLUDES.append(grinder_line)
+# MAVERICK EDIT END
+
 def post_error(string):
     print(red(f"Ticked File Enforcement [{file_reference}]: " + string))
     if on_github:
