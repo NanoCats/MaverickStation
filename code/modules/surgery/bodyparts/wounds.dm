@@ -115,6 +115,10 @@
 		return
 
 	var/datum/wound/possible_wound = pick_weight(possible_wounds)
+	// MAVERICK EDIT BEGIN - every candidate can have a weight of 0, and then pick_weight returns null
+	if (isnull(possible_wound))
+		return
+	// MAVERICK EDIT END
 	var/datum/wound_pregen_data/possible_pregen_data = GLOB.all_wound_pregen_data[possible_wound]
 	var/datum/wound/replaced_wound = null
 	for(var/datum/wound/existing_wound as anything in wounds)
