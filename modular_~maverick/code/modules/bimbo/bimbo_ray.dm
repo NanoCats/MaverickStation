@@ -1,10 +1,10 @@
 /obj/item/gun/energy/bimbo_ray
 	name = "bimbo ray"
 	desc = "A pink ray gun from the LustWish catalogue. One zap and your head feels lighter. It recharges on its own."
-	icon = 'modular_maverick/icons/obj/weapons/bimbo_ray.dmi'
+	icon = 'modular_~maverick/icons/obj/weapons/bimbo_ray.dmi'
 	icon_state = "bimbo_ray"
-	lefthand_file = 'modular_maverick/icons/mob/inhands/bimbo_ray_lefthand.dmi'
-	righthand_file = 'modular_maverick/icons/mob/inhands/bimbo_ray_righthand.dmi'
+	lefthand_file = 'modular_~maverick/icons/mob/inhands/bimbo_ray_lefthand.dmi'
+	righthand_file = 'modular_~maverick/icons/mob/inhands/bimbo_ray_righthand.dmi'
 	inhand_icon_state = "bimbo_ray"
 	ammo_type = list(/obj/item/ammo_casing/energy/bimbo_ray)
 	automatic_charge_overlays = FALSE
@@ -21,7 +21,7 @@
 
 /obj/projectile/energy/bimbo_ray
 	name = "bimbo beam"
-	icon = 'modular_maverick/icons/obj/weapons/bimbo_ray.dmi'
+	icon = 'modular_~maverick/icons/obj/weapons/bimbo_ray.dmi'
 	icon_state = "bimbo_beam"
 	light_color = "#ff69b4"
 	damage = 0

@@ -3,7 +3,7 @@ import { Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
 import type { Objective } from './common/Objectives';
-import { MaverickAntagRules } from './maverick/AntagRules'; // MAVERICK EDIT
+import { MaverickAntagRules, MaxTacRules } from './maverick/AntagRules'; // MAVERICK EDIT
 
 type Info = {
   antag_name: string;
@@ -13,6 +13,18 @@ type Info = {
 export const Rules = (props) => {
   const { data } = useBackend<Info>();
   const { antag_name } = data;
+  // MAVERICK EDIT BEGIN - MaxTac gets its own rules
+  if (antag_name?.startsWith('MaxTac')) {
+    return (
+      <Stack vertical>
+        <Stack.Item bold>Special Rules:</Stack.Item>
+        <Stack.Item>
+          <MaxTacRules />
+        </Stack.Item>
+      </Stack>
+    );
+  }
+  // MAVERICK EDIT END
   switch (antag_name) {
     case 'Abductor Agent':
     case 'Abductor Scientist':

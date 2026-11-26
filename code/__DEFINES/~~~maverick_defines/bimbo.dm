@@ -1,4 +1,4 @@
-// Bimbo quirk and ray. See modular_maverick/code/modules/bimbo/
+// Bimbo quirk and ray. See modular_~maverick/code/modules/bimbo/
 
 /// Trait source for everything the bimbo component adds
 #define BIMBO_TRAIT_SOURCE "bimbo_component"

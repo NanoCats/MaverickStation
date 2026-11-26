@@ -40,7 +40,7 @@ excluded_files = [
     "DMCompiler_linux-x64/*.dm",
     # BUBBER EDIT - Modular files
     "modular_zubbers/code/__DEFINES/*.dm",
-    "modular_maverick/code/__DEFINES/*.dm", # MAVERICK EDIT - our global defines
+    "modular_~maverick/code/__DEFINES/*.dm", # MAVERICK EDIT - our global defines
 ]
 
 define_regex = re.compile(r"(\s+)?#define\s?([A-Z0-9_]+)\(?(.+)\)?")

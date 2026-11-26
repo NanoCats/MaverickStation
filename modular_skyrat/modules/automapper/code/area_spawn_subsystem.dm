@@ -121,6 +121,10 @@ SUBSYSTEM_DEF(area_spawn)
 	// Turf completely empty?
 	var/totally_empty = TRUE
 	for(var/atom/movable/found_movable in turf)
+		// MAVERICK EDIT BEGIN - window spawners may not have become windows yet. Never place on one.
+		if(istype(found_movable, /obj/effect/spawner/structure))
+			return 0
+		// MAVERICK EDIT END
 		if(istype(found_movable, /obj/effect))
 			continue
 
@@ -170,6 +174,12 @@ SUBSYSTEM_DEF(area_spawn)
 			if(isopenturf(long_test_turf))
 				num_very_open_floors++
 		for(var/atom/movable/found_movable in neighbor_turf)
+			// MAVERICK EDIT BEGIN - a window spawner next to us counts as the window it will become
+			if(istype(found_movable, /obj/effect/spawner/structure))
+				found_dense_object = TRUE
+				num_dense_found++
+				break
+			// MAVERICK EDIT END
 			if(istype(found_movable, /obj/effect))
 				continue
 

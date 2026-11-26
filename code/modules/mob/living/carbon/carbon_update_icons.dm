@@ -486,6 +486,7 @@
 	. += body_zone
 	if(should_draw_greyscale && draw_color)
 		. += draw_color
+		. += "[owner?.get_custom_shading_key()]" // MAVERICK EDIT - custom shading
 	if(is_invisible)
 		. += "invisible"
 	// BUBBER EDIT ADDITION START - per-limb alpha

@@ -58,7 +58,7 @@ export const file_labels = {
 // Files listed in ignore are skipped entirely (they do not count either way).
 export const outside_labels = {
   'Upstream File Edit': {
-    allowed_paths: ['modular_maverick/', 'maverick/'],
+    allowed_paths: ['modular_~maverick/', 'maverick/'],
     ignore: ['tgstation.dme'],
   },
 };

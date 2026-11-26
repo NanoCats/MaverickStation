@@ -4,763 +4,763 @@
 
 /datum/greyscale_config/mod_gags_security_worn
 	name = "MODsuit Security (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/security.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/security_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/security.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/security_worn.json'
 
 /datum/greyscale_config/mod_gags_security_obj
 	name = "MODsuit Security (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/security.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/security_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/security.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/security_obj.json'
 
 /datum/greyscale_config/mod_gags_security_digi
 	name = "MODsuit Security (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/security.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/security_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/security.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/security_digi.json'
 
 /datum/greyscale_config/mod_gags_security_vox
 	name = "MODsuit Security (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/security.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/security_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/security.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/security_vox.json'
 
 /datum/greyscale_config/mod_gags_security_menu
 	name = "MODsuit Security (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/security.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/security_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/security.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/security_menu.json'
 
 /datum/greyscale_config/mod_gags_engineering_worn
 	name = "MODsuit Engineering (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/engineering.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/engineering_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/engineering.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/engineering_worn.json'
 
 /datum/greyscale_config/mod_gags_engineering_obj
 	name = "MODsuit Engineering (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/engineering.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/engineering_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/engineering.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/engineering_obj.json'
 
 /datum/greyscale_config/mod_gags_engineering_digi
 	name = "MODsuit Engineering (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/engineering.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/engineering_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/engineering.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/engineering_digi.json'
 
 /datum/greyscale_config/mod_gags_engineering_vox
 	name = "MODsuit Engineering (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/engineering.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/engineering_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/engineering.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/engineering_vox.json'
 
 /datum/greyscale_config/mod_gags_engineering_menu
 	name = "MODsuit Engineering (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/engineering.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/engineering_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/engineering.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/engineering_menu.json'
 
 /datum/greyscale_config/mod_gags_lustwish_obj
 	name = "MODsuit LustWish (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/lustwish.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/lustwish_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/lustwish.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/lustwish_obj.json'
 
 /datum/greyscale_config/mod_gags_lustwish_worn
 	name = "MODsuit LustWish (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/lustwish.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/lustwish_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/lustwish.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/lustwish_worn.json'
 
 /datum/greyscale_config/mod_gags_lustwish_digi
 	name = "MODsuit LustWish (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/lustwish.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/lustwish_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/lustwish.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/lustwish_digi.json'
 
 /datum/greyscale_config/mod_gags_lustwish_menu
 	name = "MODsuit LustWish (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/lustwish.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/lustwish_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/lustwish.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/lustwish_menu.json'
 
 /datum/greyscale_config/mod_gags_frontline_obj
 	name = "MODsuit Frontline (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/frontline.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/frontline_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/frontline.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/frontline_obj.json'
 
 /datum/greyscale_config/mod_gags_frontline_worn
 	name = "MODsuit Frontline (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/frontline.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/frontline_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/frontline.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/frontline_worn.json'
 
 /datum/greyscale_config/mod_gags_frontline_digi
 	name = "MODsuit Frontline (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/frontline.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/frontline_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/frontline.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/frontline_digi.json'
 
 /datum/greyscale_config/mod_gags_frontline_menu
 	name = "MODsuit Frontline (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/frontline.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/frontline_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/frontline.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/frontline_menu.json'
 
 /datum/greyscale_config/mod_gags_voskhod_obj
 	name = "MODsuit Voskhod (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/voskhod.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/voskhod_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/voskhod.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/voskhod_obj.json'
 
 /datum/greyscale_config/mod_gags_voskhod_worn
 	name = "MODsuit Voskhod (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/voskhod.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/voskhod_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/voskhod.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/voskhod_worn.json'
 
 /datum/greyscale_config/mod_gags_voskhod_digi
 	name = "MODsuit Voskhod (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/voskhod.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/voskhod_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/voskhod.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/voskhod_digi.json'
 
 /datum/greyscale_config/mod_gags_voskhod_menu
 	name = "MODsuit Voskhod (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/voskhod.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/voskhod_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/voskhod.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/voskhod_menu.json'
 
 /datum/greyscale_config/mod_gags_ninja_worn
 	name = "MODsuit Ninja (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/ninja.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/ninja_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/ninja.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/ninja_worn.json'
 
 /datum/greyscale_config/mod_gags_ninja_obj
 	name = "MODsuit Ninja (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/ninja.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/ninja_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/ninja.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/ninja_obj.json'
 
 /datum/greyscale_config/mod_gags_ninja_digi
 	name = "MODsuit Ninja (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/ninja.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/ninja_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/ninja.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/ninja_digi.json'
 
 /datum/greyscale_config/mod_gags_ninja_vox
 	name = "MODsuit Ninja (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/ninja.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/ninja_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/ninja.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/ninja_vox.json'
 
 /datum/greyscale_config/mod_gags_ninja_menu
 	name = "MODsuit Ninja (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/ninja.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/ninja_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/ninja.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/ninja_menu.json'
 
 /datum/greyscale_config/mod_gags_advanced_worn
 	name = "MODsuit Advanced (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/advanced.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/advanced_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/advanced.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/advanced_worn.json'
 
 /datum/greyscale_config/mod_gags_advanced_obj
 	name = "MODsuit Advanced (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/advanced.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/advanced_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/advanced.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/advanced_obj.json'
 
 /datum/greyscale_config/mod_gags_advanced_digi
 	name = "MODsuit Advanced (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/advanced.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/advanced_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/advanced.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/advanced_digi.json'
 
 /datum/greyscale_config/mod_gags_advanced_vox
 	name = "MODsuit Advanced (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/advanced.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/advanced_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/advanced.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/advanced_vox.json'
 
 /datum/greyscale_config/mod_gags_advanced_menu
 	name = "MODsuit Advanced (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/advanced.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/advanced_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/advanced.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/advanced_menu.json'
 
 /datum/greyscale_config/mod_gags_apocryphal_worn
 	name = "MODsuit Apocryphal (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/apocryphal.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/apocryphal_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/apocryphal.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/apocryphal_worn.json'
 
 /datum/greyscale_config/mod_gags_apocryphal_obj
 	name = "MODsuit Apocryphal (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/apocryphal.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/apocryphal_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/apocryphal.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/apocryphal_obj.json'
 
 /datum/greyscale_config/mod_gags_apocryphal_digi
 	name = "MODsuit Apocryphal (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/apocryphal.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/apocryphal_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/apocryphal.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/apocryphal_digi.json'
 
 /datum/greyscale_config/mod_gags_apocryphal_vox
 	name = "MODsuit Apocryphal (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/apocryphal.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/apocryphal_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/apocryphal.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/apocryphal_vox.json'
 
 /datum/greyscale_config/mod_gags_apocryphal_menu
 	name = "MODsuit Apocryphal (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/apocryphal.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/apocryphal_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/apocryphal.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/apocryphal_menu.json'
 
 /datum/greyscale_config/mod_gags_asteroid_worn
 	name = "MODsuit Asteroid (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/asteroid.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/asteroid_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/asteroid.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/asteroid_worn.json'
 
 /datum/greyscale_config/mod_gags_asteroid_obj
 	name = "MODsuit Asteroid (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/asteroid.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/asteroid_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/asteroid.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/asteroid_obj.json'
 
 /datum/greyscale_config/mod_gags_asteroid_digi
 	name = "MODsuit Asteroid (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/asteroid.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/asteroid_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/asteroid.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/asteroid_digi.json'
 
 /datum/greyscale_config/mod_gags_asteroid_vox
 	name = "MODsuit Asteroid (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/asteroid.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/asteroid_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/asteroid.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/asteroid_vox.json'
 
 /datum/greyscale_config/mod_gags_asteroid_menu
 	name = "MODsuit Asteroid (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/asteroid.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/asteroid_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/asteroid.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/asteroid_menu.json'
 
 /datum/greyscale_config/mod_gags_atmospheric_worn
 	name = "MODsuit Atmospheric (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/atmospheric.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/atmospheric_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/atmospheric.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/atmospheric_worn.json'
 
 /datum/greyscale_config/mod_gags_atmospheric_obj
 	name = "MODsuit Atmospheric (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/atmospheric.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/atmospheric_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/atmospheric.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/atmospheric_obj.json'
 
 /datum/greyscale_config/mod_gags_atmospheric_digi
 	name = "MODsuit Atmospheric (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/atmospheric.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/atmospheric_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/atmospheric.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/atmospheric_digi.json'
 
 /datum/greyscale_config/mod_gags_atmospheric_vox
 	name = "MODsuit Atmospheric (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/atmospheric.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/atmospheric_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/atmospheric.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/atmospheric_vox.json'
 
 /datum/greyscale_config/mod_gags_atmospheric_menu
 	name = "MODsuit Atmospheric (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/atmospheric.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/atmospheric_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/atmospheric.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/atmospheric_menu.json'
 
 /datum/greyscale_config/mod_gags_chrono_worn
 	name = "MODsuit Chrono (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/chrono.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/chrono_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/chrono.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/chrono_worn.json'
 
 /datum/greyscale_config/mod_gags_chrono_obj
 	name = "MODsuit Chrono (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/chrono.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/chrono_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/chrono.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/chrono_obj.json'
 
 /datum/greyscale_config/mod_gags_chrono_digi
 	name = "MODsuit Chrono (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/chrono.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/chrono_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/chrono.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/chrono_digi.json'
 
 /datum/greyscale_config/mod_gags_chrono_vox
 	name = "MODsuit Chrono (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/chrono.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/chrono_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/chrono.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/chrono_vox.json'
 
 /datum/greyscale_config/mod_gags_chrono_menu
 	name = "MODsuit Chrono (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/chrono.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/chrono_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/chrono.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/chrono_menu.json'
 
 /datum/greyscale_config/mod_gags_civilian_worn
 	name = "MODsuit Civilian (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/civilian.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/civilian_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/civilian.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/civilian_worn.json'
 
 /datum/greyscale_config/mod_gags_civilian_obj
 	name = "MODsuit Civilian (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/civilian.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/civilian_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/civilian.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/civilian_obj.json'
 
 /datum/greyscale_config/mod_gags_civilian_digi
 	name = "MODsuit Civilian (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/civilian.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/civilian_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/civilian.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/civilian_digi.json'
 
 /datum/greyscale_config/mod_gags_civilian_vox
 	name = "MODsuit Civilian (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/civilian.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/civilian_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/civilian.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/civilian_vox.json'
 
 /datum/greyscale_config/mod_gags_civilian_menu
 	name = "MODsuit Civilian (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/civilian.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/civilian_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/civilian.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/civilian_menu.json'
 
 /datum/greyscale_config/mod_gags_corporate_worn
 	name = "MODsuit Corporate (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/corporate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/corporate_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/corporate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/corporate_worn.json'
 
 /datum/greyscale_config/mod_gags_corporate_obj
 	name = "MODsuit Corporate (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/corporate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/corporate_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/corporate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/corporate_obj.json'
 
 /datum/greyscale_config/mod_gags_corporate_digi
 	name = "MODsuit Corporate (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/corporate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/corporate_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/corporate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/corporate_digi.json'
 
 /datum/greyscale_config/mod_gags_corporate_vox
 	name = "MODsuit Corporate (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/corporate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/corporate_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/corporate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/corporate_vox.json'
 
 /datum/greyscale_config/mod_gags_corporate_menu
 	name = "MODsuit Corporate (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/corporate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/corporate_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/corporate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/corporate_menu.json'
 
 /datum/greyscale_config/mod_gags_corpsman_worn
 	name = "MODsuit Corpsman (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/corpsman.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/corpsman_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/corpsman.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/corpsman_worn.json'
 
 /datum/greyscale_config/mod_gags_corpsman_obj
 	name = "MODsuit Corpsman (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/corpsman.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/corpsman_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/corpsman.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/corpsman_obj.json'
 
 /datum/greyscale_config/mod_gags_corpsman_digi
 	name = "MODsuit Corpsman (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/corpsman.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/corpsman_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/corpsman.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/corpsman_digi.json'
 
 /datum/greyscale_config/mod_gags_corpsman_vox
 	name = "MODsuit Corpsman (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/corpsman.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/corpsman_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/corpsman.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/corpsman_vox.json'
 
 /datum/greyscale_config/mod_gags_corpsman_menu
 	name = "MODsuit Corpsman (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/corpsman.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/corpsman_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/corpsman.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/corpsman_menu.json'
 
 /datum/greyscale_config/mod_gags_enchanted_worn
 	name = "MODsuit Enchanted (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/enchanted.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/enchanted_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/enchanted.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/enchanted_worn.json'
 
 /datum/greyscale_config/mod_gags_enchanted_obj
 	name = "MODsuit Enchanted (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/enchanted.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/enchanted_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/enchanted.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/enchanted_obj.json'
 
 /datum/greyscale_config/mod_gags_enchanted_digi
 	name = "MODsuit Enchanted (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/enchanted.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/enchanted_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/enchanted.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/enchanted_digi.json'
 
 /datum/greyscale_config/mod_gags_enchanted_vox
 	name = "MODsuit Enchanted (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/enchanted.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/enchanted_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/enchanted.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/enchanted_vox.json'
 
 /datum/greyscale_config/mod_gags_enchanted_menu
 	name = "MODsuit Enchanted (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/enchanted.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/enchanted_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/enchanted.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/enchanted_menu.json'
 
 /datum/greyscale_config/mod_gags_glitch_worn
 	name = "MODsuit Glitch (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/glitch.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/glitch_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/glitch.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/glitch_worn.json'
 
 /datum/greyscale_config/mod_gags_glitch_obj
 	name = "MODsuit Glitch (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/glitch.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/glitch_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/glitch.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/glitch_obj.json'
 
 /datum/greyscale_config/mod_gags_glitch_modules
 	name = "MODsuit Glitch (modules)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/glitch.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/glitch_modules.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/glitch.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/glitch_modules.json'
 
 /datum/greyscale_config/mod_gags_glitch_menu
 	name = "MODsuit Glitch (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/glitch.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/glitch_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/glitch.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/glitch_menu.json'
 
 /datum/greyscale_config/mod_gags_infiltrator_worn
 	name = "MODsuit Infiltrator (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/infiltrator.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/infiltrator_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/infiltrator.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/infiltrator_worn.json'
 
 /datum/greyscale_config/mod_gags_infiltrator_obj
 	name = "MODsuit Infiltrator (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/infiltrator.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/infiltrator_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/infiltrator.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/infiltrator_obj.json'
 
 /datum/greyscale_config/mod_gags_infiltrator_digi
 	name = "MODsuit Infiltrator (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/infiltrator.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/infiltrator_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/infiltrator.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/infiltrator_digi.json'
 
 /datum/greyscale_config/mod_gags_infiltrator_menu
 	name = "MODsuit Infiltrator (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/infiltrator.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/infiltrator_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/infiltrator.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/infiltrator_menu.json'
 
 /datum/greyscale_config/mod_gags_inquisitory_worn
 	name = "MODsuit Inquisitory (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_worn.json'
 
 /datum/greyscale_config/mod_gags_inquisitory_obj
 	name = "MODsuit Inquisitory (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_obj.json'
 
 /datum/greyscale_config/mod_gags_inquisitory_digi
 	name = "MODsuit Inquisitory (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_digi.json'
 
 /datum/greyscale_config/mod_gags_inquisitory_vox
 	name = "MODsuit Inquisitory (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_vox.json'
 
 /datum/greyscale_config/mod_gags_inquisitory_modules
 	name = "MODsuit Inquisitory (modules)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_modules.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_modules.json'
 
 /datum/greyscale_config/mod_gags_inquisitory_menu
 	name = "MODsuit Inquisitory (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/inquisitory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/inquisitory_menu.json'
 
 /datum/greyscale_config/mod_gags_interdyne_worn
 	name = "MODsuit Interdyne (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/interdyne.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/interdyne_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/interdyne.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/interdyne_worn.json'
 
 /datum/greyscale_config/mod_gags_interdyne_obj
 	name = "MODsuit Interdyne (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/interdyne.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/interdyne_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/interdyne.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/interdyne_obj.json'
 
 /datum/greyscale_config/mod_gags_interdyne_digi
 	name = "MODsuit Interdyne (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/interdyne.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/interdyne_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/interdyne.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/interdyne_digi.json'
 
 /datum/greyscale_config/mod_gags_interdyne_menu
 	name = "MODsuit Interdyne (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/interdyne.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/interdyne_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/interdyne.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/interdyne_menu.json'
 
 /datum/greyscale_config/mod_gags_loader_worn
 	name = "MODsuit Loader (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/loader.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/loader_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/loader.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/loader_worn.json'
 
 /datum/greyscale_config/mod_gags_loader_obj
 	name = "MODsuit Loader (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/loader.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/loader_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/loader.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/loader_obj.json'
 
 /datum/greyscale_config/mod_gags_loader_digi
 	name = "MODsuit Loader (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/loader.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/loader_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/loader.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/loader_digi.json'
 
 /datum/greyscale_config/mod_gags_loader_vox
 	name = "MODsuit Loader (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/loader.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/loader_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/loader.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/loader_vox.json'
 
 /datum/greyscale_config/mod_gags_loader_menu
 	name = "MODsuit Loader (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/loader.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/loader_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/loader.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/loader_menu.json'
 
 /datum/greyscale_config/mod_gags_magnate_worn
 	name = "MODsuit Magnate (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/magnate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/magnate_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/magnate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/magnate_worn.json'
 
 /datum/greyscale_config/mod_gags_magnate_obj
 	name = "MODsuit Magnate (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/magnate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/magnate_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/magnate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/magnate_obj.json'
 
 /datum/greyscale_config/mod_gags_magnate_digi
 	name = "MODsuit Magnate (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/magnate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/magnate_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/magnate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/magnate_digi.json'
 
 /datum/greyscale_config/mod_gags_magnate_vox
 	name = "MODsuit Magnate (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/magnate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/magnate_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/magnate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/magnate_vox.json'
 
 /datum/greyscale_config/mod_gags_magnate_menu
 	name = "MODsuit Magnate (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/magnate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/magnate_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/magnate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/magnate_menu.json'
 
 /datum/greyscale_config/mod_gags_medical_worn
 	name = "MODsuit Medical (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/medical.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/medical_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/medical.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/medical_worn.json'
 
 /datum/greyscale_config/mod_gags_medical_obj
 	name = "MODsuit Medical (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/medical.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/medical_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/medical.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/medical_obj.json'
 
 /datum/greyscale_config/mod_gags_medical_digi
 	name = "MODsuit Medical (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/medical.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/medical_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/medical.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/medical_digi.json'
 
 /datum/greyscale_config/mod_gags_medical_vox
 	name = "MODsuit Medical (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/medical.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/medical_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/medical.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/medical_vox.json'
 
 /datum/greyscale_config/mod_gags_medical_menu
 	name = "MODsuit Medical (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/medical.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/medical_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/medical.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/medical_menu.json'
 
 /datum/greyscale_config/mod_gags_mining_worn
 	name = "MODsuit Mining (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/mining.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/mining_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/mining.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/mining_worn.json'
 
 /datum/greyscale_config/mod_gags_mining_obj
 	name = "MODsuit Mining (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/mining.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/mining_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/mining.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/mining_obj.json'
 
 /datum/greyscale_config/mod_gags_mining_digi
 	name = "MODsuit Mining (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/mining.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/mining_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/mining.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/mining_digi.json'
 
 /datum/greyscale_config/mod_gags_mining_vox
 	name = "MODsuit Mining (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/mining.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/mining_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/mining.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/mining_vox.json'
 
 /datum/greyscale_config/mod_gags_mining_menu
 	name = "MODsuit Mining (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/mining.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/mining_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/mining.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/mining_menu.json'
 
 /datum/greyscale_config/mod_gags_rescue_worn
 	name = "MODsuit Rescue (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/rescue.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/rescue_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/rescue.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/rescue_worn.json'
 
 /datum/greyscale_config/mod_gags_rescue_obj
 	name = "MODsuit Rescue (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/rescue.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/rescue_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/rescue.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/rescue_obj.json'
 
 /datum/greyscale_config/mod_gags_rescue_digi
 	name = "MODsuit Rescue (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/rescue.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/rescue_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/rescue.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/rescue_digi.json'
 
 /datum/greyscale_config/mod_gags_rescue_vox
 	name = "MODsuit Rescue (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/rescue.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/rescue_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/rescue.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/rescue_vox.json'
 
 /datum/greyscale_config/mod_gags_rescue_menu
 	name = "MODsuit Rescue (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/rescue.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/rescue_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/rescue.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/rescue_menu.json'
 
 /datum/greyscale_config/mod_gags_research_worn
 	name = "MODsuit Research (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/research.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/research_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/research.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/research_worn.json'
 
 /datum/greyscale_config/mod_gags_research_obj
 	name = "MODsuit Research (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/research.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/research_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/research.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/research_obj.json'
 
 /datum/greyscale_config/mod_gags_research_digi
 	name = "MODsuit Research (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/research.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/research_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/research.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/research_digi.json'
 
 /datum/greyscale_config/mod_gags_research_vox
 	name = "MODsuit Research (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/research.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/research_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/research.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/research_vox.json'
 
 /datum/greyscale_config/mod_gags_research_menu
 	name = "MODsuit Research (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/research.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/research_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/research.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/research_menu.json'
 
 /datum/greyscale_config/mod_gags_responsory_worn
 	name = "MODsuit Responsory (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/responsory_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/responsory_worn.json'
 
 /datum/greyscale_config/mod_gags_responsory_obj
 	name = "MODsuit Responsory (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/responsory_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/responsory_obj.json'
 
 /datum/greyscale_config/mod_gags_responsory_digi
 	name = "MODsuit Responsory (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/responsory_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/responsory_digi.json'
 
 /datum/greyscale_config/mod_gags_responsory_vox
 	name = "MODsuit Responsory (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/responsory_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/responsory_vox.json'
 
 /datum/greyscale_config/mod_gags_responsory_modules
 	name = "MODsuit Responsory (modules)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/responsory_modules.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/responsory_modules.json'
 
 /datum/greyscale_config/mod_gags_responsory_menu
 	name = "MODsuit Responsory (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/responsory_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/responsory.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/responsory_menu.json'
 
 /datum/greyscale_config/mod_gags_safeguard_worn
 	name = "MODsuit Safeguard (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/safeguard.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/safeguard_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/safeguard.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/safeguard_worn.json'
 
 /datum/greyscale_config/mod_gags_safeguard_obj
 	name = "MODsuit Safeguard (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/safeguard.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/safeguard_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/safeguard.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/safeguard_obj.json'
 
 /datum/greyscale_config/mod_gags_safeguard_digi
 	name = "MODsuit Safeguard (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/safeguard.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/safeguard_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/safeguard.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/safeguard_digi.json'
 
 /datum/greyscale_config/mod_gags_safeguard_vox
 	name = "MODsuit Safeguard (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/safeguard.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/safeguard_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/safeguard.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/safeguard_vox.json'
 
 /datum/greyscale_config/mod_gags_safeguard_menu
 	name = "MODsuit Safeguard (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/safeguard.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/safeguard_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/safeguard.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/safeguard_menu.json'
 
 /datum/greyscale_config/mod_gags_standard_worn
 	name = "MODsuit Standard (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/standard.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/standard_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/standard.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/standard_worn.json'
 
 /datum/greyscale_config/mod_gags_standard_obj
 	name = "MODsuit Standard (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/standard.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/standard_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/standard.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/standard_obj.json'
 
 /datum/greyscale_config/mod_gags_standard_digi
 	name = "MODsuit Standard (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/standard.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/standard_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/standard.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/standard_digi.json'
 
 /datum/greyscale_config/mod_gags_standard_vox
 	name = "MODsuit Standard (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/standard.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/standard_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/standard.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/standard_vox.json'
 
 /datum/greyscale_config/mod_gags_standard_menu
 	name = "MODsuit Standard (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/standard.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/standard_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/standard.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/standard_menu.json'
 
 /datum/greyscale_config/mod_gags_syndicate_worn
 	name = "MODsuit Syndicate (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/syndicate_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/syndicate_worn.json'
 
 /datum/greyscale_config/mod_gags_syndicate_obj
 	name = "MODsuit Syndicate (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/syndicate_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/syndicate_obj.json'
 
 /datum/greyscale_config/mod_gags_syndicate_digi
 	name = "MODsuit Syndicate (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/syndicate_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/syndicate_digi.json'
 
 /datum/greyscale_config/mod_gags_syndicate_vox
 	name = "MODsuit Syndicate (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/syndicate_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/syndicate_vox.json'
 
 /datum/greyscale_config/mod_gags_syndicate_modules
 	name = "MODsuit Syndicate (modules)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/syndicate_modules.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/syndicate_modules.json'
 
 /datum/greyscale_config/mod_gags_syndicate_voxmodules
 	name = "MODsuit Syndicate (voxmodules)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/syndicate_voxmodules.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/syndicate_voxmodules.json'
 
 /datum/greyscale_config/mod_gags_syndicate_menu
 	name = "MODsuit Syndicate (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/syndicate_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/syndicate.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/syndicate_menu.json'
 
 /datum/greyscale_config/mod_gags_debug_worn
 	name = "MODsuit Bluespace (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/debug.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/debug_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/debug.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/debug_worn.json'
 
 /datum/greyscale_config/mod_gags_debug_obj
 	name = "MODsuit Bluespace (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/debug.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/debug_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/debug.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/debug_obj.json'
 
 /datum/greyscale_config/mod_gags_debug_digi
 	name = "MODsuit Bluespace (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/debug.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/debug_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/debug.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/debug_digi.json'
 
 /datum/greyscale_config/mod_gags_debug_vox
 	name = "MODsuit Bluespace (vox)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/debug.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/debug_vox.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/debug.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/debug_vox.json'
 
 /datum/greyscale_config/mod_gags_debug_menu
 	name = "MODsuit Bluespace (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/debug.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/debug_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/debug.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/debug_menu.json'
 
 /datum/greyscale_config/mod_gags_praetorian_obj
 	name = "MODsuit Praetorian (obj)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/praetorian.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/praetorian_obj.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/praetorian.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/praetorian_obj.json'
 
 /datum/greyscale_config/mod_gags_praetorian_worn
 	name = "MODsuit Praetorian (worn)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/praetorian.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/praetorian_worn.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/praetorian.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/praetorian_worn.json'
 
 /datum/greyscale_config/mod_gags_praetorian_digi
 	name = "MODsuit Praetorian (digi)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/praetorian.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/praetorian_digi.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/praetorian.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/praetorian_digi.json'
 
 /datum/greyscale_config/mod_gags_praetorian_menu
 	name = "MODsuit Praetorian (menu)"
-	icon_file = 'modular_maverick/icons/mob/clothing/modsuit/gags/praetorian.dmi'
-	json_config = 'modular_maverick/code/datums/greyscale/json_configs/modsuit/praetorian_menu.json'
+	icon_file = 'modular_~maverick/icons/mob/clothing/modsuit/gags/praetorian.dmi'
+	json_config = 'modular_~maverick/code/datums/greyscale/json_configs/modsuit/praetorian_menu.json'
 
 
 /datum/mod_gags_skin/security
