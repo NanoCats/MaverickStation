@@ -52,6 +52,8 @@
 		var/list/new_materials = custom_materials?.Copy()
 		for(var/mat in prototype.custom_materials)
 			new_materials[mat] -= prototype.custom_materials[mat] * max_ammo
+			if(new_materials[mat] <= 0) // MAVERICK EDIT - shells can be made of things the box never counted, drop them instead of going negative
+				new_materials -= mat
 		qdel(prototype)
 		set_custom_materials(new_materials)
 
@@ -75,6 +77,8 @@
 		var/list/new_materials = custom_materials?.Copy()
 		for(var/mat in gone.custom_materials)
 			new_materials[mat] -= gone.custom_materials[mat]
+			if(new_materials[mat] <= 0) // MAVERICK EDIT - shells can be made of things the box never counted, drop them instead of going negative
+				new_materials -= mat
 		set_custom_materials(new_materials)
 	update_appearance()
 
