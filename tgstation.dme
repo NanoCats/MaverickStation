@@ -10849,6 +10849,7 @@
 #include "modular_~maverick\code\modules\maxtac\maxtac_ert.dm"
 #include "modular_~maverick\code\modules\maxtac\maxtac_gear.dm"
 #include "modular_~maverick\code\modules\maxtac\maxtac_outfit.dm"
+#include "modular_~maverick\code\modules\mob\blast_ear_protection.dm"
 #include "modular_~maverick\code\modules\mod\combat_suit_storage.dm"
 #include "modular_~maverick\code\modules\mod\freelance_policing.dm"
 #include "modular_~maverick\code\modules\mod\magnetic_harness_rebuild.dm"
