@@ -95,6 +95,7 @@
 	if(!istype(card))
 		return
 	var/obj/item/modular_computer/pda/nri_police/pda = new(operative)
+	pda.name = "\improper MaxTac PDA"
 	operative.temporarilyRemoveItemFromInventory(card, force = TRUE)
 	pda.insert_id(card)
 	if(!operative.equip_to_slot_if_possible(pda, ITEM_SLOT_ID, disable_warning = TRUE))
