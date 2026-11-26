@@ -583,7 +583,7 @@
 			build: build_paint,
 		},
 		amp: {
-			title: "SpaceAmp", icon: "music", w: 160, h: 112,
+			title: "SpaceAmp", icon: "music", w: 184, h: 112,
 			x: function () { return 8; }, y: 6,
 			build: build_amp,
 		},
