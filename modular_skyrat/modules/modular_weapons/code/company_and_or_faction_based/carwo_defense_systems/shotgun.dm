@@ -50,10 +50,7 @@
 		capacity for modification to satiate even the most overfunded of \
 		peacekeeper forces. Inevitably, the weapon made its way into civilian \
 		markets alongside its sale to several military branches that also \
-		saw value in having a heavy shotgun. \n\n A recent development are \
-		renegotiated trade deals with the production company, leading Nanotrasen to \
-		desire a return to their in-house built 'woodstock' pattern \
-		shotguns."
+		saw value in having a heavy shotgun." // MAVERICK EDIT - drop the "Nanotrasen is going back to Woodstocks" line, the armory stocks Renosters
 
 	return .
 
