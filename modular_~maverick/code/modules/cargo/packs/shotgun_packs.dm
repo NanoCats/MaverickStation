@@ -31,12 +31,13 @@
 	)
 
 /datum/supply_pack/goody/renoster_shotgun_lesslethal
-	desc = "A common modern shotgun used by Terran Government Police, modified to only fire less-lethal rounds."
+	name = "Ystervark LTL Shotgun Single-Pack"
+	desc = "The police refit of the Renoster, modified to only fire less-lethal rounds."
 	contains = list(
 		/obj/item/gun/ballistic/shotgun/riot/sol/lesslethal,
 		/obj/item/storage/pouch/ammo,
 		/obj/item/storage/belt/bandolier,
-		/obj/item/ammo_box/advanced/s12gauge/rubber,
+		/obj/item/ammo_box/advanced/s12gauge/bean,
 	)
 
 /datum/supply_pack/goody/double_barrel
@@ -52,3 +53,11 @@
 /datum/supply_pack/security/armory/peacekeepers
 	desc = "Three Renoster pump-action shotguns to restock your armories with."
 	cost = CARGO_CRATE_VALUE * 10
+
+/datum/supply_pack/security/armory/peacekeepers_plus
+	name = "Ystervark LTL Shotgun Crate"
+	desc = "Three Ystervark less-lethal pump-action shotguns to restock your armories with, each with a box of beanbag slugs."
+	contains = list(
+		/obj/item/gun/ballistic/shotgun/riot/sol/lesslethal = 3,
+		/obj/item/ammo_box/advanced/s12gauge/bean = 3,
+	)
