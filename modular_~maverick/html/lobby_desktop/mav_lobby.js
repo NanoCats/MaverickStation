@@ -1343,6 +1343,18 @@
 				row.addEventListener("dblclick", function () { byond("music=track;track=" + (i + 1)); });
 			});
 		}
+		// Like Winamp: when the track changes, scroll the playlist so the new one sits in the middle.
+		// Only on a change, so it does not fight someone scrolling the list by hand.
+		// clientHeight is 0 until the window is laid out; try again on the next draw instead of giving up.
+		if (M.index !== amp.shown_index && amp.list.clientHeight) {
+			amp.shown_index = M.index;
+			var cur = amp.list.children[M.index];
+			if (cur) {
+				var list_box = amp.list.getBoundingClientRect();
+				var row_box = cur.getBoundingClientRect();
+				amp.list.scrollTop += (row_box.top - list_box.top) - (amp.list.clientHeight - row_box.height) / 2;
+			}
+		}
 	}
 
 	var spec_levels = [];
