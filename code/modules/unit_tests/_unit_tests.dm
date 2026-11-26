@@ -377,8 +377,10 @@
 #include "weird_food.dm"
 #include "wizard_loadout.dm"
 // MAVERICK EDIT BEGIN - Maverick unit tests
+#include "~maverick\elephant_probes.dm"
 #include "~maverick\maxtac.dm"
 #include "~maverick\mod_gags.dm"
+#include "~maverick\overlay_lighting_cells.dm"
 // MAVERICK EDIT END
 // SKYRAT EDIT START
 #include "~skyrat\automapper.dm"

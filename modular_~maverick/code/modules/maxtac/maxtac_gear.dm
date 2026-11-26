@@ -98,15 +98,15 @@
 /obj/item/organ/cyberimp/arm/toolkit/armblade/maxtac
 	name = "MaxTac mantis blade implant"
 	desc = "A military energy blade implant. Not legal for civilians anywhere."
-	icon = 'modular_maverick/icons/obj/maxtac/maxtac_implanted_blade.dmi'
+	icon = 'modular_~maverick/icons/obj/maxtac/maxtac_implanted_blade.dmi'
 	// One blade only, so the use key deploys it straight away with no menu.
 	items_to_create = list(/obj/item/melee/implantarmblade/energy/maxtac)
 
 // The energy blade, in police blue.
 /obj/item/melee/implantarmblade/energy/maxtac
-	icon = 'modular_maverick/icons/obj/maxtac/maxtac_implanted_blade.dmi'
-	lefthand_file = 'modular_maverick/icons/mob/inhands/maxtac/maxtac_implanted_blade_lefthand.dmi'
-	righthand_file = 'modular_maverick/icons/mob/inhands/maxtac/maxtac_implanted_blade_righthand.dmi'
+	icon = 'modular_~maverick/icons/obj/maxtac/maxtac_implanted_blade.dmi'
+	lefthand_file = 'modular_~maverick/icons/mob/inhands/maxtac/maxtac_implanted_blade_lefthand.dmi'
+	righthand_file = 'modular_~maverick/icons/mob/inhands/maxtac/maxtac_implanted_blade_righthand.dmi'
 
 // The blade ships unlocked already.
 /obj/item/organ/cyberimp/arm/toolkit/armblade/maxtac/emag_act(mob/user, obj/item/card/emag/emag_card)

@@ -32,5 +32,5 @@ do
 done
 
 # MAVERICK EDIT BEGIN - Call our deploy too
-source modular_maverick/tools/deploy_maverick.sh
+source modular_~maverick/tools/deploy_maverick.sh
 # MAVERICK EDIT END

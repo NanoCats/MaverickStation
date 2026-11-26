@@ -38,10 +38,10 @@ GLOBAL_LIST_EMPTY(maverick_startup_heard)
 	if(!client)
 		return FALSE
 	var/static/list/sounds = list(
-		"click" = 'modular_maverick/sound/lobby_desktop/desktop_click.ogg',
-		"error" = 'modular_maverick/sound/lobby_desktop/desktop_error.ogg',
-		"startup" = 'modular_maverick/sound/lobby_desktop/desktop_startup.ogg',
-		"shutdown" = 'modular_maverick/sound/lobby_desktop/desktop_shutdown.ogg',
+		"click" = 'modular_~maverick/sound/lobby_desktop/desktop_click.ogg',
+		"error" = 'modular_~maverick/sound/lobby_desktop/desktop_error.ogg',
+		"startup" = 'modular_~maverick/sound/lobby_desktop/desktop_startup.ogg',
+		"shutdown" = 'modular_~maverick/sound/lobby_desktop/desktop_shutdown.ogg',
 	)
 	var/static/list/gaps = list("click" = 0.05 SECONDS, "error" = 0.15 SECONDS)
 	var/file = sounds[kind]
