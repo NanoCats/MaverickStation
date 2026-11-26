@@ -10836,6 +10836,7 @@
 #include "modular_~maverick\code\modules\branding\space_law_book.dm"
 #include "modular_~maverick\code\modules\branding\top_bar_buttons.dm"
 #include "modular_~maverick\code\modules\cargo\packs\shotgun_packs.dm"
+#include "modular_~maverick\code\modules\colortron\colortron.dm"
 #include "modular_~maverick\code\modules\customization\custom_shading.dm"
 #include "modular_~maverick\code\modules\emotes\cat_screams.dm"
 #include "modular_~maverick\code\modules\loadout\loadout_gates.dm"
