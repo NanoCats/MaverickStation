@@ -34,17 +34,16 @@
 
 	fire_delay = 8
 
-	// shown on examine_more, subtypes with a different role swap this out
+	// MAVERICK EDIT BEGIN - examine lore as a var so the Ystervark can swap it, Woodstock line cut
+	/// Shown on examine_more. Subtypes with a different role swap this out.
 	var/examine_lore = "The Renoster was designed at its core as a police shotgun. \
 		As consequence, it holds all the qualities a police force would want \
 		in one. Large shell capacity, sturdy frame, while holding enough \
 		capacity for modification to satiate even the most overfunded of \
 		peacekeeper forces. Inevitably, the weapon made its way into civilian \
 		markets alongside its sale to several military branches that also \
-		saw value in having a heavy shotgun. \n\n A recent development are \
-		renegotiated trade deals with the production company, leading Nanotrasen to \
-		desire a return to their in-house built 'woodstock' pattern \
-		shotguns."
+		saw value in having a heavy shotgun."
+	// MAVERICK EDIT END
 
 /obj/item/gun/ballistic/shotgun/riot/sol/give_manufacturer_examine()
 	AddElement(/datum/element/manufacturer_examine, COMPANY_CARWO)
@@ -56,7 +55,7 @@
 /obj/item/gun/ballistic/shotgun/riot/sol/examine_more(mob/user)
 	. = ..()
 
-	. += examine_lore
+	. += examine_lore // MAVERICK EDIT - read the lore var
 
 	return .
 
@@ -79,14 +78,17 @@
 // Shotgun but it doesn't kill people (sometimes)
 
 /obj/item/gun/ballistic/shotgun/riot/sol/lesslethal
+	// MAVERICK EDIT BEGIN - Ystervark LTL refit
 	name = "\improper Ystervark LTL Shotgun"
 	desc = "A police refit of the Renoster shotgun in safety orange, this one only holds rounds deemed sufficiently unexciting. The barrel lacks the threading of the military version and cannot fit muzzle attachments."
+	// MAVERICK EDIT END
 	accepted_magazine_type = /obj/item/ammo_box/magazine/internal/shot/less_lethal
 	can_suppress = FALSE
 
 	icon_state = "renosterlesslethal"
 	worn_icon_state = "renosterlesslethal"
 	inhand_icon_state = "renosterlesslethal"
+	// MAVERICK EDIT BEGIN - Ystervark LTL refit
 	examine_lore = "The Ystervark is a Renoster rebuilt by Carwo for crowd control contracts. \
 		The receiver is restricted to less-lethal and breaching loads, and the \
 		unthreaded barrel will not take muzzle attachments. The orange \
@@ -94,4 +96,4 @@
 		Police departments and station security buy it for one reason: a \
 		riot gun that cannot be loaded with buckshot is a riot gun that \
 		does not end up on the evening news."
-
+	// MAVERICK EDIT END
