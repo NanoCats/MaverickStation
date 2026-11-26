@@ -12,7 +12,7 @@
 /obj/machinery/amas_ai_core
 	name = "AMAS core"
 	desc = "A Micron Control Systems station intelligence, installed by AMAS to manage the station when no AI is on duty. It looks happy to see you."
-	icon = 'modular_maverick/icons/mob/silicon/amas_ai.dmi'
+	icon = 'modular_~maverick/icons/mob/silicon/amas_ai.dmi'
 	icon_state = "ai-girl"
 	density = TRUE
 	anchored = TRUE
