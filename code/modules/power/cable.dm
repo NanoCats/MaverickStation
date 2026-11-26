@@ -786,14 +786,28 @@ GLOBAL_LIST_INIT(wire_node_generating_types, typecacheof(list(
 
 /obj/structure/cable/multilayer/Initialize(mapload)
 	. = ..()
-	var/turf/T = get_turf(src)
-	for(var/obj/structure/cable/C in T.contents - src)
-		if(C.cable_layer & cable_layer)
-			C.deconstruct() // remove adversary cable
-	if(!mapload)
-		auto_propagate_cut_cable(src)
+	// MAVERICK EDIT BEGIN - at mapload the cable we replace may not be initialized yet. Deleting it then
+	// breaks create_and_destroy ("qdel'd before we could call Initialize"). Do it in LateInitialize instead.
+	if(mapload)
+		return
+	remove_adversary_cables()
+	// MAVERICK EDIT END
+	auto_propagate_cut_cable(src)
 
 	update_appearance()
+
+// MAVERICK EDIT BEGIN - see Initialize
+/obj/structure/cable/multilayer/LateInitialize()
+	remove_adversary_cables()
+	return ..()
+
+/// Removes other cables on our tile that share one of our layers.
+/obj/structure/cable/multilayer/proc/remove_adversary_cables()
+	var/turf/our_turf = get_turf(src)
+	for(var/obj/structure/cable/other_cable in our_turf.contents - src)
+		if(other_cable.cable_layer & cable_layer)
+			other_cable.deconstruct() // remove adversary cable
+// MAVERICK EDIT END
 
 /obj/structure/cable/multilayer/examine(mob/user)
 	. += ..()
