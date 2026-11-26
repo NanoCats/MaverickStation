@@ -358,16 +358,18 @@
 	if(cell.charge < THERMAL_REGULATOR_COST)
 		spacesuit_hud.update_spacesuit_hud_icon(SPACESUIT_CELL_EMPTY, cell_percent, thermal_on)
 		return
-	// MAVERICK EDIT BEGIN - Ranges were 0-20, 21-40, 41-60, 61-100, so a charge like 20.5% matched nothing and the HUD went stale
+	// MAVERICK EDIT BEGIN - Ranges were 0-20, 21-40, 41-60, 61-100, so a charge like 20.5% matched nothing and the HUD went stale.
+	// Also works out the regulator runtime left. It drains a fixed amount every SSobj tick, so this is exact while it stays on.
+	var/seconds_left = thermal_on ? round(cell.charge / THERMAL_REGULATOR_COST) * (SSobj.wait / (1 SECONDS)) : null
 	switch(cell_percent)
 		if(0 to 20)
-			spacesuit_hud.update_spacesuit_hud_icon(SPACESUIT_CELL_VERY_LOW, cell_percent, thermal_on)
+			spacesuit_hud.update_spacesuit_hud_icon(SPACESUIT_CELL_VERY_LOW, cell_percent, thermal_on, seconds_left)
 		if(20 to 40)
-			spacesuit_hud.update_spacesuit_hud_icon(SPACESUIT_CELL_LOW, cell_percent, thermal_on)
+			spacesuit_hud.update_spacesuit_hud_icon(SPACESUIT_CELL_LOW, cell_percent, thermal_on, seconds_left)
 		if(40 to 60)
-			spacesuit_hud.update_spacesuit_hud_icon(SPACESUIT_CELL_MID, cell_percent, thermal_on)
+			spacesuit_hud.update_spacesuit_hud_icon(SPACESUIT_CELL_MID, cell_percent, thermal_on, seconds_left)
 		if(60 to 100)
-			spacesuit_hud.update_spacesuit_hud_icon(SPACESUIT_CELL_HIGH, cell_percent, thermal_on)
+			spacesuit_hud.update_spacesuit_hud_icon(SPACESUIT_CELL_HIGH, cell_percent, thermal_on, seconds_left)
 	// MAVERICK EDIT END
 
 // zap the cell if we get hit with an emp
