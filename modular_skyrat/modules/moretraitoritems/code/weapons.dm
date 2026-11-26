@@ -180,6 +180,7 @@
 //Magazine stuff
 /obj/item/ammo_box/magazine/m14mm
 	name = "pistol magazine (14mm)"
+	desc = "A heavy 10-round magazine for the Malorian Arms 3516." // MAVERICK EDIT - it fell back to the placeholder text
 	icon = 'modular_skyrat/modules/moretraitoritems/icons/3516_mag.dmi'
 	icon_state = "14mm"
 	base_icon_state = "14mm"
