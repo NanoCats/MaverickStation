@@ -114,13 +114,13 @@
 
 /obj/item/ammo_box/advanced/s12gauge/dart
 	name = "Shotgun Dart ammo box"
-	desc = "A box of 7 empty shotgun darts. ostensibly a medical device."
+	desc = "A box of 7 empty shotgun darts. Ostensibly a medical device."
 	icon_state = "dart"
 	ammo_type = /obj/item/ammo_casing/shotgun/dart
 
 /obj/item/ammo_box/advanced/s12gauge/dart_large
 	name = "XL Shotgun Dart ammo box"
-	desc = "A box of 7 empty XL shotgun darts. ostensibly a medical device."
+	desc = "A box of 7 empty XL shotgun darts. Ostensibly a medical device."
 	icon_state = "dart_large"
 	ammo_type = /obj/item/ammo_casing/shotgun/dart/large
 
