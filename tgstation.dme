@@ -10841,6 +10841,7 @@
 #include "modular_~maverick\code\modules\customization\custom_shading.dm"
 #include "modular_~maverick\code\modules\emotes\cat_screams.dm"
 #include "modular_~maverick\code\modules\loadout\loadout_gates.dm"
+#include "modular_~maverick\code\modules\loadout\real_gear.dm"
 #include "modular_~maverick\code\modules\loadout\categories\platings.dm"
 #include "modular_~maverick\code\modules\loadout\categories\weaponry.dm"
 #include "modular_~maverick\code\modules\lobby_desktop\classic_lobby_pref.dm"
