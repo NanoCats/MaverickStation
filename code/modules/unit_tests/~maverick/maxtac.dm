@@ -68,10 +68,13 @@
 	return operative
 
 /datum/unit_test/maxtac/proc/check_common(mob/living/carbon/human/operative, role)
-	var/obj/item/card/id/card = operative.wear_id
+	var/obj/item/card/id/card = operative.wear_id?.GetID()
 	TEST_ASSERT(istype(card, /obj/item/card/id/advanced/black/deathsquad), "[role]: wrong ID card [card?.type].")
 	TEST_ASSERT_EQUAL(card.assignment, "MaxTac [capitalize(role)]", "[role]: wrong ID assignment.")
 	TEST_ASSERT(istype(operative.w_uniform, /obj/item/clothing/under/rank/security/officer/beatcop), "[role]: wrong uniform.")
+	var/obj/item/modular_computer/pda/nri_police/pda = operative.wear_id
+	TEST_ASSERT(istype(pda), "[role]: no police PDA in the ID slot.")
+	TEST_ASSERT(istype(pda?.stored_id, /obj/item/card/id/advanced/black/deathsquad), "[role]: ID card is not in the PDA.")
 	TEST_ASSERT(istype(operative.glasses, /obj/item/clothing/glasses/night), "[role]: no night vision goggles.")
 	var/obj/item/mod/control/pre_equipped/suit = operative.back
 	TEST_ASSERT(istype(suit), "[role]: no MODsuit.")

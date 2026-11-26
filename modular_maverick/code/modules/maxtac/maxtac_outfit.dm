@@ -74,6 +74,8 @@
 	if(visuals_only)
 		return
 
+	put_id_in_pda(operative)
+
 	for(var/organ_type in chrome + heart_type)
 		install_chrome(operative, new organ_type())
 
@@ -86,6 +88,22 @@
 			var/obj/item/organ/arm_implant = new arm_type()
 			arm_implant.swap_zone(arm_zone)
 			install_chrome(operative, arm_implant)
+
+/// Moves the ID card into a police PDA and wears the PDA in the ID slot.
+/datum/outfit/centcom/ert/maxtac/proc/put_id_in_pda(mob/living/carbon/human/operative)
+	var/obj/item/card/id/card = operative.wear_id
+	if(!istype(card))
+		return
+	var/obj/item/modular_computer/pda/nri_police/pda = new(operative)
+	operative.temporarilyRemoveItemFromInventory(card, force = TRUE)
+	pda.insert_id(card)
+	if(!operative.equip_to_slot_if_possible(pda, ITEM_SLOT_ID, disable_warning = TRUE))
+		// Never leave them without an ID.
+		pda.remove_id(silent = TRUE)
+		operative.equip_to_slot_if_possible(card, ITEM_SLOT_ID, disable_warning = TRUE)
+		qdel(pda)
+		return
+	pda.imprint_id(operative.real_name, card.assignment)
 
 /// Installs an implant if it is safe for this species, deletes it if not.
 /datum/outfit/centcom/ert/maxtac/proc/install_chrome(mob/living/carbon/human/operative, obj/item/organ/implant)
