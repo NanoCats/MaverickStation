@@ -91,14 +91,14 @@ const tested = [
   },
 ];
 
-let labels = await run('opened', 'Thing', ['modular_maverick/a.dm'], tested);
+let labels = await run('opened', 'Thing', ['modular_~maverick/a.dm'], tested);
 assert.ok(labels.includes('Testing Completed'), 'manual label kept on open');
 assert.ok(
   !labels.includes('Upstream File Edit'),
   'modular only is not an upstream edit',
 );
 
-labels = await run('synchronize', 'Thing', ['modular_maverick/a.dm'], tested);
+labels = await run('synchronize', 'Thing', ['modular_~maverick/a.dm'], tested);
 assert.ok(
   !labels.includes('Testing Completed'),
   'cleared when commits are pushed',
@@ -143,9 +143,9 @@ const playtest = [
   },
   ...tested,
 ];
-labels = await run('labeled', 'Thing', ['modular_maverick/a.dm'], playtest);
+labels = await run('labeled', 'Thing', ['modular_~maverick/a.dm'], playtest);
 assert.ok(!labels.includes('Needs Playtest'), 'tested PR drops Needs Playtest');
-labels = await run('synchronize', 'Thing', ['modular_maverick/a.dm'], playtest);
+labels = await run('synchronize', 'Thing', ['modular_~maverick/a.dm'], playtest);
 assert.ok(labels.includes('Needs Playtest'), 'push brings Needs Playtest back');
 assert.ok(
   !labels.includes('Testing Completed'),
@@ -154,7 +154,7 @@ assert.ok(
 labels = await run(
   'synchronize',
   'Thing',
-  ['modular_maverick/a.dm'],
+  ['modular_~maverick/a.dm'],
   [
     {
       event: 'labeled',

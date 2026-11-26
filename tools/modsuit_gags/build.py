@@ -5,9 +5,9 @@ Builds the MODsuit GAGS assets from the original MODsuit sprites.
   python tools/modsuit_gags/build.py loader ninja rebuild only these skins
 
 Writes, for each skin:
-  modular_maverick/icons/mob/clothing/modsuit/gags/<skin>.dmi
-  modular_maverick/code/datums/greyscale/json_configs/modsuit/<skin>_<role>.json
-and always rewrites modular_maverick/code/modules/mod/gags/mod_gags_skins.dm.
+  modular_~maverick/icons/mob/clothing/modsuit/gags/<skin>.dmi
+  modular_~maverick/code/datums/greyscale/json_configs/modsuit/<skin>_<role>.json
+and always rewrites modular_~maverick/code/modules/mod/gags/mod_gags_skins.dm.
 
 Run check.py afterwards. It must report 0 mismatched pixels.
 """
@@ -24,9 +24,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gags_math import REPO, hls, meta_blocks  # noqa: E402
 from rules import LAYOUT, ROLE, dmi, make, states_for  # noqa: E402
 
-ICON_DIR = "modular_maverick/icons/mob/clothing/modsuit/gags/"
-JSON_DIR = "modular_maverick/code/datums/greyscale/json_configs/modsuit/"
-DM_FILE = "modular_maverick/code/modules/mod/gags/mod_gags_skins.dm"
+ICON_DIR = "modular_~maverick/icons/mob/clothing/modsuit/gags/"
+JSON_DIR = "modular_~maverick/code/datums/greyscale/json_configs/modsuit/"
+DM_FILE = "modular_~maverick/code/modules/mod/gags/mod_gags_skins.dm"
 MANIFEST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "manifest.json")
 
 # Display names in the GAGS config list, when the skin name alone reads badly
