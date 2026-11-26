@@ -156,6 +156,7 @@
 	r_hand = /obj/item/gun/energy/ionrifle/carbine
 	backpack_contents = list(
 		/obj/item/gun/ballistic/automatic/pistol/robohand = 1,
+		/obj/item/ammo_box/maxtac_14mm = 1,
 		/obj/item/ammo_box/magazine/c40sol_rifle/standard = 2,
 		/obj/item/storage/medkit/regular = 1,
 		/obj/item/storage/box/handcuffs = 1,

@@ -14,6 +14,9 @@
 		var/mob/living/carbon/human/operative = equip_operative(outfit_type)
 		check_common(operative, roles[outfit_type])
 
+	var/mob/living/carbon/human/box_commander = equip_operative(/datum/outfit/centcom/ert/maxtac/commander)
+	TEST_ASSERT(locate(/obj/item/ammo_box/maxtac_14mm) in box_commander.get_all_contents(), "Commander has no 14mm ammo box.")
+
 	var/mob/living/carbon/human/assault = equip_operative(/datum/outfit/centcom/ert/maxtac)
 	TEST_ASSERT(istype(assault.get_organ_slot(ORGAN_SLOT_LEFT_ARM_AUG), /obj/item/organ/cyberimp/arm/toolkit/toolset), "Assault has no toolset.")
 	TEST_ASSERT(istype(assault.get_organ_slot(ORGAN_SLOT_HEART), /obj/item/organ/heart/cybernetic/tier3), "Assault has no tier 3 heart.")

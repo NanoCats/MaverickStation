@@ -137,3 +137,11 @@
 /obj/item/radio/headset/headset_cent/alt/maxtac/leader
 	name = "MaxTac commander bowman headset"
 	command = TRUE
+
+// Loose 14mm for the Commander's Malorian. Only MaxTac carries these; everyone else refills 14mm at an ammo bench.
+/obj/item/ammo_box/maxtac_14mm
+	name = "ammo box (14mm)"
+	desc = "A box of heavy 14mm pistol rounds, issued to MaxTac commanders."
+	icon_state = "45box"
+	ammo_type = /obj/item/ammo_casing/c14mm
+	max_ammo = 20
