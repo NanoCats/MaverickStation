@@ -233,7 +233,7 @@
 /// Sets the gender of the human, respecting prefs unless it's forced. Do not force in non-admin operations.
 /mob/living/carbon/human/proc/set_gender(ngender = NEUTER, silent = FALSE, update_icon = TRUE, forced = FALSE)
 	var/bender = gender != ngender
-	if((!client?.prefs?.read_preference(/datum/preference/toggle/erp/gender_change) && !forced) || !dna || !bender)
+	if((!mob_consents(/datum/preference/toggle/erp/gender_change) && !forced) || !dna || !bender) // MAVERICK EDIT - Debug consent. Original: !client?.prefs?.read_preference(/datum/preference/toggle/erp/gender_change)
 		return FALSE
 
 	if(ngender == MALE || ngender == FEMALE)

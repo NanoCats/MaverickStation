@@ -10830,6 +10830,7 @@
 #include "modular_~maverick\code\controllers\configuration\entries\maverick_config_entries.dm"
 #include "modular_~maverick\code\controllers\subsystem\maverick_loot.dm"
 #include "modular_~maverick\code\modules\admin\cheat_engine.dm"
+#include "modular_~maverick\code\modules\admin\debug_consent.dm"
 #include "modular_~maverick\code\modules\admin\local_debug.dm"
 #include "modular_~maverick\code\modules\admin\stale_build_check.dm"
 #include "modular_~maverick\code\modules\admin\vv_export.dm"
