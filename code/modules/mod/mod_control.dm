@@ -749,7 +749,7 @@
 
 	var/atom/movable/screen/spacesuit/spacesuit_hud = wearer.hud_used?.screen_objects[HUD_MOB_SPACESUIT]
 	if (spacesuit_hud)
-		spacesuit_hud.update_spacesuit_hud_icon(state_to_use || SPACESUIT_NO_ICON)
+		spacesuit_hud.update_spacesuit_hud_icon(state_to_use || SPACESUIT_NO_ICON, maverick_core_percent(), TRUE, maverick_runtime_left()) // MAVERICK EDIT - Exact charge and runtime for the finer cell bar
 
 /obj/item/mod/control/proc/update_speed()
 	var/total_slowdown = 0
