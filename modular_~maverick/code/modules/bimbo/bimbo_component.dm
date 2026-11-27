@@ -26,6 +26,8 @@
 	COOLDOWN_DECLARE(distraction_cooldown)
 	/// Limits how often the short attention span drops an action
 	COOLDOWN_DECLARE(lose_focus_cooldown)
+	/// Limits how often an invasive thought pops up
+	COOLDOWN_DECLARE(invasive_thought_cooldown)
 
 /datum/component/bimbo/Initialize(baseline = 0, from_quirk = FALSE, lipstick_color)
 	if(!ishuman(parent))
@@ -126,6 +128,7 @@
 	update_heat(seconds_per_tick)
 	try_lose_focus()
 	try_get_distracted()
+	try_invasive_thought()
 
 	life_ticks++
 	if(life_ticks % 5)
@@ -267,13 +270,13 @@
 	var/mob/living/carbon/human/holder = parent
 	switch(get_tier())
 		if(BIMBO_TIER_DITZY)
-			examine_list += span_notice("[holder.p_They()] seem[holder.p_s()] a little scatterbrained.")
+			examine_list += span_userlove("[holder.p_They()] [holder.p_have()] a cute, dreamy look about [holder.p_them()].")
 		if(BIMBO_TIER_AIRHEAD)
-			examine_list += span_notice("[holder.p_They()] [holder.p_have()] a sweet, vacant smile.")
+			examine_list += span_userlove("[holder.p_They()] [holder.p_have()] a sweet, carefree smile.")
 		if(BIMBO_TIER_BIMBO)
-			examine_list += span_purple("[holder.p_They()] look[holder.p_s()] like [holder.p_theyve()] never had a hard thought in [holder.p_their()] life.")
+			examine_list += span_userlove("[holder.p_They()] look[holder.p_s()] bubbly, glossy and happily distracted.")
 		if(BIMBO_TIER_BUBBLEHEADED)
-			examine_list += span_purple("There is clearly nobody home behind those eyes.")
+			examine_list += span_userlove("[holder.p_They()] positively glow[holder.p_es()] with ditzy, giggly charm.")
 
 	if(user == holder || !ishuman(user))
 		return
@@ -357,3 +360,28 @@
 
 /datum/actionspeed_modifier/bimbo
 	variable = TRUE
+
+/// Lewd thoughts that pop into your head now and then, from the old hexacrocin overdose. Only with ERP on.
+/datum/component/bimbo/proc/try_invasive_thought()
+	var/mob/living/carbon/human/holder = parent
+	if(!COOLDOWN_FINISHED(src, invasive_thought_cooldown) || world.time < clarity_until)
+		return
+	if(!holder.client?.prefs?.read_preference(/datum/preference/toggle/erp))
+		return
+	var/intensity = get_effective_intensity()
+	if(intensity < BIMBO_AIRHEAD_INTENSITY || !prob(intensity / 20))
+		return
+	COOLDOWN_START(src, invasive_thought_cooldown, BIMBO_INVASIVE_THOUGHT_COOLDOWN)
+	var/static/list/mild_thoughts = list(
+		"You feel a bit hot.",
+		"Your mind keeps wandering somewhere naughty.",
+		"You feel totally in the mood.",
+		"Someone cute would really make your day right now.",
+	)
+	var/static/list/strong_thoughts = list(
+		"You can't get sex off your mind!",
+		"You're bursting with tension!",
+		"You really, really need someone right now.",
+		"Every thought you have ends up in the same place.",
+	)
+	to_chat(holder, span_userlove(pick(holder.arousal >= AROUSAL_MEDIUM ? strong_thoughts : mild_thoughts)))
