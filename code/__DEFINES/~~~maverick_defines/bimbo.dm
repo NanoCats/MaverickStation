@@ -46,8 +46,11 @@
 /// Alert category for the heat icon
 #define ALERT_BIMBO_HEAT "bimbo_heat"
 
-/// Breast size floor at full intensity. 19 is BREAST_SIZE_S, the largest the prefs allow.
-#define BIMBO_BREAST_FLOOR_MAX 19
+/// Breast size floor at full intensity. 8 is an H cup: big, but still something a real person could have.
+/// The floor scales with intensity, so 25% is a B, 50% a D and 75% an F. Bigger is up to the player.
+#define BIMBO_BREAST_FLOOR_MAX 8
+/// Butt size floor at full intensity. 4 is "hefty"; the sizes above that are hyper territory.
+#define BIMBO_BUTT_FLOOR_MAX 4
 
 /// Long actions shorter than this never get interrupted by the short attention span
 #define BIMBO_ATTENTION_SPAN (5 SECONDS)

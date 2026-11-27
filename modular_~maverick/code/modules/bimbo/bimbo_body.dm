@@ -24,7 +24,7 @@
 			to_chat(holder, span_purple("Your chest feels warm as it swells a little bigger."))
 
 	var/obj/item/organ/genital/butt/butt = holder.get_organ_slot(ORGAN_SLOT_BUTT)
-	if(butt && grow_to_floor(butt, round(BUTT_MAX_SIZE * fraction), instant))
+	if(butt && grow_to_floor(butt, round(BIMBO_BUTT_FLOOR_MAX * fraction), instant))
 		changed = TRUE
 		if(!instant)
 			to_chat(holder, span_purple("Your hips feel heavier."))
