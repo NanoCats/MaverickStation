@@ -235,6 +235,8 @@
 		"You feel very weak in the darkness." = MUT_MSG_EXTENDED,
 		"You feel like basking in the sunlight." = MUT_MSG_ABOUT2TURN)
 
+// MAVERICK EDIT BEGIN - Shadekin are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_SHADEKIN
 /datum/reagent/mutationtoxin/shadekin
 	name = "Shadekin Mutation Toxin"
 	description = "A shadekin toxin."
@@ -248,6 +250,8 @@
 		"You are getting furrier." = MUT_MSG_EXTENDED,
 		"Your ears flop over your head." = MUT_MSG_EXTENDED,
 		"You hear a cacophony of voices in your head." = MUT_MSG_ABOUT2TURN)
+#endif
+// MAVERICK EDIT END
 
 /datum/reagent/mutationtoxin/shadow
 	name = "Shadow Mutation Toxin"
@@ -307,6 +311,8 @@
 		"Your nose is wet." = MUT_MSG_EXTENDED,
 		"You feel very fuzzy." = MUT_MSG_ABOUT2TURN)
 
+// MAVERICK EDIT BEGIN - Teshari are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_TESHARI
 /datum/reagent/mutationtoxin/teshari
 	name = "Teshari Mutation Toxin"
 	description = "A teshari toxin."
@@ -320,7 +326,11 @@
 		"You begin growing feathers." = MUT_MSG_EXTENDED,
 		"You feel very excitable." = MUT_MSG_EXTENDED,
 		"You feel like a little gremlin, like you need to do some crimes." = MUT_MSG_ABOUT2TURN)
+#endif
+// MAVERICK EDIT END
 
+// MAVERICK EDIT BEGIN - Vox are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_VOX
 /datum/reagent/mutationtoxin/vox
 	name = "Vox Mutation Toxin"
 	description = "A voxin."
@@ -348,6 +358,8 @@
 		"Quills push through your skin." = MUT_MSG_EXTENDED,
 		"A beak forms on your face and splits into three parts." = MUT_MSG_EXTENDED,
 		"You need to find nitrogen fast! SKREE!" = MUT_MSG_ABOUT2TURN)
+#endif
+// MAVERICK EDIT END
 
 /datum/reagent/mutationtoxin/vulpkanin
 	name = "Fox Mutation Toxin"

@@ -1,0 +1,49 @@
+# Operation Angle Grinder: upstream files cut from the MaverickStation build.
+# One glob per line, matched against repo-relative paths with forward slashes.
+# tools/maverick/angle_grinder.py removes matching includes from tgstation.dme,
+# and the include checker fails CI if one comes back. Nothing here is deleted from disk.
+
+# Cursekin (and the lycan form they turn into). Its __DEFINES.dm stays, other code names the species IDs.
+modular_zubbers/code/modules/customization/species/lycans/[!_]*.dm
+modular_zubbers/code/modules/customization/species/lycans/_*_species.dm
+modular_zubbers/code/modules/customization/species/lycans/*/*.dm
+modular_zubbers/code/modules/uplink/uplink_items/species/lycan_booster.dm
+modular_zubbers/code/modules/antagonists/heretic/knowledge/lycan_booster.dm
+
+
+# Teshari species, bodyparts, augments and bird food. The Schechi language and the kiri and muli fruit stay, other code uses them. The clothing sprite infrastructure
+# (worn_icon_teshari and friends) stays, because every piece of clothing refers to it.
+modular_skyrat/modules/teshari/code/_teshari.dm
+modular_skyrat/modules/teshari/code/teshari_bodytype.dm
+modular_skyrat/modules/teshari/code/teshari_clothes.dm
+modular_skyrat/modules/teshari/code/birdman_food.dm
+modular_skyrat/modules/teshari/code/language_holder.dm
+modular_skyrat/modules/bodyparts/code/teshari_bodyparts.dm
+modular_skyrat/modules/tesh_augments/code/*.dm
+modular_skyrat/modules/customization/datums/components/crafting/teshari_recipes.dm
+
+# Vox and Vox Primalis species, bodyparts, markings and hair. Their organs, language and job outfits stay, other code uses them. Clothing sprite
+# infrastructure (vox_sprites, vox_clothing, greyscale_config_worn_vox) stays for the same reason as Teshari.
+# alt_vox is the AI announcer voice, not the species, and stays.
+modular_skyrat/modules/better_vox/code/vox_bodycolor.dm
+modular_skyrat/modules/better_vox/code/vox_bodyparts.dm
+modular_skyrat/modules/better_vox/code/vox_species.dm
+modular_skyrat/modules/better_vox/code/vox_sprite_accessories.dm
+modular_skyrat/modules/bodyparts/code/vox_bodyparts.dm
+modular_skyrat/modules/customization/modules/mob/dead/new_player/body_markings/body_markings_vox.dm
+modular_skyrat/modules/customization/modules/mob/dead/new_player/sprite_accessories/vox.dm
+modular_skyrat/modules/customization/modules/mob/living/carbon/human/species/vox.dm
+modular_zubbers/code/modules/mob/living/carbon/human/species_types/vox_primalis.dm
+
+# Not cut here, see notes:
+# - Xenomorph Hybrid: its species file also holds vars that regular xenomorph aliens use, so it stays.
+#   The species stays unpickable through MAVERICK_SPECIES_DISABLED instead.
+# - Anthro Syndicate troopers: ruins and maint rooms place them, so they are reskinned as regular
+#   troopers in modular_~maverick/code/modules/mob/living/basic/anthro_troopers.dm instead.
+
+# Shadekin species, its brain and its regeneration. Shadekin ears, bodyparts, tails and loadout items stay, other code uses them.
+modular_zubbers/code/modules/mob/living/carbon/human/species_types/shadekin.dm
+
+# Quirks leadership cut: Hydra Heads (no sprites back it up) and Jerk (always on, and players end up apologizing for it).
+modular_skyrat/modules/hydra/code/neutral.dm
+modular_zubbers/code/datums/quirks/positive_quirks/defensive.dm

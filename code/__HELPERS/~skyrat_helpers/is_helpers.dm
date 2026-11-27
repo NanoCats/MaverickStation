@@ -1,8 +1,8 @@
 //Robots
 #define issynthetic(A) (is_species(A,/datum/species/synthetic))
 //Actual Species
-#define isvox(A) (is_species(A,/datum/species/vox))
-#define isvoxprimalis(A) (is_species(A,/datum/species/vox_primalis))
+#define isvox(A) (is_species(A, null)) // MAVERICK EDIT - Vox are cut (Operation Angle Grinder) - Original: #define isvox(A) (is_species(A,/datum/species/vox))
+#define isvoxprimalis(A) (is_species(A, null)) // MAVERICK EDIT - Vox are cut (Operation Angle Grinder) - Original: #define isvoxprimalis(A) (is_species(A,/datum/species/vox_primalis))
 #define ispodweak(A) (is_species(A,/datum/species/pod/podweak))
 #define isxenohybrid(A) (is_species(A,/datum/species/xeno))
 #define isdwarf(A) (is_species(A,/datum/species/dwarf))
@@ -13,14 +13,14 @@
 #define isskrell(A) (is_species(A,/datum/species/skell)) //SKRELL GANG SKRELL GANG
 #define isunathi(A) (is_species(A,/datum/species/unathi))
 #define isvulpkanin(A) (is_species(A,/datum/species/vulpkanin))
-#define isteshari(A) (is_species(A, /datum/species/teshari))
+#define isteshari(A) (is_species(A, null)) // MAVERICK EDIT - Teshari are cut (Operation Angle Grinder) - Original: #define isteshari(A) (is_species(A, /datum/species/teshari))
 #define issnail(A) (is_species(A, /datum/species/snail))
 #define isluminescent(A) (is_species(A, /datum/species/jelly/luminescent))
 #define isprimitivedemihuman(A) (is_species(A, /datum/species/human/felinid/primitive))
-#define isshadekin(A) (is_species(A, /datum/species/shadekin))
+#define isshadekin(A) (is_species(A, null)) // MAVERICK EDIT - Shadekin are cut (Operation Angle Grinder) - Original: #define isshadekin(A) (is_species(A, /datum/species/shadekin))
 #define isprotean(A) (is_species(A, /datum/species/protean))
-#define iscursekin(A) (is_species(A, /datum/species/human/cursekin))
-#define islycan(A) (is_species(A, /datum/species/lycan))
+#define iscursekin(A) (is_species(A, null)) // MAVERICK EDIT - Cursekin are cut (Operation Angle Grinder) - Original: #define iscursekin(A) (is_species(A, /datum/species/human/cursekin))
+#define islycan(A) (is_species(A, null)) // MAVERICK EDIT - lycans are cut (Operation Angle Grinder) - Original: #define islycan(A) (is_species(A, /datum/species/lycan))
 #define isgas(A) (is_species(A, /datum/species/gas))
 //Antags
 #define ishorrorling(A) (istype(A, /mob/living/simple_animal/hostile/true_changeling))

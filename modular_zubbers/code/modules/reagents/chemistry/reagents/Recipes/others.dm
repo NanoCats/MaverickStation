@@ -96,10 +96,14 @@
 	required_reagents  = list(/datum/reagent/cellulose = 20, /datum/reagent/consumable/ethanol/mush_crush = 3, /datum/reagent/plantnutriment/robustharvestnutriment = 3, /datum/reagent/mutationtoxin = 1)
 	required_temp = 320
 
+// MAVERICK EDIT BEGIN - Shadekin are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_SHADEKIN
 /datum/chemical_reaction/mutationtoxin/shadekin
 	results = list(/datum/reagent/mutationtoxin/shadekin = 1)
 	required_reagents  = list(/datum/reagent/consumable/bananashake = 3, /datum/reagent/medicine/mannitol = 2, /datum/reagent/drug/happiness = 2, /datum/reagent/mutationtoxin = 1)
 	required_temp = 320
+#endif
+// MAVERICK EDIT END
 
 /datum/chemical_reaction/mutationtoxin/skeleton
 	results = list(/datum/reagent/mutationtoxin/skeleton = 1)
@@ -131,11 +135,17 @@
 	required_reagents  = list(/datum/reagent/consumable/ethanol/frisky_kitty = 3, /datum/reagent/consumable/frostoil = 2, /datum/reagent/consumable/ice = 2, /datum/reagent/mutationtoxin = 1)
 	required_temp = 270
 
+// MAVERICK EDIT BEGIN - Teshari are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_TESHARI
 /datum/chemical_reaction/mutationtoxin/teshari
 	results = list(/datum/reagent/mutationtoxin/teshari = 1)
 	required_reagents  = list(/datum/reagent/consumable/ethanol/antifreeze = 3, /datum/reagent/drug/maint/sludge = 2, /datum/reagent/lube = 2, /datum/reagent/mutationtoxin = 1)
 	required_temp = 320
+#endif
+// MAVERICK EDIT END
 
+// MAVERICK EDIT BEGIN - Vox are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_VOX
 /datum/chemical_reaction/mutationtoxin/vox
 	results = list(/datum/reagent/mutationtoxin/vox = 1)
 	required_reagents  = list(/datum/reagent/consumable/ethanol/toxins_special= 3, /datum/reagent/medicine/nanite_slurry = 2, /datum/reagent/nitrogen = 2, /datum/reagent/mutationtoxin = 1)
@@ -145,6 +155,8 @@
 	results = list(/datum/reagent/mutationtoxin/vox_primalis = 1)
 	required_reagents  = list(/datum/reagent/consumable/hot_ice_coffee = 3, /datum/reagent/medicine/nanite_slurry = 2, /datum/reagent/nitrogen = 2, /datum/reagent/mutationtoxin = 1)
 	required_temp = 320
+#endif
+// MAVERICK EDIT END
 
 /datum/chemical_reaction/mutationtoxin/vulpkanin
 	results = list(/datum/reagent/mutationtoxin/vulpkanin = 1)

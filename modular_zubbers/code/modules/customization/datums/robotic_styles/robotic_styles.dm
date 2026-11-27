@@ -188,7 +188,7 @@ GLOBAL_LIST_EMPTY(robotic_styles_list)
 /datum/robotic_style/dimorphic/vox
 	name = "Vox (Robotic)"
 	icon = BODYPART_ICON_VOX
-	limb_id_override = /obj/item/bodypart/chest/mutant/vox::limb_id
+	limb_id_override = SPECIES_VOX // MAVERICK EDIT - the Vox chest type is cut (Operation Angle Grinder), this is its limb_id - Original: /obj/item/bodypart/chest/mutant/vox::limb_id
 
 /datum/robotic_style/dimorphic/xenohybrid
 	name = "Xenohybrid (Robotic)"

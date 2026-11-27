@@ -221,6 +221,8 @@
 	build_path = /obj/item/organ/tongue/cat/tajaran
 	category = list(SPECIES_TAJARAN, RND_CATEGORY_INITIAL)
 
+// MAVERICK EDIT BEGIN - Teshari are cut (Operation Angle Grinder)
+#ifndef MAVERICK_CUT_TESHARI
 //Teshari organs
 /datum/design/teshari_ears
 	name = "Teshari Ears"
@@ -242,6 +244,8 @@
 	reagents_list = list(/datum/reagent/medicine/c2/synthflesh = 10)
 	build_path = /obj/item/organ/tongue/teshari
 	category = list(SPECIES_TESHARI, RND_CATEGORY_INITIAL)
+#endif
+// MAVERICK EDIT END
 
 /datum/design/wholehuman
 	name = "Blank Body"
