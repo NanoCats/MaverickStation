@@ -382,6 +382,7 @@
 #include "~maverick\maxtac.dm"
 #include "~maverick\mod_gags.dm"
 #include "~maverick\multilayer_cable_mapload.dm"
+#include "~maverick\object_tf.dm"
 #include "~maverick\overlay_lighting_cells.dm"
 // MAVERICK EDIT END
 // SKYRAT EDIT START
