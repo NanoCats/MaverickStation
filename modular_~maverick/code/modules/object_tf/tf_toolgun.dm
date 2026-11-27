@@ -12,12 +12,9 @@
 	icon = 'modular_zubbers/icons/obj/equipment/architector_items.dmi'
 	icon_state = "toolgun"
 	inhand_icon_state = "toolgun"
-	worn_icon_state = "toolgun"
-	worn_icon = 'modular_zubbers/icons/mob/inhands/architector_items_belt.dmi'
 	lefthand_file = 'modular_zubbers/icons/mob/inhands/architector_items_lefthand.dmi'
 	righthand_file = 'modular_zubbers/icons/mob/inhands/architector_items_righthand.dmi'
 	w_class = WEIGHT_CLASS_SMALL
-	slot_flags = ITEM_SLOT_BELT
 	throwforce = 0
 	pickup_sound = 'modular_zubbers/sound/phystools/toolgun_select.ogg'
 	/// TF_TOOLGUN_SAMPLE, TF_TOOLGUN_TRANSFORM or TF_TOOLGUN_RESTORE
