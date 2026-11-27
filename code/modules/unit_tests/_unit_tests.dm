@@ -377,6 +377,7 @@
 #include "weird_food.dm"
 #include "wizard_loadout.dm"
 // MAVERICK EDIT BEGIN - Maverick unit tests
+#include "~maverick\bimbo_makeover.dm"
 #include "~maverick\elephant_probes.dm"
 #include "~maverick\maxtac.dm"
 #include "~maverick\mod_gags.dm"

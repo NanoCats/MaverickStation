@@ -46,11 +46,11 @@
 /// Alert category for the heat icon
 #define ALERT_BIMBO_HEAT "bimbo_heat"
 
-/// Breast size floor at full intensity. 8 is an H cup: big, but still something a real person could have.
-/// The floor scales with intensity, so 25% is a B, 50% a D and 75% an F. Bigger is up to the player.
-#define BIMBO_BREAST_FLOOR_MAX 8
-/// Butt size floor at full intensity. 4 is "hefty"; the sizes above that are hyper territory.
-#define BIMBO_BUTT_FLOOR_MAX 4
+/// Breast size floor at full intensity. 16 is a P cup (leadership's pick). The sizes past P take much bigger leaps.
+/// The floor scales with intensity, so 25% is a D, 50% an H and 75% an L. Bigger is up to the player.
+#define BIMBO_BREAST_FLOOR_MAX 16
+/// Butt size floor at full intensity. 5 is one step past "hefty".
+#define BIMBO_BUTT_FLOOR_MAX 5
 
 /// Long actions shorter than this never get interrupted by the short attention span
 #define BIMBO_ATTENTION_SPAN (10 SECONDS)
@@ -70,6 +70,31 @@
 
 /// From /datum/interaction/act() on the target of a lewd interaction: (mob/living/carbon/human/user, datum/interaction/interaction)
 #define COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED "human_lewd_interaction_received"
+
+// THOT Accelerator (the bimbo pulse rifle)
+/// Label shown when examining the rifle
+#define COMPANY_LUSTWISH "It has a glossy <b>[span_purple("LustWish")]</b> label on it."
+/// Bimbonium injected by one brain-melt pulse
+#define BIMBO_PULSE_DOSE 5
+/// Arousal gained the moment a pulse hits
+#define BIMBO_PULSE_AROUSAL 8
+/// Chance that a pulse makes the target giggle, moan or similar
+#define BIMBO_PULSE_EMOTE_CHANCE 60
+
+/// Pink for the makeover outfit, heels and ID trim
+#define BIMBO_MAKEOVER_PINK "#ff69b4"
+/// The job title the makeover puts on your ID
+#define BIMBO_ID_ASSIGNMENT "Slut"
+
+// Bimbonium, the reagent the pulses inject
+/// Intensity added per life tick while Bimbonium is in your system
+#define BIMBONIUM_INTENSITY_PER_TICK 1
+/// Arousal added per life tick while Bimbonium is in your system
+#define BIMBONIUM_AROUSAL_PER_TICK 2
+/// Chance per life tick to take the next makeover step (hair, figure, breasts)
+#define BIMBONIUM_MAKEOVER_STEP_CHANCE 25
+/// Overdose amount. About six pulses in a short time.
+#define BIMBONIUM_OVERDOSE 30
 
 // Bimbo ray hair settings
 #define BIMBO_RAY_HAIR_KEEP "Leave it alone"
