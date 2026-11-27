@@ -55,6 +55,54 @@
 		text += "<br>[floor(whole_seconds / 60)]:[secs < 10 ? "0" : ""][secs]"
 	return MAPTEXT("<div align='right'>[text]</div>")
 
+/// How far back the MODsuit runtime estimate looks at charge use.
+#define MOD_RUNTIME_WINDOW (30 SECONDS)
+/// How much history the estimate needs before it shows a time.
+#define MOD_RUNTIME_MIN_WINDOW (5 SECONDS)
+
+/obj/item/mod/control
+	/// Recent (world.time, charge) samples, used to estimate how long the core lasts at the current drain.
+	var/list/maverick_charge_samples
+
+/// Core charge as a percent for the HUD, or null when there's nothing to show.
+/obj/item/mod/control/proc/maverick_core_percent()
+	if(isnull(core))
+		return null
+	var/charge = core.charge_amount()
+	var/max_charge = core.max_charge_amount()
+	if(charge == INFINITY)
+		return 100
+	if(!max_charge)
+		return null
+	return 100 * charge / max_charge
+
+/**
+ * Seconds of power left at the recent rate of use, or null if we can't tell.
+ * MODsuit drain changes with modules, so this averages the last 30 seconds instead of using a fixed cost.
+ */
+/obj/item/mod/control/proc/maverick_runtime_left()
+	if(!active || isnull(core))
+		maverick_charge_samples = null
+		return null
+	var/charge = core.charge_amount()
+	if(charge == INFINITY)
+		return null
+	var/list/newest = LAZYACCESS(maverick_charge_samples, length(maverick_charge_samples))
+	if(isnull(newest) || world.time - newest[1] >= 1 SECONDS)
+		LAZYADD(maverick_charge_samples, list(list(world.time, charge)))
+	while(length(maverick_charge_samples) > 2 && world.time - maverick_charge_samples[2][1] >= MOD_RUNTIME_WINDOW)
+		maverick_charge_samples.Cut(1, 2)
+	var/list/oldest = maverick_charge_samples[1]
+	var/elapsed = world.time - oldest[1]
+	if(elapsed < MOD_RUNTIME_MIN_WINDOW)
+		return null
+	var/drained = oldest[2] - charge
+	if(drained <= 0)
+		return null // Charging, or not draining
+	return charge / (drained / (elapsed / (1 SECONDS)))
+
+#undef MOD_RUNTIME_WINDOW
+#undef MOD_RUNTIME_MIN_WINDOW
 #undef SPACESUIT_CELL_BAR_ROWS
 #undef SPACESUIT_CELL_FLASH_SECONDS
 #undef SPACESUIT_CELL_RED_SECONDS
