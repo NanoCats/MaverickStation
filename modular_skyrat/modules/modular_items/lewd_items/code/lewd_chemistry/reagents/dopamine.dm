@@ -22,7 +22,7 @@
 	desc = "Delicious flavored reagent. You feel happy even looking at it."
 
 /datum/reagent/drug/aphrodisiac/dopamine/on_mob_add(mob/living/carbon/human/exposed_mob)
-	if(!(exposed_mob.client?.prefs.read_preference(/datum/preference/toggle/erp/aphro)))
+	if(!(exposed_mob.mob_consents(/datum/preference/toggle/erp/aphro))) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return ..()
 	exposed_mob.add_mood_event("[type]_start", /datum/mood_event/orgasm, name)
 	return ..()

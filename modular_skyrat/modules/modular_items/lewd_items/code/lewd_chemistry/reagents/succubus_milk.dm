@@ -93,7 +93,7 @@
 		suppress_chat = TRUE
 
 	// Begin breast growth if prefs allow it
-	if(exposed_mob.client?.prefs.read_preference(/datum/preference/toggle/erp/breast_enlargement))
+	if(exposed_mob.mob_consents(/datum/preference/toggle/erp/breast_enlargement)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		create_genitals(exposed_mob, suppress_chat, list(GENITAL_BREASTS))
 
 	// Separates gender change stuff from breast growth and shrinkage, as well as from new genitalia growth/removal
