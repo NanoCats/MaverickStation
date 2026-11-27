@@ -10850,6 +10850,7 @@
 #include "modular_~maverick\code\modules\mod\gags\mod_gags.dm"
 #include "modular_~maverick\code\modules\mod\gags\mod_gags_hooks.dm"
 #include "modular_~maverick\code\modules\mod\gags\mod_gags_skins.dm"
+#include "modular_~maverick\code\modules\projectiles\techshell_box_refit.dm"
 #include "modular_~maverick\code\modules\research\research_on_deconstruct.dm"
 #include "modular_~maverick\code\modules\robotics_surgery_tray\robotics_surgery_tray.dm"
 #include "modular_~maverick\code\modules\security\armory_shotguns.dm"
