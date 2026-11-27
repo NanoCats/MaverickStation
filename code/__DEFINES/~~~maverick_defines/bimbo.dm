@@ -95,6 +95,12 @@
 #define BIMBONIUM_AROUSAL_PER_TICK 2
 /// Chance per life tick to take the next makeover step (hair, figure, breasts)
 #define BIMBONIUM_MAKEOVER_STEP_CHANCE 25
+/// Stamina lost per tick while overdosed on Bimbonium
+#define BIMBONIUM_OVERDOSE_STAMINA 4
+/// How long the reality overwrite knocks you out
+#define BIMBO_OVERWRITE_KNOCKOUT (4 SECONDS)
+/// PDA colors after the reality overwrite
+#define BIMBO_PDA_COLORS "#ff69b4#ffffff"
 /// Overdose amount. About six pulses in a short time.
 #define BIMBONIUM_OVERDOSE 30
 
