@@ -366,7 +366,7 @@
 	var/mob/living/carbon/human/holder = parent
 	if(!COOLDOWN_FINISHED(src, invasive_thought_cooldown) || world.time < clarity_until)
 		return
-	if(!holder.client?.prefs?.read_preference(/datum/preference/toggle/erp))
+	if(!holder.mob_consents(/datum/preference/toggle/erp))
 		return
 	var/intensity = get_effective_intensity()
 	if(intensity < BIMBO_AIRHEAD_INTENSITY || !prob(intensity / 20))

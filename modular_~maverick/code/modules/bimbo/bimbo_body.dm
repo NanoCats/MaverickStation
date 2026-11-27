@@ -3,7 +3,7 @@
 	if(from_quirk)
 		return TRUE
 	var/mob/living/carbon/human/holder = parent
-	return holder.client?.prefs?.read_preference(/datum/preference/toggle/erp/breast_enlargement)
+	return holder.mob_consents(/datum/preference/toggle/erp/breast_enlargement)
 
 /**
  * Raises breast and butt size to the floor for the current intensity.
@@ -21,13 +21,19 @@
 	if(breasts && grow_to_floor(breasts, round(BIMBO_BREAST_FLOOR_MAX * fraction), instant))
 		changed = TRUE
 		if(!instant)
-			to_chat(holder, span_purple("Your chest feels warm as it swells a little bigger."))
+			holder.visible_message(
+				span_userlove("[holder]'s chest swells a little fuller[holder.w_uniform ? ", straining against [holder.p_their()] clothes" : ""]."),
+				span_userlove("Your chest feels warm as it swells a little bigger[holder.w_uniform ? ". Your clothes feel tighter" : ""]."),
+			)
 
 	var/obj/item/organ/genital/butt/butt = holder.get_organ_slot(ORGAN_SLOT_BUTT)
 	if(butt && grow_to_floor(butt, round(BIMBO_BUTT_FLOOR_MAX * fraction), instant))
 		changed = TRUE
 		if(!instant)
-			to_chat(holder, span_purple("Your hips feel heavier."))
+			holder.visible_message(
+				span_userlove("[holder]'s hips round out, a little curvier than a moment ago."),
+				span_userlove("Your hips feel heavier[holder.w_uniform ? ", and your clothes hug them tighter" : ""]."),
+			)
 
 	if(changed)
 		holder.update_body()
@@ -48,6 +54,10 @@
 	if(!holder.get_bodypart(BODY_ZONE_HEAD))
 		return
 	holder.update_lips("lipstick", lipstick_color)
+	holder.visible_message(
+		span_userlove("[holder]'s lips shimmer as a fresh coat of glossy lipstick appears on them."),
+		span_userlove("Your lips tingle as a fresh coat of lipstick blooms across them."),
+	)
 
 /// The ray's "Barbie" profile. Each part checks its own existing pref.
 /datum/component/bimbo/proc/barbie_conversion()
@@ -59,8 +69,12 @@
 		holder.physique = FEMALE
 		holder.update_body()
 		holder.update_appearance(UPDATE_OVERLAYS)
+		holder.visible_message(
+			span_userlove("[holder]'s figure softens and reshapes into a curvier silhouette."),
+			span_userlove("Your whole body tingles as your figure softens and curves."),
+		)
 
-	if(holder.get_organ_slot(ORGAN_SLOT_BREASTS) || !holder.client?.prefs?.read_preference(/datum/preference/toggle/erp/new_genitalia_growth))
+	if(holder.get_organ_slot(ORGAN_SLOT_BREASTS) || !holder.mob_consents(/datum/preference/toggle/erp/new_genitalia_growth))
 		return
 	var/list/breast_part = holder.dna?.mutant_bodyparts[ORGAN_SLOT_BREASTS]
 	if(!breast_part)
@@ -73,14 +87,17 @@
 	new_breasts.set_size(2)
 	new_breasts.update_sprite_suffix()
 	holder.update_body()
-	to_chat(holder, span_purple("Your chest feels warm and tingly as it fills out."))
+	holder.visible_message(
+		span_userlove("[holder]'s chest fills out into a modest new bust[holder.w_uniform ? ", pulling [holder.p_their()] clothes snug" : ""]."),
+		span_userlove("Your chest feels warm and tingly as it fills out."),
+	)
 
 /**
  * One ray hit or hexacrocin overdose roll.
  * Needs the bimbofication pref. Returns TRUE if anything happened.
  */
 /proc/bimbo_hit(mob/living/carbon/human/target, barbie = FALSE)
-	if(!istype(target) || !target.client?.prefs?.read_preference(/datum/preference/toggle/erp/bimbofication))
+	if(!istype(target) || !target.mob_consents(/datum/preference/toggle/erp/bimbofication))
 		return FALSE
 	var/datum/component/bimbo/bimbo = target.GetComponent(/datum/component/bimbo) || target.AddComponent(/datum/component/bimbo)
 	if(!bimbo)
@@ -88,5 +105,8 @@
 	if(barbie)
 		bimbo.barbie_conversion()
 	bimbo.adjust_bonus(BIMBO_HIT_INTENSITY)
-	to_chat(target, span_purple("Your head feels light and bubbly."))
+	target.visible_message(
+		span_userlove("[target] blinks, then breaks into a bubbly, airheaded giggle."),
+		span_userlove("Your head feels light and bubbly."),
+	)
 	return TRUE
