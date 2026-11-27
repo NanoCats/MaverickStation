@@ -1,13 +1,18 @@
 /obj/item/gun/energy/bimbo_ray
-	name = "bimbo ray"
-	desc = "A pink ray gun from the LustWish catalogue. One zap and your head feels lighter. A tiny reactor recharges it on its own. Use it in hand to change its settings."
+	name = "bimbo pulse rifle"
+	desc = "A death squad pulse rifle that LustWish got their hands on and gave a candy pink paint job. It no longer destroys anything except attention spans. A tiny reactor recharges it on its own. Use it in hand to change its settings."
 	icon = 'modular_~maverick/icons/obj/weapons/bimbo_ray.dmi'
-	icon_state = "bimbo_ray"
+	icon_state = "bimbo_pulse"
 	lefthand_file = 'modular_~maverick/icons/mob/inhands/bimbo_ray_lefthand.dmi'
 	righthand_file = 'modular_~maverick/icons/mob/inhands/bimbo_ray_righthand.dmi'
-	inhand_icon_state = "bimbo_ray"
+	worn_icon = 'modular_~maverick/icons/mob/clothing/bimbo_ray_back.dmi'
+	// Built from the charge level, like the pulse rifle: "bimbo_pulse0" to "bimbo_pulse4"
+	inhand_icon_state = null
+	worn_icon_state = null
+	w_class = WEIGHT_CLASS_BULKY
+	slot_flags = ITEM_SLOT_BACK
+	light_color = "#ff69b4"
 	ammo_type = list(/obj/item/ammo_casing/energy/bimbo_ray)
-	automatic_charge_overlays = FALSE
 	selfcharge = 1
 	charge_delay = 10 // Same rate as the advanced energy gun
 	can_charge = FALSE
@@ -31,7 +36,7 @@
 		"Makeover: [barbie ? "on" : "off"]" = "makeover",
 		"Hair: [hair_mode]" = "hair",
 	)
-	var/choice = tgui_input_list(user, "Change a setting.", "Bimbo ray", options)
+	var/choice = tgui_input_list(user, "Change a setting.", "Bimbo pulse rifle", options)
 	if(!choice || !user.is_holding(src))
 		return TRUE
 	switch(options[choice])
@@ -39,11 +44,11 @@
 			barbie = !barbie
 			balloon_alert(user, "makeover [barbie ? "on" : "off"]")
 		if("hair")
-			var/new_mode = tgui_input_list(user, "What should the makeover do to hair?", "Bimbo ray", list(BIMBO_RAY_HAIR_KEEP, BIMBO_RAY_HAIR_BLONDE, BIMBO_RAY_HAIR_CUSTOM), hair_mode)
+			var/new_mode = tgui_input_list(user, "What should the makeover do to hair?", "Bimbo pulse rifle", list(BIMBO_RAY_HAIR_KEEP, BIMBO_RAY_HAIR_BLONDE, BIMBO_RAY_HAIR_CUSTOM), hair_mode)
 			if(!new_mode || !user.is_holding(src))
 				return TRUE
 			if(new_mode == BIMBO_RAY_HAIR_CUSTOM)
-				var/new_color = input(user, "Pick a hair color.", "Bimbo ray", custom_hair_color) as color|null
+				var/new_color = input(user, "Pick a hair color.", "Bimbo pulse rifle", custom_hair_color) as color|null
 				if(!new_color || !user.is_holding(src))
 					return TRUE
 				custom_hair_color = new_color
@@ -66,15 +71,17 @@
 /obj/item/ammo_casing/energy/bimbo_ray
 	projectile_type = /obj/projectile/energy/bimbo_ray
 	select_name = "bimbo"
-	fire_sound = 'sound/effects/stealthoff.ogg'
+	fire_sound = 'sound/items/weapons/pulse.ogg'
+	muzzle_flash_color = "#ff69b4"
 	harmful = FALSE
 	e_cost = LASER_SHOTS(4, STANDARD_CELL_CHARGE)
 
 /obj/projectile/energy/bimbo_ray
-	name = "bimbo beam"
+	name = "endocrine modification pulse"
 	icon = 'modular_~maverick/icons/obj/weapons/bimbo_ray.dmi'
 	icon_state = "bimbo_beam"
 	light_color = "#ff69b4"
+	impact_effect_type = /obj/effect/temp_visual/impact_effect/purple_laser
 	damage = 0
 	damage_type = STAMINA
 	armor_flag = ENERGY
