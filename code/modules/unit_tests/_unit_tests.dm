@@ -378,7 +378,9 @@
 #include "wizard_loadout.dm"
 // MAVERICK EDIT BEGIN - Maverick unit tests
 #include "~maverick\elephant_probes.dm"
+#include "~maverick\maxtac.dm"
 #include "~maverick\mod_gags.dm"
+#include "~maverick\multilayer_cable_mapload.dm"
 #include "~maverick\overlay_lighting_cells.dm"
 // MAVERICK EDIT END
 // SKYRAT EDIT START
@@ -388,6 +390,7 @@
 #include "~skyrat\opposing_force.dm"
 #include "~skyrat\proteans.dm"
 #include "~zubbers\antag_prompt_timing.dm"
+#include "~zubbers\shotgun_shell_boxes.dm"
 #include "~zubbers\vitezstvi_turret_flags.dm"
 // SKYRAT EDIT END
 // END_INCLUDE

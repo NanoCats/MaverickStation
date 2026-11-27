@@ -582,7 +582,7 @@
 	icon_state = "plastitaniumtiny"
 	},
 /mob/living/basic/alien/queen/large{
-	loot = list(/obj/effect/gibspawner/xeno,/obj/item/ammo_box/magazine/smartgun,/obj/effect/mob_spawn/corpse/human/syndicatecommando/soft_suit);
+	loot = list(/obj/effect/gibspawner/xeno,/obj/item/ammo_box/magazine/smartgun,/obj/effect/mob_spawn/corpse/human/syndicatestormtrooper);
 	desc = "What you saw in your dreams last night.";
 	faction = list("syndicate","xenomorph")
 	},
@@ -981,7 +981,7 @@
 "qE" = (
 /obj/structure/cable,
 /obj/effect/decal/cleanable/dirt,
-/obj/item/gun/energy/laser/scatter/shotty,
+/obj/item/gun/ballistic/automatic/smartgun,
 /turf/open/floor/mineral/plastitanium/red,
 /area/ruin/space/has_grav/infested_frigate)
 "qY" = (
@@ -2051,7 +2051,8 @@
 	},
 /obj/structure/closet/syndicate,
 /obj/structure/cable,
-/obj/item/gun/syringe,
+/obj/item/gun/syringe/syndicate,
+/obj/item/defibrillator/compact/combat,
 /turf/open/floor/mineral/plastitanium/pod/dark,
 /area/ruin/space/has_grav/infested_frigate)
 "Ii" = (

@@ -23,3 +23,32 @@ export const MaverickAntagRules = () => (
     </ul>
   </Box>
 );
+
+/**
+ * Rules for MaxTac operatives. MaxTac is the last answer before a death squad:
+ * someone pushed the station too far, and the team is here to end it.
+ */
+export const MaxTacRules = () => (
+  <Box>
+    <ul style={{ margin: 0, paddingLeft: '1.5em' }}>
+      <li>
+        You are here because someone went too far. Find your target and put
+        them down. You do not need to warn, arrest or negotiate.
+      </li>
+      <li>
+        Lethal force is authorized against your target and anyone who fights
+        for them or gets in your way.
+      </li>
+      <li>
+        Crew who stay out of the fight are not your targets. You are one step
+        below a death squad, not a death squad.
+      </li>
+      <li>
+        Property damage that comes with the job is fine. Do not gut the station
+        for no reason.
+      </li>
+      <li>When the target is down, report in and leave.</li>
+      <li>Respect the content preferences other players have set.</li>
+    </ul>
+  </Box>
+);

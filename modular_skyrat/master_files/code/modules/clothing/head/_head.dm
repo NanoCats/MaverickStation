@@ -21,7 +21,7 @@
 	. = ..()
 	alternate_worn_layer = initial(alternate_worn_layer)
 	if(istype(user) && user.ears && (flags_inv & HIDEEARS))
-		RegisterSignal(user, COMSIG_MOB_UNEQUIPPED_ITEM, PROC_REF(update_on_removed))
+		RegisterSignal(user, COMSIG_MOB_UNEQUIPPED_ITEM, PROC_REF(update_on_removed), override = TRUE) // MAVERICK EDIT - A hat can be dropped twice (hand, then head) before the signal fires
 
 /// After the hat has actually been removed from the mob, we can update what needs to be updated here
 /obj/item/clothing/head/proc/update_on_removed(mob/living/carbon/human/user, obj/item/hat, slot)
