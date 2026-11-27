@@ -28,3 +28,16 @@
 	victim.__gvb_safeword(list()) // The verb body; the verb itself queues through SSverbs and needs a player
 	TEST_ASSERT_EQUAL(victim.loc, start, "Safe word did not release the victim")
 	TEST_ASSERT_NULL(victim.GetComponent(/datum/component/object_tf), "Component stayed after the safe word")
+
+/// Examining the object must not give away who is inside.
+/datum/unit_test/object_tf_anonymous
+
+/datum/unit_test/object_tf_anonymous/Run()
+	var/mob/living/carbon/human/consistent/victim = allocate(/mob/living/carbon/human/consistent)
+	var/mob/living/carbon/human/consistent/onlooker = allocate(/mob/living/carbon/human/consistent)
+	var/obj/item/pen/shape = allocate(/obj/item/pen)
+	victim.real_name = "Unit Test Secret Name"
+	victim.name = victim.real_name
+	victim.AddComponent(/datum/component/object_tf, shape)
+	var/examined = jointext(shape.examine(onlooker), "\n")
+	TEST_ASSERT(!findtext(examined, "Unit Test Secret Name"), "Examining the object named the person inside")
