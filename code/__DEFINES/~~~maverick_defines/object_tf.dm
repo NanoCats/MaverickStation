@@ -11,3 +11,5 @@
 #define TF_TOOLGUN_TRANSFORM_TIME (5 SECONDS)
 /// Time between wobbles when someone in an object tries to move
 #define OBJECT_TF_WOBBLE_COOLDOWN (2 SECONDS)
+/// Filter name for the glow while someone turns into an object
+#define TF_TOOLGUN_GLOW_FILTER "tf_toolgun_glow"

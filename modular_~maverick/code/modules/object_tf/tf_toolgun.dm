@@ -77,6 +77,8 @@
 	if(!COOLDOWN_FINISHED(src, use_cooldown) || busy)
 		balloon_alert(user, "recharging!")
 		return ITEM_INTERACT_BLOCKING
+	// Aim the beam at where the target is now. Sampling moves the item into the toolgun.
+	var/turf/beam_turf = get_turf(target)
 	var/error
 	switch(mode)
 		if(TF_TOOLGUN_SAMPLE)
@@ -91,8 +93,8 @@
 		return ITEM_INTERACT_BLOCKING
 	COOLDOWN_START(src, use_cooldown, TF_TOOLGUN_COOLDOWN)
 	playsound(src, pick('modular_zubbers/sound/phystools/toolgun_shot1.ogg', 'modular_zubbers/sound/phystools/toolgun_shot2.ogg'), 50, TRUE)
-	if(target.loc != user && target != user)
-		user.Beam(target, "light_beam", time = 3)
+	if(beam_turf && beam_turf != get_turf(user))
+		user.Beam(beam_turf, "light_beam", time = 3)
 	return ITEM_INTERACT_SUCCESS
 
 /// Returns why the item can't be sampled, or null if it can.
@@ -108,7 +110,7 @@
 	if(item.GetComponent(/datum/component/stationloving))
 		return "too important!"
 	if(locate(/mob) in item.get_all_contents())
-		return "someone's in there!"
+		return "can't sample that!"
 	return null
 
 /obj/item/tf_toolgun/proc/try_sample(atom/target, mob/user)
@@ -140,11 +142,11 @@
 		return "they resist the change!"
 
 	busy = TRUE
-	var/mutable_appearance/result = new(sampled_item)
-	result.pixel_x = 0
-	result.pixel_y = 0
-	var/mutable_appearance/scanline = mutable_appearance('icons/effects/effects.dmi', "transform_effect")
-	victim.transformation_animation(result, TF_TOOLGUN_TRANSFORM_TIME, scanline.appearance)
+	// A pulsing pink glow while the change takes hold
+	victim.add_filter(TF_TOOLGUN_GLOW_FILTER, 2, list("type" = "outline", "color" = "#ff69b4", "size" = 1))
+	var/glow = victim.get_filter(TF_TOOLGUN_GLOW_FILTER)
+	animate(glow, alpha = 60, time = 0.5 SECONDS, loop = -1)
+	animate(alpha = 255, time = 0.5 SECONDS)
 	victim.Immobilize(TF_TOOLGUN_TRANSFORM_TIME, ignore_canstun = TRUE)
 	victim.visible_message(
 		span_userlove("[victim] starts to shimmer and fold into the shape of [sampled_item]!"),
@@ -156,11 +158,19 @@
 
 /obj/item/tf_toolgun/proc/finish_transform(mob/living/carbon/human/victim, mob/living/user)
 	busy = FALSE
+	if(!QDELETED(victim))
+		victim.remove_filter(TF_TOOLGUN_GLOW_FILTER)
 	if(QDELETED(victim) || victim.stat == DEAD || QDELETED(sampled_item) || victim.GetComponent(/datum/component/object_tf))
 		return
 	var/obj/item/new_shape = sampled_item
 	new_shape.forceMove(get_turf(victim))
 	victim.AddComponent(/datum/component/object_tf, new_shape)
+	// The object pops into being
+	var/matrix/pop = matrix(new_shape.transform)
+	new_shape.transform = pop.Scale(0.2)
+	animate(new_shape, transform = matrix(pop).Scale(6), time = 0.15 SECONDS, easing = BACK_EASING | EASE_OUT)
+	animate(transform = initial(new_shape.transform), time = 0.1 SECONDS)
+	tf_heart_burst(get_turf(new_shape))
 	new_shape.visible_message(span_userlove("[victim] is now [new_shape]!"))
 	to_chat(victim, span_userlove("You are [new_shape] now. You can still talk. The OOC Safe Word verb lets you out at any time."))
 	log_combat(user, victim, "turned into [new_shape] ([new_shape.type])", src)
