@@ -51,3 +51,18 @@ MAVERICK_AUTOMAPPER_DISABLED metastation_blacksmith
 
 ## Minutes an unpaid citation has before it becomes a Fine Evasion crime and sets arrest status. 0 turns fine evasion off.
 MAVERICK_FINE_EVASION_MINUTES 10
+
+## Species roster. These adjust which species can be picked in character setup, on top of the
+## upstream ROUNDSTART_RACES list. Use species IDs, one per line. Disabled wins over enabled.
+MAVERICK_SPECIES_DISABLED vox
+MAVERICK_SPECIES_DISABLED vox_primalis
+MAVERICK_SPECIES_DISABLED teshari
+MAVERICK_SPECIES_DISABLED cursekin
+MAVERICK_SPECIES_DISABLED xeno
+MAVERICK_SPECIES_DISABLED zombie
+MAVERICK_SPECIES_ENABLED primitive_felinid
+MAVERICK_SPECIES_ENABLED ashwalker
+MAVERICK_SPECIES_ENABLED silverscale
+MAVERICK_SPECIES_ENABLED dullahan
+MAVERICK_SPECIES_ENABLED skeleton
+MAVERICK_SPECIES_ENABLED monkey
