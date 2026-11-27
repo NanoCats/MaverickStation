@@ -9,6 +9,10 @@
 	var/name = "Unnamed function"
 	/// The job AMAS staffs to fix a shortfall here
 	var/datum/job/dispatch_job
+	/// The cyborg model AMAS builds to fix a shortfall here. Null means this function has no cyborg yet.
+	var/mob/living/silicon/robot/dispatch_unit_model
+	/// The brain that runs that cyborg
+	var/datum/amas_brain/dispatch_brain
 	/// Health below this counts as a shortfall. 1 means the target is fully met.
 	var/shortfall_threshold = 0.5
 	/// How long a shortfall must last before it is reported
