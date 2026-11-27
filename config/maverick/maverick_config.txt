@@ -31,3 +31,6 @@ MAVERICK_LOG_RETENTION_DAYS 90
 ## Local test servers: turn game debugging on when someone connects from localhost,
 ## so runtimes show in the Debug Log chat tab. Only with the localhost admin rank on.
 MAVERICK_LOCAL_DEBUG
+
+## Minutes an unpaid citation has before it becomes a Fine Evasion crime and sets arrest status. 0 turns fine evasion off.
+MAVERICK_FINE_EVASION_MINUTES 10
