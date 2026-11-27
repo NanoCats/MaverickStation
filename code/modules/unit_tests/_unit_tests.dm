@@ -384,6 +384,7 @@
 #include "~maverick\multilayer_cable_mapload.dm"
 #include "~maverick\object_tf.dm"
 #include "~maverick\overlay_lighting_cells.dm"
+#include "~maverick\succubus_burst.dm"
 // MAVERICK EDIT END
 // SKYRAT EDIT START
 #include "~skyrat\automapper.dm"
