@@ -10826,6 +10826,7 @@
 #include "modular_~maverick\code\controllers\subsystem\maverick_loot.dm"
 #include "modular_~maverick\code\modules\admin\cheat_engine.dm"
 #include "modular_~maverick\code\modules\admin\local_debug.dm"
+#include "modular_~maverick\code\modules\admin\stale_build_check.dm"
 #include "modular_~maverick\code\modules\admin\vv_export.dm"
 #include "modular_~maverick\code\modules\age_gate\age_gate_hooks.dm"
 #include "modular_~maverick\code\modules\age_gate\age_gate_prompt.dm"
