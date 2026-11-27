@@ -33,6 +33,9 @@ MAVERICK_LOG_RETENTION_DAYS 90
 MAVERICK_LOCAL_DEBUG
 
 
+## Uncomment to bring back the old hexacrocin overdose bimbo trauma. Off by default, the overdose feeds the new bimbo system instead.
+#MAVERICK_LEGACY_BIMBO_TRAUMA
+
 ## Automapper templates that never load. One template name per line, from the [templates.<name>] keys in
 ## _maps/bubber/automapper/automapper_config.toml. The station blacksmith rooms are off by default.
 MAVERICK_AUTOMAPPER_DISABLED deltastation_blacksmith
@@ -68,3 +71,4 @@ MAVERICK_SPECIES_ENABLED monkey
 
 ## Percent chance per round that one station floor logo gets the "Aeri" graffiti tag over SPACE. 0 turns it off, 100 tags every round.
 MAVERICK_AERI_GRAFFITI_CHANCE 50
+
