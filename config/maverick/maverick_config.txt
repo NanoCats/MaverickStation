@@ -43,3 +43,6 @@ MAVERICK_AUTOMAPPER_DISABLED metastation_blacksmith
 
 ## Uncomment to turn the Good Assistant Points punchcard program back on.
 #MAVERICK_GOOD_ASSISTANT_POINTS
+
+## Minutes an unpaid citation has before it becomes a Fine Evasion crime and sets arrest status. 0 turns fine evasion off.
+MAVERICK_FINE_EVASION_MINUTES 10
