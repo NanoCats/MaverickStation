@@ -10881,6 +10881,7 @@
 #include "modular_~maverick\code\modules\robotics_surgery_tray\robotics_surgery_tray.dm"
 #include "modular_~maverick\code\modules\security\armory_shotguns.dm"
 #include "modular_~maverick\code\modules\security\fine_evasion.dm"
+#include "modular_~maverick\code\modules\station_traits\trait_gear_pref.dm"
 #include "modular_~maverick\code\modules\surgery\synth_self_surgery.dm"
 #include "modular_~maverick\code\modules\synths\power_cord_optional.dm"
 // END_INCLUDE
