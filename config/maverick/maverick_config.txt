@@ -46,3 +46,6 @@ MAVERICK_AUTOMAPPER_DISABLED metastation_blacksmith
 
 ## Minutes an unpaid citation has before it becomes a Fine Evasion crime and sets arrest status. 0 turns fine evasion off.
 MAVERICK_FINE_EVASION_MINUTES 10
+
+## Percent chance per round that one station floor logo gets the "Aeri" graffiti tag over SPACE. 0 turns it off, 100 tags every round.
+MAVERICK_AERI_GRAFFITI_CHANCE 50

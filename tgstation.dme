@@ -10839,6 +10839,8 @@
 #include "modular_~maverick\code\modules\age_gate\age_gate_vetting.dm"
 #include "modular_~maverick\code\modules\age_gate\config.dm"
 #include "modular_~maverick\code\modules\automapper\automapper_disable.dm"
+#include "modular_~maverick\code\modules\branding\aeri_graffiti.dm"
+#include "modular_~maverick\code\modules\branding\maverick_flag.dm"
 #include "modular_~maverick\code\modules\branding\space_law_book.dm"
 #include "modular_~maverick\code\modules\branding\top_bar_buttons.dm"
 #include "modular_~maverick\code\modules\cargo\good_assistant_points.dm"
