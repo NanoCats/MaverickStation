@@ -46,3 +46,6 @@ MAVERICK_AUTOMAPPER_DISABLED metastation_blacksmith
 
 ## Minutes an unpaid citation has before it becomes a Fine Evasion crime and sets arrest status. 0 turns fine evasion off.
 MAVERICK_FINE_EVASION_MINUTES 10
+
+## Uncomment to turn AMAS off entirely. No watchdogs run and no automatons are dispatched.
+#MAVERICK_AMAS_DISABLED
