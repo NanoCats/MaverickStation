@@ -10840,6 +10840,7 @@
 #include "modular_~maverick\code\modules\cargo\good_assistant_points.dm"
 #include "modular_~maverick\code\modules\cargo\markets\lizard_gas_boards.dm"
 #include "modular_~maverick\code\modules\cargo\packs\shotgun_packs.dm"
+#include "modular_~maverick\code\modules\clothing\spacesuit_cell_hud.dm"
 #include "modular_~maverick\code\modules\colortron\colortron.dm"
 #include "modular_~maverick\code\modules\customization\custom_shading.dm"
 #include "modular_~maverick\code\modules\customization\pointer_color.dm"
