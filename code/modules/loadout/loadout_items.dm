@@ -432,6 +432,10 @@ GLOBAL_LIST_INIT(all_loadout_categories, init_loadout_categories())
 		return
 	if(ispath(item_path, /obj/item/mob_holder))
 		return
+	// MAVERICK EDIT ADDITION - A player who connects while the server is still starting gets their loadout UI built before SSatoms is done.
+	// Probes made then never run Initialize, so half-built items runtime on delete. Wait; the next UI refresh tries again.
+	if(SSatoms.initialized == INITIALIZATION_INSSATOMS)
+		return
 	var/obj/item/probe = new item_path(null)
 	// Some items delete themselves during Initialize (a lewd NIFSoft datadisk does exactly this when
 	// the lewd content config is off), and new() still hands back the reference. Touching it would
