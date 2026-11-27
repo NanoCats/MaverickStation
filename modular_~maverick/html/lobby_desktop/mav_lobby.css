@@ -312,7 +312,7 @@ img { image-rendering: pixelated; border: none; }
 .amp_btn:hover { background-color: #565d8a; }
 .amp_btn:active, .amp_btn.on { background-color: #2a2e48; box-shadow: inset 1px 1px 0 #101220, inset -1px -1px 0 #6a70a0; }
 .amp_btn.on { filter: drop-shadow(0 0 1px #5fff5f); }
-.amp_tog { font-size: 8px; height: 9px; line-height: 9px; padding: 0 2px; color: #7a80b0; cursor: pointer;
+.amp_tog { font-size: 8px; height: 9px; line-height: 9px; padding: 0 2px; color: #7a80b0; cursor: pointer; white-space: nowrap; flex: 0 0 auto;
 	box-shadow: inset 1px 1px 0 #6a70a0, inset -1px -1px 0 #101220; background: #2a2e48; }
 .amp_tog.on { color: #5fff5f; }
 .amp_vol { flex: 1; height: 4px; background: #0b0d18; position: relative; cursor: pointer; margin: 0 3px; }
