@@ -10853,6 +10853,7 @@
 #include "modular_~maverick\code\modules\emotes\cat_screams.dm"
 #include "modular_~maverick\code\modules\emotes\vibe.dm"
 #include "modular_~maverick\code\modules\jobs\blacksmith_job.dm"
+#include "modular_~maverick\code\modules\lewd_chems\succubus_overdose_burst.dm"
 #include "modular_~maverick\code\modules\loadout\loadout_gates.dm"
 #include "modular_~maverick\code\modules\loadout\personal_effects.dm"
 #include "modular_~maverick\code\modules\loadout\real_gear.dm"
