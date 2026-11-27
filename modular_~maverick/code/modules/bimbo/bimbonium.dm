@@ -5,8 +5,8 @@
  * - Each tick adds a little intensity and arousal.
  * - With the makeover on, each tick may take the next step: hair, then figure, then breasts.
  * - Breast and butt growth follow the bimbo size floor, one size at a time.
- * Overdosing (about six pulses in a short time) does the full makeover once:
- * stripper outfit, heels, and a "Slut" ID trim.
+ * Overdosing (about six pulses in a short time) drains stamina and does the reality overwrite once:
+ * slutty pink outfit, a "Slut" job everywhere, a pink PDA, and a short blackout.
  *
  * Needs the Bimbofication pref, checked by the aphrodisiac base type.
  */
@@ -22,7 +22,7 @@
 	/// TRUE once this overdose has done the full makeover. Once per overdose.
 	var/did_full_makeover = FALSE
 
-// Settings ride along in the reagent data: list("makeover" = TRUE/FALSE, "hair" = color or null, "wardrobe" = TRUE/FALSE)
+// Settings ride along in the reagent data: list("hair" = color or null, "lipstick" = color or null)
 /datum/reagent/drug/aphrodisiac/bimbonium/on_merge(list/mix_data, amount)
 	. = ..()
 	if(islist(mix_data))
@@ -34,23 +34,28 @@
 		return
 	bimbo.adjust_bonus(BIMBONIUM_INTENSITY_PER_TICK)
 	exposed_mob.adjust_arousal(BIMBONIUM_AROUSAL_PER_TICK)
-	if(get_setting("makeover", TRUE) && prob(BIMBONIUM_MAKEOVER_STEP_CHANCE))
+	var/lipstick = get_setting("lipstick")
+	if(lipstick && bimbo.lipstick_color != lipstick)
+		bimbo.lipstick_color = lipstick
+	if(prob(BIMBONIUM_MAKEOVER_STEP_CHANCE))
 		bimbo.makeover_step(get_setting("hair"))
 
+// No ordinary overdose message or moodlet. This overdose is the point.
 /datum/reagent/drug/aphrodisiac/bimbonium/overdose_start(mob/living/carbon/human/exposed_mob)
-	. = ..()
 	if(!ishuman(exposed_mob) || !exposed_mob.mob_consents(overdose_pref_datum))
 		return
 	to_chat(exposed_mob, span_userlove("So much pink! Your thoughts melt into a warm, giggly haze!"))
 
 /datum/reagent/drug/aphrodisiac/bimbonium/overdose_effects(mob/living/carbon/human/exposed_mob)
-	if(did_full_makeover || !get_setting("wardrobe", TRUE))
+	// Like the old hexacrocin overdose, it takes it out of you. Stamina only.
+	exposed_mob.adjust_stamina_loss(BIMBONIUM_OVERDOSE_STAMINA)
+	if(did_full_makeover)
 		return
 	var/datum/component/bimbo/bimbo = exposed_mob.GetComponent(/datum/component/bimbo)
 	if(!bimbo)
 		return
 	did_full_makeover = TRUE
-	bimbo.full_makeover()
+	bimbo.reality_overwrite()
 
 /datum/reagent/drug/aphrodisiac/bimbonium/on_mob_end_metabolize(mob/living/affected_mob)
 	. = ..()

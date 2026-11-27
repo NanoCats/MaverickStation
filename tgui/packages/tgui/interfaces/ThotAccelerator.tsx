@@ -11,71 +11,68 @@ import { Window } from '../layouts';
 
 type Data = {
   charge: number;
-  makeover: boolean;
-  wardrobe: boolean;
+  shots: number;
   hair_mode: string;
   hair_color: string;
+  lipstick_color: string | null;
   hair_modes: string[];
 };
 
+const CUSTOM = 'Custom color';
+
 export const ThotAccelerator = () => {
   const { act, data } = useBackend<Data>();
-  const { charge, makeover, wardrobe, hair_mode, hair_color, hair_modes } =
+  const { charge, shots, hair_mode, hair_color, lipstick_color, hair_modes } =
     data;
   return (
-    <Window title="LustWish THOT Accelerator" width={360} height={290}>
+    <Window title="LustWish THOT Accelerator" width={400} height={240}>
       <Window.Content>
         <Section>
           <LabeledList>
             <LabeledList.Item label="Charge">
               <ProgressBar value={charge / 100} color="pink">
-                {charge}%
+                {shots} shots
               </ProgressBar>
             </LabeledList.Item>
           </LabeledList>
         </Section>
-        <Section title="Pulse Settings">
+        <Section title="Makeover">
           <LabeledList>
-            <LabeledList.Item label="Makeover">
-              <Button
-                icon={makeover ? 'heart' : 'times'}
-                selected={makeover}
-                tooltip="Hair, figure and breasts change step by step."
-                onClick={() => act('toggle_makeover')}
-              >
-                {makeover ? 'On' : 'Off'}
-              </Button>
-            </LabeledList.Item>
-            <LabeledList.Item label="Wardrobe">
-              <Button
-                icon={wardrobe ? 'shirt' : 'times'}
-                selected={wardrobe}
-                tooltip="An overdose turns clothes, shoes and ID card slutty."
-                onClick={() => act('toggle_wardrobe')}
-              >
-                {wardrobe ? 'On' : 'Off'}
-              </Button>
-            </LabeledList.Item>
             <LabeledList.Item label="Hair">
               {hair_modes.map((mode) => (
                 <Button
                   key={mode}
                   selected={hair_mode === mode}
-                  disabled={!makeover}
+                  icon={mode === CUSTOM ? 'palette' : undefined}
+                  tooltip={mode === CUSTOM ? 'Pick a color' : undefined}
                   onClick={() => act('set_hair_mode', { mode })}
                 >
-                  {mode}
+                  {mode === CUSTOM ? (
+                    <>
+                      Custom <ColorBox color={hair_color} ml={0.5} />
+                    </>
+                  ) : (
+                    mode
+                  )}
                 </Button>
               ))}
             </LabeledList.Item>
-            <LabeledList.Item label="Hair Color">
-              <ColorBox color={hair_color} mr={1} />
+            <LabeledList.Item label="Lipstick">
+              <Button
+                selected={!lipstick_color}
+                onClick={() => act('reset_lipstick')}
+              >
+                Their own
+              </Button>
               <Button
                 icon="palette"
-                disabled={!makeover}
-                onClick={() => act('pick_hair_color')}
+                selected={!!lipstick_color}
+                onClick={() => act('pick_lipstick')}
               >
-                Pick
+                Custom{' '}
+                {!!lipstick_color && (
+                  <ColorBox color={lipstick_color} ml={0.5} />
+                )}
               </Button>
             </LabeledList.Item>
           </LabeledList>

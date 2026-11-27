@@ -13,18 +13,17 @@
 	slot_flags = ITEM_SLOT_BACK
 	light_color = "#ff69b4"
 	ammo_type = list(/obj/item/ammo_casing/energy/bimbo_ray)
+	cell_type = /obj/item/stock_parts/power_store/cell/pulse
 	selfcharge = 1
 	charge_delay = 10 // Same rate as the advanced energy gun
 	can_charge = FALSE
 	gun_flags = NOT_A_REAL_GUN
-	/// Makeover on: hair, figure and breasts change step by step
-	var/makeover = TRUE
-	/// Wardrobe on: an overdose turns clothes, shoes and ID slutty
-	var/wardrobe = TRUE
 	/// What the makeover does to hair: BIMBO_RAY_HAIR_KEEP, BIMBO_RAY_HAIR_BLONDE or BIMBO_RAY_HAIR_CUSTOM
 	var/hair_mode = BIMBO_RAY_HAIR_KEEP
 	/// Hair color for BIMBO_RAY_HAIR_CUSTOM
 	var/custom_hair_color = "#ff69b4"
+	/// Lipstick color the makeover applies, or null to leave the target's own
+	var/lipstick_color = null
 
 /obj/item/gun/energy/bimbo_ray/give_manufacturer_examine()
 	AddElement(/datum/element/manufacturer_examine, COMPANY_LUSTWISH)
@@ -50,12 +49,13 @@
 	return GLOB.hands_state
 
 /obj/item/gun/energy/bimbo_ray/ui_data(mob/user)
+	var/obj/item/ammo_casing/energy/shot = ammo_type[select]
 	return list(
 		"charge" = cell ? round(cell.charge / cell.maxcharge * 100) : 0,
-		"makeover" = makeover,
-		"wardrobe" = wardrobe,
+		"shots" = cell ? round(cell.charge / shot.e_cost) : 0,
 		"hair_mode" = hair_mode,
 		"hair_color" = custom_hair_color,
+		"lipstick_color" = lipstick_color,
 	)
 
 /obj/item/gun/energy/bimbo_ray/ui_static_data(mob/user)
@@ -66,30 +66,45 @@
 	if(.)
 		return
 	switch(action)
-		if("toggle_makeover")
-			makeover = !makeover
-		if("toggle_wardrobe")
-			wardrobe = !wardrobe
 		if("set_hair_mode")
 			var/new_mode = params["mode"]
-			if(!(new_mode in list(BIMBO_RAY_HAIR_KEEP, BIMBO_RAY_HAIR_BLONDE, BIMBO_RAY_HAIR_CUSTOM)))
+			if(new_mode == BIMBO_RAY_HAIR_CUSTOM)
+				// Custom always means picking a color
+				var/new_color = input(usr, "Pick a hair color.", name, custom_hair_color) as color|null
+				if(!new_color || !usr.is_holding(src))
+					return FALSE
+				custom_hair_color = new_color
+			else if(!(new_mode in list(BIMBO_RAY_HAIR_KEEP, BIMBO_RAY_HAIR_BLONDE)))
 				return FALSE
 			hair_mode = new_mode
-		if("pick_hair_color")
-			var/new_color = input(usr, "Pick a hair color.", name, custom_hair_color) as color|null
+		if("pick_lipstick")
+			var/new_color = input(usr, "Pick a lipstick color.", name, lipstick_color || BIMBO_DEFAULT_LIPSTICK_COLOR) as color|null
 			if(!new_color || !usr.is_holding(src))
 				return FALSE
-			custom_hair_color = new_color
-			hair_mode = BIMBO_RAY_HAIR_CUSTOM
+			lipstick_color = new_color
+		if("reset_lipstick")
+			lipstick_color = null
 		else
 			return FALSE
 	playsound(src, 'sound/machines/click.ogg', 30, TRUE)
 	return TRUE
 
+/// Using it on yourself fires a pulse into yourself instead of bashing yourself with it
+/obj/item/gun/energy/bimbo_ray/try_fire_gun(atom/target, mob/living/user, params)
+	if(target != user)
+		return ..()
+	if(!can_shoot())
+		shoot_with_empty_chamber(user)
+		return ITEM_INTERACT_BLOCKING
+	user.visible_message(
+		span_userlove("[user] points [src] at [user.p_them()]self and pulls the trigger!"),
+		span_userlove("You point [src] at yourself and pull the trigger!"),
+	)
+	process_fire(user, user, FALSE, params, user.zone_selected)
+	return ITEM_INTERACT_SUCCESS
+
 /// The hair color the makeover should apply, or null to leave hair alone
 /obj/item/gun/energy/bimbo_ray/proc/get_hair_color()
-	if(!makeover)
-		return null
 	switch(hair_mode)
 		if(BIMBO_RAY_HAIR_BLONDE)
 			return BIMBO_RAY_BLONDE_COLOR
@@ -99,7 +114,7 @@
 
 /// Settings passed to Bimbonium in its reagent data
 /obj/item/gun/energy/bimbo_ray/proc/get_pulse_settings()
-	return list("makeover" = makeover, "wardrobe" = wardrobe, "hair" = get_hair_color())
+	return list("hair" = get_hair_color(), "lipstick" = lipstick_color)
 
 /obj/item/ammo_casing/energy/bimbo_ray
 	projectile_type = /obj/projectile/energy/bimbo_ray
@@ -107,7 +122,7 @@
 	fire_sound = 'sound/items/weapons/pulse.ogg'
 	muzzle_flash_color = "#ff69b4"
 	harmful = FALSE
-	e_cost = LASER_SHOTS(4, STANDARD_CELL_CHARGE)
+	e_cost = LASER_SHOTS(BIMBO_RIFLE_SHOTS, STANDARD_CELL_CHARGE * 40)
 
 /obj/projectile/energy/bimbo_ray
 	name = "brain-melt pulse"
@@ -120,6 +135,7 @@
 	damage = 0
 	damage_type = STAMINA
 	armor_flag = ENERGY
+	reflectable = TRUE
 
 /obj/projectile/energy/bimbo_ray/on_hit(atom/target, blocked = 0, pierce_hit)
 	. = ..()
@@ -131,7 +147,7 @@
 		return
 
 	var/obj/item/gun/energy/bimbo_ray/rifle = find_rifle()
-	var/list/settings = rifle ? rifle.get_pulse_settings() : list("makeover" = TRUE, "wardrobe" = TRUE)
+	var/list/settings = rifle ? rifle.get_pulse_settings() : list()
 	victim.reagents?.add_reagent(/datum/reagent/drug/aphrodisiac/bimbonium, BIMBO_PULSE_DOSE, settings)
 
 	// The hit itself should feel like something

@@ -65,8 +65,8 @@
 #define BIMBO_BLISS_MAX 0.5
 /// Do-after slowdown at full intensity
 #define BIMBO_MAX_ACTION_SLOWDOWN 0.2
-/// Chance that a word over the length cap gets forgotten
-#define BIMBO_FORGET_WORD_CHANCE 50
+/// Bubbleheaded only: chance that a word over the length cap gets forgotten
+#define BIMBO_FORGET_WORD_CHANCE 20
 
 /// From /datum/interaction/act() on the target of a lewd interaction: (mob/living/carbon/human/user, datum/interaction/interaction)
 #define COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED "human_lewd_interaction_received"
@@ -74,6 +74,8 @@
 // THOT Accelerator (the bimbo pulse rifle)
 /// Label shown when examining the rifle
 #define COMPANY_LUSTWISH "It has a glossy <b>[span_purple("LustWish")]</b> label on it."
+/// Shots per full pulse rifle cell
+#define BIMBO_RIFLE_SHOTS 100
 /// Bimbonium injected by one brain-melt pulse
 #define BIMBO_PULSE_DOSE 5
 /// Arousal gained the moment a pulse hits
@@ -87,12 +89,18 @@
 #define BIMBO_ID_ASSIGNMENT "Slut"
 
 // Bimbonium, the reagent the pulses inject
-/// Intensity added per life tick while Bimbonium is in your system
-#define BIMBONIUM_INTENSITY_PER_TICK 1
+/// Intensity added per life tick while Bimbonium is in your system. About 3 per pulse, so roughly 30 pulses to max.
+#define BIMBONIUM_INTENSITY_PER_TICK 0.3
 /// Arousal added per life tick while Bimbonium is in your system
 #define BIMBONIUM_AROUSAL_PER_TICK 2
 /// Chance per life tick to take the next makeover step (hair, figure, breasts)
 #define BIMBONIUM_MAKEOVER_STEP_CHANCE 25
+/// Stamina lost per tick while overdosed on Bimbonium
+#define BIMBONIUM_OVERDOSE_STAMINA 4
+/// How long the reality overwrite knocks you out
+#define BIMBO_OVERWRITE_KNOCKOUT (4 SECONDS)
+/// PDA colors after the reality overwrite
+#define BIMBO_PDA_COLORS "#ff69b4#ffffff"
 /// Overdose amount. About six pulses in a short time.
 #define BIMBONIUM_OVERDOSE 30
 
@@ -102,3 +110,17 @@
 #define BIMBO_RAY_HAIR_CUSTOM "Custom color"
 /// The ray's blonde
 #define BIMBO_RAY_BLONDE_COLOR "#f3e3b5"
+
+// Full bimbo cripples (Bubbleheaded tier unless noted)
+/// Butterfingers drops something at most this often
+#define BIMBO_BUTTERFINGERS_COOLDOWN (1 MINUTES)
+/// A compulsion pulls you somewhere at most this often
+#define BIMBO_COMPULSION_COOLDOWN (90 SECONDS)
+/// Steps a compulsion takes you
+#define BIMBO_COMPULSION_STEPS 2
+/// How far a mirror or a cute person can lure you from
+#define BIMBO_COMPULSION_RANGE 5
+/// Bimbo tier and up: after a passed console roll, no new roll for this long
+#define BIMBO_BUTTONS_OK_TIME (10 SECONDS)
+/// After a failed console roll, consoles refuse to work for this long
+#define BIMBO_BUTTONS_CONFUSED_TIME (3 SECONDS)
