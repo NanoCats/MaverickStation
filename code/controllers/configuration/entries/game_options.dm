@@ -344,7 +344,7 @@
 	min_val = 0
 
 /datum/config_entry/number/space_budget
-	default = 16
+	default = 35 // MAVERICK EDIT - More space ruins. Original: 16
 	integer = FALSE
 	min_val = 0
 
