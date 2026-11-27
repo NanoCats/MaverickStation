@@ -583,7 +583,7 @@
 			build: build_paint,
 		},
 		amp: {
-			title: "SpaceAmp", icon: "music", w: 160, h: 112,
+			title: "SpaceAmp", icon: "music", w: 184, h: 112,
 			x: function () { return 8; }, y: 6,
 			build: build_amp,
 		},
@@ -1238,11 +1238,15 @@
 		var vol_knob = el("b", null, vol);
 		var rpt = el("div", "amp_tog", row, REPEAT_LABEL[amp_repeat]);
 		rpt.title = REPEAT_TIP[amp_repeat];
+		// Shuffle lives on the server, since the server picks the next track. This only asks it to flip.
+		var shuf = el("div", "amp_tog", row, "SHUF");
+		shuf.title = "Shuffle: play the playlist in random order. Click to toggle.";
+		shuf.addEventListener("click", function () { byond("music=shuffle"); });
 		var list = el("div", "amp_list", body);
 
 		amp = {
 			time: time, marquee_text: marquee_text, seek_fill: seek_fill, vol_fill: vol_fill, vol_knob: vol_knob,
-			btns: btns, list: list, rpt: rpt, spec: spec,
+			btns: btns, list: list, rpt: rpt, shuf: shuf, spec: spec,
 		};
 
 		rpt.classList.toggle("on", amp_repeat !== "off");
@@ -1329,6 +1333,7 @@
 		amp.time.classList.toggle("paused", !!M.paused);
 		amp.btns.play.classList.toggle("on", M.playing && !M.paused);
 		amp.btns.pause.classList.toggle("on", !!M.paused);
+		amp.shuf.classList.toggle("on", !!M.shuffle);
 		amp.vol_fill.style.width = M.vol + "%";
 		amp.vol_knob.style.left = M.vol + "%";
 		if (rebuild_list) {
@@ -1337,6 +1342,18 @@
 				var row = el("div", i === M.index ? "cur" : "", amp.list, (i + 1) + ". " + tr.title);
 				row.addEventListener("dblclick", function () { byond("music=track;track=" + (i + 1)); });
 			});
+		}
+		// Like Winamp: when the track changes, scroll the playlist so the new one sits in the middle.
+		// Only on a change, so it does not fight someone scrolling the list by hand.
+		// clientHeight is 0 until the window is laid out; try again on the next draw instead of giving up.
+		if (M.index !== amp.shown_index && amp.list.clientHeight) {
+			amp.shown_index = M.index;
+			var cur = amp.list.children[M.index];
+			if (cur) {
+				var list_box = amp.list.getBoundingClientRect();
+				var row_box = cur.getBoundingClientRect();
+				amp.list.scrollTop += (row_box.top - list_box.top) - (amp.list.clientHeight - row_box.height) / 2;
+			}
 		}
 	}
 
