@@ -483,6 +483,7 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen) // I hate this place
 	hovering = TRUE
 	var/mob/living/carbon/human/wearer = hud?.mymob
 	astype(wearer.wear_suit, /obj/item/clothing/suit/space)?.update_hud_icon(usr)
+	astype(wearer.back, /obj/item/mod/control)?.update_charge_alert() // MAVERICK EDIT - MODsuits refresh on hover too
 
 /atom/movable/screen/spacesuit/MouseExited(location, control, params)
 	if(usr != get_mob())
@@ -491,8 +492,9 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen) // I hate this place
 	hovering = FALSE
 	var/mob/living/carbon/human/wearer = hud?.mymob
 	astype(wearer.wear_suit, /obj/item/clothing/suit/space)?.update_hud_icon(usr)
+	astype(wearer.back, /obj/item/mod/control)?.update_charge_alert() // MAVERICK EDIT - MODsuits refresh on hover too
 
-/atom/movable/screen/spacesuit/proc/update_spacesuit_hud_icon(cell_state, cell_percent, thermal_on = TRUE)
+/atom/movable/screen/spacesuit/proc/update_spacesuit_hud_icon(cell_state, cell_percent, thermal_on = TRUE, seconds_left = null) // MAVERICK EDIT - Added seconds_left
 	if(cell_state)
 		switch(cell_state)
 			if(SPACESUIT_NO_ICON)
@@ -506,8 +508,9 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen) // I hate this place
 				maptext = null
 			else
 				icon_state = "spacesuit_[cell_state]"
-	if(cell_percent && hovering)
-		maptext = MAPTEXT("<div align='right'>[round(cell_percent, 0.1)]%</div>")
+		apply_maverick_cell_bar(cell_state, cell_percent, seconds_left) // MAVERICK EDIT - Finer cell bar
+	if(cell_percent) // MAVERICK EDIT - Percent always shows; the time left joins it on hover. Was: if(cell_percent && hovering)
+		maptext = maverick_cell_maptext(cell_percent, hovering ? seconds_left : null) // MAVERICK EDIT - Show time left too
 	else
 		maptext = null
 	if(thermal_on != cached_thermal_on)
