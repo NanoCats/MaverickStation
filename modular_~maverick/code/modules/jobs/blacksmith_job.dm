@@ -10,3 +10,5 @@
 		return
 	total_positions = 0
 	spawn_positions = 0
+	// Not joinable at all, so it drops off the join menu and the job preferences instead of showing 0/0.
+	job_flags &= ~JOB_NEW_PLAYER_JOINABLE
