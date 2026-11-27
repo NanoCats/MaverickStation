@@ -20,7 +20,7 @@
 	var/moving_from_parent = FALSE
 	var/obj/vehicle/ridden/golfcart/parent = null
 	///List of offsets for buckled passengers. Indexed by passenger index, then by direction string.
-	var/static/list/list/vector/passenger_offsets = list(
+	var/static/list/passenger_offsets = list( // MAVERICK EDIT - Original: var/static/list/list/vector/passenger_offsets. The /vector type hint on an object var trips a DreamMaker "invalid variable" bug, see Blackflags BF-2
 		list(
 			TEXT_NORTH = vector(-4, 0, 24),
 			TEXT_SOUTH = vector(4, 0, 4),
@@ -35,7 +35,7 @@
 		)
 	)
 	///Same as [/obj/golfcart_rear/passenger_offsets], except for when the passenger is lying down.
-	var/static/list/list/vector/lying_down_passenger_offsets = list(
+	var/static/list/lying_down_passenger_offsets = list( // MAVERICK EDIT - Original: var/static/list/list/vector/lying_down_passenger_offsets. The /vector type hint on an object var trips a DreamMaker "invalid variable" bug, see Blackflags BF-2
 		list(
 			TEXT_NORTH = vector(0, 0, 16),
 			TEXT_SOUTH = vector(0, 0, 8),
