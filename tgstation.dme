@@ -10837,6 +10837,7 @@
 #include "modular_~maverick\code\modules\cargo\packs\shotgun_packs.dm"
 #include "modular_~maverick\code\modules\customization\custom_shading.dm"
 #include "modular_~maverick\code\modules\loadout\loadout_gates.dm"
+#include "modular_~maverick\code\modules\loadout\personal_effects.dm"
 #include "modular_~maverick\code\modules\loadout\categories\platings.dm"
 #include "modular_~maverick\code\modules\loadout\categories\weaponry.dm"
 #include "modular_~maverick\code\modules\lobby_desktop\classic_lobby_pref.dm"
