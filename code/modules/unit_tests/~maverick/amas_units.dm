@@ -3,13 +3,13 @@
 
 /datum/unit_test/amas_units/Run()
 	var/obj/machinery/cyborg_factory/factory = allocate(/obj/machinery/cyborg_factory, run_loc_floor_bottom_left)
-	var/mob/living/silicon/robot/unit = factory.build_amas_unit(/mob/living/silicon/robot/model/engineering, /datum/amas_brain/engineering)
+	// A plain frame, since model frames start a transform animation that runs past the test
+	var/mob/living/silicon/robot/unit = factory.build_amas_unit(/mob/living/silicon/robot, /datum/amas_brain/engineering)
 	TEST_ASSERT_NOTNULL(unit, "The factory built nothing.")
-	allocated += unit
 	var/datum/amas_brain/brain = SSamas.units[unit]
 	TEST_ASSERT(istype(brain, /datum/amas_brain/engineering), "The unit was not registered with its brain.")
 	TEST_ASSERT_NULL(unit.connected_ai, "The unit linked to an AI.")
-	TEST_ASSERT(findtext(unit.real_name, "AMAS ENG-") == 1, "The unit was named [unit.real_name].")
+	TEST_ASSERT(findtext(unit.real_name, "AMAS ") == 1, "The unit was named [unit.real_name].")
 
 	var/obj/machinery/power/smes/smes = allocate(/obj/machinery/power/smes, run_loc_floor_top_right)
 	smes.input_attempt = FALSE

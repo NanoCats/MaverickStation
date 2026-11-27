@@ -7,22 +7,22 @@ GLOBAL_LIST_EMPTY(cyborg_factories)
  * Cyborgs always came out of thin air on the AI satellite. This pad is where they come from now.
  * One is placed on every cyborg spawn point at mapload, so no map edits are needed.
  * Player cyborgs, roundstart and latejoin, are built here. AMAS builds its own units here too.
+ *
+ * Sprite: the Automatic Robotic Factory 5000 from the malf AI module, which already looks the part.
  */
 /obj/machinery/cyborg_factory
 	name = "cyborg factory"
-	desc = "A Micron Control Systems assembly pad. Frames, wiring and plating go in through the floor, finished cyborgs come out on top."
-	icon = 'modular_~maverick/icons/obj/machines/cyborg_factory.dmi'
-	icon_state = "factory"
-	base_icon_state = "factory"
+	desc = "A Micron Control Systems assembly line. Frames, wiring and plating go in one end, finished cyborgs come out the other."
+	icon = 'icons/obj/machines/recycling.dmi'
+	icon_state = "separator-AO1"
 	density = FALSE
 	anchored = TRUE
-	layer = BELOW_OBJ_LAYER
+	layer = ABOVE_ALL_MOB_LAYER
+	plane = ABOVE_GAME_PLANE
 	use_power = IDLE_POWER_USE
 	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION
 	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 5
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | ACID_PROOF
-	/// Set while the assembly animation plays
-	var/busy = FALSE
 
 /obj/machinery/cyborg_factory/Initialize(mapload)
 	. = ..()
@@ -33,23 +33,19 @@ GLOBAL_LIST_EMPTY(cyborg_factories)
 	return ..()
 
 /obj/machinery/cyborg_factory/update_icon_state()
-	icon_state = busy ? "[base_icon_state]-active" : base_icon_state
+	icon_state = is_operational ? "separator-AO1" : "separator-AO0"
 	return ..()
 
 /// Plays the assembly flourish over a cyborg that was just built here
 /obj/machinery/cyborg_factory/proc/show_assembly(mob/living/silicon/robot/new_borg)
-	busy = TRUE
 	update_use_power(ACTIVE_POWER_USE)
-	update_appearance(UPDATE_ICON_STATE)
 	playsound(src, 'sound/items/tools/rped.ogg', 50, TRUE)
 	do_sparks(3, FALSE, src)
-	visible_message(span_notice("[src] hums and assembles [new_borg] from the floor up."))
+	visible_message(span_notice("[src] whirs and rolls out a freshly assembled [new_borg]."))
 	addtimer(CALLBACK(src, PROC_REF(finish_assembly)), 2 SECONDS)
 
 /obj/machinery/cyborg_factory/proc/finish_assembly()
-	busy = FALSE
 	update_use_power(IDLE_POWER_USE)
-	update_appearance(UPDATE_ICON_STATE)
 
 /**
  * Builds an AMAS unit of the given model on this pad and starts its brain.
