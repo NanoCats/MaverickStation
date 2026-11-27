@@ -16,7 +16,7 @@
 	alert_type = null
 
 /datum/status_effect/aroused/tick(seconds_between_ticks)
-	if(owner.stat >= DEAD || !owner.client?.prefs?.read_preference(/datum/preference/toggle/erp))
+	if(owner.stat >= DEAD || !owner.mob_consents(/datum/preference/toggle/erp)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	var/mob/living/carbon/human/affected_mob = owner

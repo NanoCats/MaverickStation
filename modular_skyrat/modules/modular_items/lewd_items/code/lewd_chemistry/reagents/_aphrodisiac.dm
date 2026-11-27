@@ -112,12 +112,12 @@
 
 /datum/reagent/drug/aphrodisiac/on_mob_life(mob/living/carbon/human/exposed_mob)
 	. = ..()
-	if(life_pref_datum && exposed_mob.client?.prefs.read_preference(life_pref_datum) && ishuman(exposed_mob))
+	if(life_pref_datum && exposed_mob.mob_consents(life_pref_datum) && ishuman(exposed_mob)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		life_effects(exposed_mob)
 
 /datum/reagent/drug/aphrodisiac/overdose_process(mob/living/carbon/human/exposed_mob)
 	. = ..()
-	if(overdose_pref_datum && exposed_mob.client?.prefs.read_preference(overdose_pref_datum) && ishuman(exposed_mob))
+	if(overdose_pref_datum && exposed_mob.mob_consents(overdose_pref_datum) && ishuman(exposed_mob)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		overdose_effects(exposed_mob)
 
 /**
@@ -130,7 +130,7 @@
 /datum/reagent/drug/aphrodisiac/proc/change_gender(mob/living/carbon/human/exposed_mob, new_gender = MALE, gender_fluid = FALSE)
 
 	// Check if prefs allow this
-	if(!exposed_mob.client?.prefs?.read_preference(/datum/preference/toggle/erp/gender_change))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/gender_change)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	if(gender_fluid)
@@ -159,7 +159,7 @@
 		return
 
 	// Check if prefs allow this
-	if(!exposed_mob.client?.prefs?.read_preference(/datum/preference/toggle/erp/penis_enlargement))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/penis_enlargement)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	enlargement_amount += enlarger_increase_step
@@ -199,7 +199,7 @@
 		return
 
 	// Check if prefs allow this
-	if(!exposed_mob.client?.prefs?.read_preference(/datum/preference/toggle/erp/penis_enlargement))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/penis_enlargement)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	var/obj/item/organ/genital/penis/mob_penis = exposed_mob.get_organ_slot(ORGAN_SLOT_PENIS)
@@ -226,7 +226,7 @@
 	if(!mob_breasts)
 		return
 
-	if(!exposed_mob.client?.prefs.read_preference(/datum/preference/toggle/erp/breast_enlargement))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/breast_enlargement)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	enlargement_amount += enlarger_increase_step
@@ -284,7 +284,7 @@
 		return
 
 	// Make sure prefs allow this
-	if(!exposed_mob.client?.prefs.read_preference(/datum/preference/toggle/erp/penis_shrinkage))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/penis_shrinkage)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	// Handle completely shrinking away, if prefs allow
@@ -317,7 +317,7 @@
 		return
 
 	// Make sure prefs allow this
-	if(!exposed_mob.client?.prefs.read_preference(/datum/preference/toggle/erp/penis_shrinkage))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/penis_shrinkage)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	if(mob_testicles.genital_size > balls_min_size)
@@ -341,7 +341,7 @@
 	if(!mob_breasts)
 		return
 
-	if(!exposed_mob.client?.prefs?.read_preference(/datum/preference/toggle/erp/breast_shrinkage))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/breast_shrinkage)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	if(mob_breasts.genital_size > breast_minimum_size)
@@ -395,7 +395,7 @@
 	if(!mob_genital)
 		return
 
-	if(!exposed_mob.client?.prefs?.read_preference(/datum/preference/toggle/erp/genitalia_removal))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/genitalia_removal)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	mob_genital.Remove(exposed_mob)
@@ -440,7 +440,7 @@
 		return
 
 // Check if prefs allow it
-	if(!exposed_mob.client?.prefs.read_preference(/datum/preference/toggle/erp/new_genitalia_growth))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/new_genitalia_growth)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	// If the user has not defined their own prefs for their penis type, try to assign a default based on their species, defaulting to human
@@ -485,7 +485,7 @@
 	if(mob_balls)
 		return
 
-	if(!exposed_mob.client?.prefs.read_preference(/datum/preference/toggle/erp/new_genitalia_growth))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/new_genitalia_growth)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	var/obj/item/organ/genital/testicles/new_balls = new
@@ -509,7 +509,7 @@
 	if(mob_breasts)
 		return
 
-	if(!exposed_mob.client?.prefs.read_preference(/datum/preference/toggle/erp/new_genitalia_growth))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/new_genitalia_growth)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	// If the user has not defined their own prefs for their breast type, default to two breasts
@@ -548,7 +548,7 @@
 	if(mob_vagina)
 		return
 
-	if(!exposed_mob.client?.prefs.read_preference(/datum/preference/toggle/erp/new_genitalia_growth))
+	if(!exposed_mob.mob_consents(/datum/preference/toggle/erp/new_genitalia_growth)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 
 	if (exposed_mob.dna.mutant_bodyparts[ORGAN_SLOT_VAGINA][MUTANT_INDEX_NAME] == "None")
