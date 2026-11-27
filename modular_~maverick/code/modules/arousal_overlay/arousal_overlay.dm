@@ -11,7 +11,7 @@
 /// The brute damage vignette, recolored pink. The color matrix turns the red of the base sprite into pink.
 /atom/movable/screen/fullscreen/brute/arousal
 	color = list(
-		1, 0.35, 0.65,
+		1.3, 0.5, 0.85,
 		0, 0, 0,
 		0, 0, 0,
 		0, 0, 0,
