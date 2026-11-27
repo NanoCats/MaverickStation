@@ -1,3 +1,12 @@
+/// Words a bimbo never forgets, however long: she can always call for help and name a department.
+GLOBAL_LIST_INIT(bimbo_kept_words, list(
+	"help", "security", "medical", "engineering", "science", "cargo", "service", "command",
+	"medbay", "brig", "bridge", "captain", "doctor", "paramedic", "officer", "warden",
+	"emergency", "evacuate", "shuttle", "maintenance", "atmospherics", "chemistry", "virology",
+	"robotics", "genetics", "kitchen", "botany", "library", "chapel", "janitor", "quartermaster",
+	"syndicate", "changeling", "traitor", "cultist", "fire", "plasma", "bleeding", "breach",
+))
+
 /datum/component/bimbo/proc/handle_speech(datum/source, list/speech_args)
 	SIGNAL_HANDLER
 	var/message = speech_args[SPEECH_MESSAGE]
@@ -46,15 +55,15 @@
 
 	if(nearby_names && (LOWER_TEXT(core) in nearby_names) && prob(40))
 		core = pick("babe", "hun", "sweetie", "that one")
-	else if(length_char(core) > word_cap)
+	else if(length_char(core) > word_cap && !(LOWER_TEXT(core) in GLOB.bimbo_kept_words) && prob(BIMBO_FORGET_WORD_CHANCE))
 		core = pick("thingy", "whatsit", "thingamajig", "the, um, thing", "whatchamacallit")
 	return "[lead][core][tail]"
 
-/// Words longer than this get forgotten. 12 letters at the airhead tier, 7 at full intensity.
+/// Words longer than this can get forgotten. 14 letters at the airhead tier, 10 at full intensity.
 /datum/component/bimbo/proc/get_word_length_cap(intensity)
 	if(intensity < BIMBO_AIRHEAD_INTENSITY)
 		return INFINITY
-	return round(12 - 5 * (intensity - BIMBO_AIRHEAD_INTENSITY) / (BIMBO_MAX_INTENSITY - BIMBO_AIRHEAD_INTENSITY))
+	return round(14 - 4 * (intensity - BIMBO_AIRHEAD_INTENSITY) / (BIMBO_MAX_INTENSITY - BIMBO_AIRHEAD_INTENSITY))
 
 /// First names of the people we can see, lowercase, for swapping with pet names.
 /datum/component/bimbo/proc/get_nearby_names()

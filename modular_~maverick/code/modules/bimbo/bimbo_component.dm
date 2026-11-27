@@ -24,6 +24,8 @@
 	COOLDOWN_DECLARE(examine_arousal_cooldown)
 	COOLDOWN_DECLARE(examining_arousal_cooldown)
 	COOLDOWN_DECLARE(distraction_cooldown)
+	/// Limits how often the short attention span drops an action
+	COOLDOWN_DECLARE(lose_focus_cooldown)
 
 /datum/component/bimbo/Initialize(baseline = 0, from_quirk = FALSE, lipstick_color)
 	if(!ishuman(parent))
@@ -194,10 +196,11 @@
 /// Long do_afters can get dropped halfway through.
 /datum/component/bimbo/proc/try_lose_focus()
 	var/intensity = get_effective_intensity()
-	if(intensity < BIMBO_AIRHEAD_INTENSITY || !prob(intensity / 25))
+	if(intensity < BIMBO_AIRHEAD_INTENSITY || !COOLDOWN_FINISHED(src, lose_focus_cooldown) || !prob(intensity / 50))
 		return
 	if(!interrupt_long_actions(BIMBO_ATTENTION_SPAN))
 		return
+	COOLDOWN_START(src, lose_focus_cooldown, BIMBO_LOSE_FOCUS_COOLDOWN)
 	to_chat(parent, span_purple(pick("Wait, what was I doing?", "Um... what was this for again?", "You totally lose your train of thought.")))
 
 /// Cancels any do_after of the holder that runs at least min_length. Returns TRUE if one was cancelled.

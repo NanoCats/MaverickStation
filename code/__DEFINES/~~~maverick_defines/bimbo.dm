@@ -53,14 +53,18 @@
 #define BIMBO_BUTT_FLOOR_MAX 4
 
 /// Long actions shorter than this never get interrupted by the short attention span
-#define BIMBO_ATTENTION_SPAN (5 SECONDS)
+#define BIMBO_ATTENTION_SPAN (10 SECONDS)
+/// The short attention span drops an action at most this often
+#define BIMBO_LOSE_FOCUS_COOLDOWN (1 MINUTES)
 /// How far away shiny things can distract you
 #define BIMBO_SHINY_RANGE 2
 
 /// Share of negative mood that blissful ignorance cancels at full intensity
 #define BIMBO_BLISS_MAX 0.5
 /// Do-after slowdown at full intensity
-#define BIMBO_MAX_ACTION_SLOWDOWN 0.4
+#define BIMBO_MAX_ACTION_SLOWDOWN 0.2
+/// Chance that a word over the length cap gets forgotten
+#define BIMBO_FORGET_WORD_CHANCE 50
 
 /// From /datum/interaction/act() on the target of a lewd interaction: (mob/living/carbon/human/user, datum/interaction/interaction)
 #define COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED "human_lewd_interaction_received"
