@@ -65,3 +65,6 @@ MAVERICK_SPECIES_ENABLED monkey
 
 ## Uncomment to bring back the old hexacrocin overdose bimbo trauma. Off by default, the overdose feeds the new bimbo system instead.
 #MAVERICK_LEGACY_BIMBO_TRAUMA
+
+## Percent chance per round that one station floor logo gets the "Aeri" graffiti tag over SPACE. 0 turns it off, 100 tags every round.
+MAVERICK_AERI_GRAFFITI_CHANCE 50

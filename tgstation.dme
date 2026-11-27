@@ -10806,6 +10806,8 @@
 #include "modular_~maverick\code\modules\bimbo\bimbo_quirk.dm"
 #include "modular_~maverick\code\modules\bimbo\bimbo_ray.dm"
 #include "modular_~maverick\code\modules\bimbo\bimbo_speech.dm"
+#include "modular_~maverick\code\modules\branding\aeri_graffiti.dm"
+#include "modular_~maverick\code\modules\branding\maverick_flag.dm"
 #include "modular_~maverick\code\modules\branding\space_law_book.dm"
 #include "modular_~maverick\code\modules\branding\top_bar_buttons.dm"
 #include "modular_~maverick\code\modules\cargo\good_assistant_points.dm"
