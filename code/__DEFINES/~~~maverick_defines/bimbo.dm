@@ -70,3 +70,10 @@
 
 /// From /datum/interaction/act() on the target of a lewd interaction: (mob/living/carbon/human/user, datum/interaction/interaction)
 #define COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED "human_lewd_interaction_received"
+
+// Bimbo ray hair settings
+#define BIMBO_RAY_HAIR_KEEP "Leave it alone"
+#define BIMBO_RAY_HAIR_BLONDE "Platinum blonde"
+#define BIMBO_RAY_HAIR_CUSTOM "Custom color"
+/// The ray's blonde
+#define BIMBO_RAY_BLONDE_COLOR "#f3e3b5"

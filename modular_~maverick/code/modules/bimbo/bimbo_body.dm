@@ -60,8 +60,15 @@
 	)
 
 /// The ray's "Barbie" profile. Each part checks its own existing pref.
-/datum/component/bimbo/proc/barbie_conversion()
+/datum/component/bimbo/proc/barbie_conversion(hair_color)
 	var/mob/living/carbon/human/holder = parent
+
+	if(hair_color && holder.hair_color != hair_color && holder.get_bodypart(BODY_ZONE_HEAD))
+		holder.set_haircolor(hair_color, update = TRUE)
+		holder.visible_message(
+			span_userlove("[holder]'s hair shimmers and turns a glossy new shade."),
+			span_userlove("Your scalp tingles as your hair changes color."),
+		)
 
 	// set_gender checks the gender change pref itself
 	holder.set_gender(FEMALE)
@@ -96,14 +103,14 @@
  * One ray hit or hexacrocin overdose roll.
  * Needs the bimbofication pref. Returns TRUE if anything happened.
  */
-/proc/bimbo_hit(mob/living/carbon/human/target, barbie = FALSE)
+/proc/bimbo_hit(mob/living/carbon/human/target, barbie = FALSE, hair_color = null)
 	if(!istype(target) || !target.mob_consents(/datum/preference/toggle/erp/bimbofication))
 		return FALSE
 	var/datum/component/bimbo/bimbo = target.GetComponent(/datum/component/bimbo) || target.AddComponent(/datum/component/bimbo)
 	if(!bimbo)
 		return FALSE
 	if(barbie)
-		bimbo.barbie_conversion()
+		bimbo.barbie_conversion(hair_color)
 	bimbo.adjust_bonus(BIMBO_HIT_INTENSITY)
 	target.visible_message(
 		span_userlove("[target] blinks, then breaks into a bubbly, airheaded giggle."),
