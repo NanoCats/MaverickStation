@@ -54,6 +54,8 @@
 
 /// Long actions shorter than this never get interrupted by the short attention span
 #define BIMBO_ATTENTION_SPAN (10 SECONDS)
+/// An invasive lewd thought pops up at most this often
+#define BIMBO_INVASIVE_THOUGHT_COOLDOWN (1 MINUTES)
 /// The short attention span drops an action at most this often
 #define BIMBO_LOSE_FOCUS_COOLDOWN (1 MINUTES)
 /// How far away shiny things can distract you
