@@ -313,7 +313,7 @@
 	min_cold_protection_temperature = thermal_on ? SPACE_SUIT_MIN_TEMP_PROTECT : SPACE_SUIT_MIN_TEMP_PROTECT_OFF
 
 	update_item_action_buttons()
-	if(isnull(toggler) && ishuman(loc))
+	if(ishuman(loc)) // MAVERICK EDIT - Was only on automatic toggles, so a manual "off" never put the OFF overlay back
 		update_hud_icon(loc)
 
 	if(!toggler)
