@@ -35,6 +35,7 @@ MAVERICK_LOCAL_DEBUG
 ## Minutes an unpaid citation has before it becomes a Fine Evasion crime and sets arrest status. 0 turns fine evasion off.
 MAVERICK_FINE_EVASION_MINUTES 10
 
+
 ## Automapper templates that never load. One template name per line, from the [templates.<name>] keys in
 ## _maps/bubber/automapper/automapper_config.toml. The station blacksmith rooms are off by default.
 MAVERICK_AUTOMAPPER_DISABLED deltastation_blacksmith
@@ -46,3 +47,7 @@ MAVERICK_AUTOMAPPER_DISABLED metastation_blacksmith
 
 ## Uncomment to turn the Good Assistant Points punchcard program back on.
 #MAVERICK_GOOD_ASSISTANT_POINTS
+
+
+## Minutes an unpaid citation has before it becomes a Fine Evasion crime and sets arrest status. 0 turns fine evasion off.
+MAVERICK_FINE_EVASION_MINUTES 10
