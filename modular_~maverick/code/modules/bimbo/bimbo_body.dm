@@ -1,3 +1,8 @@
+/// The shared succubus milk datum. Bimbo growth borrows its growth procs so the text matches the chem.
+/datum/component/bimbo/proc/succubus_milk()
+	RETURN_TYPE(/datum/reagent/drug/aphrodisiac/succubus_milk)
+	return GLOB.chemical_reagents_list[/datum/reagent/drug/aphrodisiac/succubus_milk]
+
 /// Quirk holders chose the size floor. Everyone else needs the breast enlargement pref.
 /datum/component/bimbo/proc/can_grow()
 	if(from_quirk)
@@ -21,10 +26,7 @@
 	if(breasts && grow_to_floor(breasts, round(BIMBO_BREAST_FLOOR_MAX * fraction), instant))
 		changed = TRUE
 		if(!instant)
-			holder.visible_message(
-				span_userlove("[holder]'s chest swells a little fuller[holder.w_uniform ? ", straining against [holder.p_their()] clothes" : ""]."),
-				span_userlove("Your chest feels warm as it swells a little bigger[holder.w_uniform ? ". Your clothes feel tighter" : ""]."),
-			)
+			succubus_milk().growth_to_chat(holder, breasts)
 
 	var/obj/item/organ/genital/butt/butt = holder.get_organ_slot(ORGAN_SLOT_BUTT)
 	if(butt && grow_to_floor(butt, round(BIMBO_BUTT_FLOOR_MAX * fraction), instant))
@@ -81,23 +83,10 @@
 			span_userlove("Your whole body tingles as your figure softens and curves."),
 		)
 
-	if(holder.get_organ_slot(ORGAN_SLOT_BREASTS) || !holder.mob_consents(/datum/preference/toggle/erp/new_genitalia_growth))
+	if(holder.get_organ_slot(ORGAN_SLOT_BREASTS) || !holder.dna?.mutant_bodyparts[ORGAN_SLOT_BREASTS])
 		return
-	var/list/breast_part = holder.dna?.mutant_bodyparts[ORGAN_SLOT_BREASTS]
-	if(!breast_part)
-		return
-	if(breast_part[MUTANT_INDEX_NAME] == SPRITE_ACCESSORY_NONE)
-		breast_part[MUTANT_INDEX_NAME] = "Pair"
-	var/obj/item/organ/genital/breasts/new_breasts = new
-	new_breasts.build_from_dna(holder.dna, ORGAN_SLOT_BREASTS)
-	new_breasts.Insert(holder, FALSE, FALSE)
-	new_breasts.set_size(2)
-	new_breasts.update_sprite_suffix()
-	holder.update_body()
-	holder.visible_message(
-		span_userlove("[holder]'s chest fills out into a modest new bust[holder.w_uniform ? ", pulling [holder.p_their()] clothes snug" : ""]."),
-		span_userlove("Your chest feels warm and tingly as it fills out."),
-	)
+	// Same growth, text and pref check as a succubus milk overdose
+	succubus_milk().create_breasts(holder)
 
 /**
  * One ray hit or hexacrocin overdose roll.
