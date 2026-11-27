@@ -3,17 +3,17 @@
  *
  * The mob sits inside the object in stasis: no hunger, no breathing, no moving or using hands.
  * They can still see, hear, talk and emote.
+ * Trying to move only makes the object wobble.
  * They come back out when:
  * - a TF toolgun restores them,
- * - they struggle free with Resist (OBJECT_TF_ESCAPE_TIME),
+ * - they use the OOC Safe Word verb,
  * - the object is destroyed.
  */
 /datum/component/object_tf
 	dupe_mode = COMPONENT_DUPE_UNIQUE
 	/// The object they became
 	var/obj/item/container
-	/// Timer for struggling free
-	var/escape_timer
+	COOLDOWN_DECLARE(wobble_cooldown)
 
 /datum/component/object_tf/Initialize(obj/item/container)
 	if(!isliving(parent) || !istype(container) || QDELETED(container))
@@ -26,19 +26,19 @@
 	var/mob/living/living_parent = parent
 	living_parent.apply_status_effect(/datum/status_effect/grouped/stasis, REF(src))
 	RegisterSignal(living_parent, COMSIG_MOVABLE_MOVED, PROC_REF(on_parent_moved))
-	RegisterSignal(living_parent, COMSIG_LIVING_RESIST, PROC_REF(on_resist))
+	RegisterSignal(living_parent, COMSIG_MOB_CLIENT_PRE_LIVING_MOVE, PROC_REF(on_move_attempt))
+	RegisterSignal(living_parent, COMSIG_OOC_ESCAPE, PROC_REF(on_safeword))
 	RegisterSignal(container, COMSIG_QDELETING, PROC_REF(on_container_deleted))
 	RegisterSignal(container, COMSIG_ATOM_EXAMINE, PROC_REF(on_container_examine))
 
 /datum/component/object_tf/UnregisterFromParent()
 	var/mob/living/living_parent = parent
 	living_parent.remove_status_effect(/datum/status_effect/grouped/stasis, REF(src))
-	UnregisterSignal(living_parent, list(COMSIG_MOVABLE_MOVED, COMSIG_LIVING_RESIST))
+	UnregisterSignal(living_parent, list(COMSIG_MOVABLE_MOVED, COMSIG_MOB_CLIENT_PRE_LIVING_MOVE, COMSIG_OOC_ESCAPE))
 	if(container)
 		UnregisterSignal(container, list(COMSIG_QDELETING, COMSIG_ATOM_EXAMINE))
 
 /datum/component/object_tf/Destroy(force)
-	deltimer(escape_timer)
 	container = null
 	return ..()
 
@@ -71,13 +71,16 @@
 	SIGNAL_HANDLER
 	examine_list += span_userlove("Something about [container.p_them()] feels warm and alive. [container.p_they(TRUE)] look[container.p_s()] a lot like [parent].")
 
-/datum/component/object_tf/proc/on_resist(datum/source)
+/// Trying to move makes the object wobble a little, and nothing else.
+/datum/component/object_tf/proc/on_move_attempt(datum/source, new_loc, direct)
 	SIGNAL_HANDLER
-	var/mob/living/living_parent = parent
-	if(escape_timer)
-		to_chat(living_parent, span_notice("You are still wriggling free of [container]. [DisplayTimeText(timeleft(escape_timer))] to go."))
-		return COMPONENT_BLOCK_RESIST
-	to_chat(living_parent, span_notice("You start wriggling free of [container]. This will take [DisplayTimeText(OBJECT_TF_ESCAPE_TIME)]."))
-	container.visible_message(span_notice("[container] wobbles a little."))
-	escape_timer = addtimer(CALLBACK(src, PROC_REF(release)), OBJECT_TF_ESCAPE_TIME, TIMER_STOPPABLE)
-	return COMPONENT_BLOCK_RESIST
+	if(COOLDOWN_FINISHED(src, wobble_cooldown))
+		COOLDOWN_START(src, wobble_cooldown, OBJECT_TF_WOBBLE_COOLDOWN)
+		container.Shake(1, 1, 0.5 SECONDS)
+		container.visible_message(span_notice("[container] moves slightly."), ignored_mobs = parent)
+		to_chat(parent, span_notice("You try to move, but [container] only shifts slightly."))
+	return COMSIG_MOB_CLIENT_BLOCK_PRE_LIVING_MOVE
+
+/datum/component/object_tf/proc/on_safeword(datum/source)
+	SIGNAL_HANDLER
+	release()
