@@ -10838,6 +10838,7 @@
 #include "modular_~maverick\code\modules\branding\top_bar_buttons.dm"
 #include "modular_~maverick\code\modules\cargo\packs\shotgun_packs.dm"
 #include "modular_~maverick\code\modules\customization\custom_shading.dm"
+#include "modular_~maverick\code\modules\emotes\cat_screams.dm"
 #include "modular_~maverick\code\modules\emotes\vibe.dm"
 #include "modular_~maverick\code\modules\loadout\loadout_gates.dm"
 #include "modular_~maverick\code\modules\loadout\categories\platings.dm"
