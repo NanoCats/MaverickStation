@@ -25,7 +25,7 @@
 	// Grows and shrinks organs depending on prefs, returning to normal. Offers a way of resetting succubus milk / incubus draft sizes, but not organs.
 
 	// Resets gender if prefs enabled.
-	if(exposed_mob.client?.prefs.read_preference(/datum/preference/toggle/erp/gender_change) && exposed_mob.gender != exposed_mob.client?.prefs?.read_preference(/datum/preference/choiced/gender))
+	if(exposed_mob.mob_consents(/datum/preference/toggle/erp/gender_change) && exposed_mob.gender != exposed_mob.client?.prefs?.read_preference(/datum/preference/choiced/gender)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		exposed_mob.set_gender(exposed_mob.client?.prefs?.read_preference(/datum/preference/choiced/gender))
 
 	if(exposed_mob.get_organ_slot(ORGAN_SLOT_BREASTS))
