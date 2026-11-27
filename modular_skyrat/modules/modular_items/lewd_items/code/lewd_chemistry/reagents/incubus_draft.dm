@@ -84,7 +84,7 @@
 		suppress_chat = TRUE
 
 	// Do prefs allow penis enlargement?
-	if(exposed_mob.client?.prefs?.read_preference(/datum/preference/toggle/erp/penis_enlargement))
+	if(exposed_mob.mob_consents(/datum/preference/toggle/erp/penis_enlargement)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		// Attempt to make new male genitals if applicable
 		create_genitals(exposed_mob, suppress_chat, list(GENITAL_PENIS, GENITAL_TESTICLES))
 

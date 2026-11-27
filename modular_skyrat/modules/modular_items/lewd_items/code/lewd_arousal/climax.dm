@@ -20,7 +20,7 @@
 		return
 
 	#ifndef TESTING
-	if(!client?.prefs?.read_preference(/datum/preference/toggle/erp/autocum) && !manual)
+	if(!mob_consents(/datum/preference/toggle/erp/autocum) && !manual) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 	#endif
 
@@ -29,7 +29,7 @@
 	refractory_period = REALTIMEOFDAY + 30 SECONDS
 
 	#ifndef TESTING
-	if(has_status_effect(/datum/status_effect/climax_cooldown) || !client?.prefs?.read_preference(/datum/preference/toggle/erp))
+	if(has_status_effect(/datum/status_effect/climax_cooldown) || !mob_consents(/datum/preference/toggle/erp)) // MAVERICK EDIT - Debug consent: mob_consents() in place of client?.prefs?.read_preference()
 		return
 	#endif
 
