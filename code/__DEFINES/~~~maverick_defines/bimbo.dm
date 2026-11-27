@@ -65,8 +65,8 @@
 #define BIMBO_BLISS_MAX 0.5
 /// Do-after slowdown at full intensity
 #define BIMBO_MAX_ACTION_SLOWDOWN 0.2
-/// Chance that a word over the length cap gets forgotten
-#define BIMBO_FORGET_WORD_CHANCE 50
+/// Bubbleheaded only: chance that a word over the length cap gets forgotten
+#define BIMBO_FORGET_WORD_CHANCE 20
 
 /// From /datum/interaction/act() on the target of a lewd interaction: (mob/living/carbon/human/user, datum/interaction/interaction)
 #define COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED "human_lewd_interaction_received"
@@ -110,3 +110,17 @@
 #define BIMBO_RAY_HAIR_CUSTOM "Custom color"
 /// The ray's blonde
 #define BIMBO_RAY_BLONDE_COLOR "#f3e3b5"
+
+// Full bimbo cripples (Bubbleheaded tier unless noted)
+/// Butterfingers drops something at most this often
+#define BIMBO_BUTTERFINGERS_COOLDOWN (1 MINUTES)
+/// A compulsion pulls you somewhere at most this often
+#define BIMBO_COMPULSION_COOLDOWN (90 SECONDS)
+/// Steps a compulsion takes you
+#define BIMBO_COMPULSION_STEPS 2
+/// How far a mirror or a cute person can lure you from
+#define BIMBO_COMPULSION_RANGE 5
+/// Bimbo tier and up: after a passed console roll, no new roll for this long
+#define BIMBO_BUTTONS_OK_TIME (10 SECONDS)
+/// After a failed console roll, consoles refuse to work for this long
+#define BIMBO_BUTTONS_CONFUSED_TIME (3 SECONDS)

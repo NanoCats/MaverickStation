@@ -46,11 +46,12 @@
 	RegisterSignal(parent, COMSIG_MOB_EXAMINATE, PROC_REF(on_examinate))
 	RegisterSignal(parent, COMSIG_CARBON_GAIN_TRAUMA, PROC_REF(on_gain_trauma))
 	RegisterSignal(parent, COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED, PROC_REF(on_lewd_interaction))
+	RegisterSignal(parent, COMSIG_TRY_USE_MACHINE, PROC_REF(on_try_use_machine))
 	refresh(instant = TRUE)
 
 /datum/component/bimbo/UnregisterFromParent()
 	var/mob/living/carbon/human/holder = parent
-	UnregisterSignal(holder, list(COMSIG_MOB_SAY, COMSIG_ATOM_EXAMINE, COMSIG_CARBON_HELP_ACT, COMSIG_LIVING_LIFE, COMSIG_MOB_EXAMINATE, COMSIG_CARBON_GAIN_TRAUMA, COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED))
+	UnregisterSignal(holder, list(COMSIG_MOB_SAY, COMSIG_ATOM_EXAMINE, COMSIG_CARBON_HELP_ACT, COMSIG_LIVING_LIFE, COMSIG_MOB_EXAMINATE, COMSIG_CARBON_GAIN_TRAUMA, COMSIG_HUMAN_LEWD_INTERACTION_RECEIVED, COMSIG_TRY_USE_MACHINE))
 	REMOVE_TRAIT(holder, TRAIT_BIMBO, BIMBO_TRAIT_SOURCE)
 	holder.remove_actionspeed_modifier(/datum/actionspeed_modifier/bimbo)
 	holder.clear_mood_event("bimbo_fashion")
@@ -129,6 +130,7 @@
 	try_lose_focus()
 	try_get_distracted()
 	try_invasive_thought()
+	handle_cripples()
 
 	life_ticks++
 	if(life_ticks % 5)
@@ -188,6 +190,8 @@
 		holder.clear_alert(ALERT_BIMBO_HEAT)
 		return
 	holder.throw_alert(ALERT_BIMBO_HEAT, /atom/movable/screen/alert/bimbo_heat)
+	if(SPT_PROB(4, seconds_per_tick))
+		holder.emote(pick("shiver", "twitch"))
 	if(!SPT_PROB(3, seconds_per_tick))
 		return
 	var/mutable_appearance/sweat = mutable_appearance('modular_skyrat/master_files/icons/effects/overlay_effects.dmi', "sweatdrop", ABOVE_MOB_LAYER)

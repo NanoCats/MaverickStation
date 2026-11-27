@@ -10843,6 +10843,7 @@
 #include "modular_~maverick\code\modules\automapper\automapper_disable.dm"
 #include "modular_~maverick\code\modules\bimbo\bimbo_body.dm"
 #include "modular_~maverick\code\modules\bimbo\bimbo_component.dm"
+#include "modular_~maverick\code\modules\bimbo\bimbo_cripples.dm"
 #include "modular_~maverick\code\modules\bimbo\bimbo_makeover.dm"
 #include "modular_~maverick\code\modules\bimbo\bimbo_mood.dm"
 #include "modular_~maverick\code\modules\bimbo\bimbo_overrides.dm"
