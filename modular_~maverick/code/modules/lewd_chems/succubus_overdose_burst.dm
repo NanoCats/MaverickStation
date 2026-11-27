@@ -35,10 +35,15 @@
 	if(!length(to_burst))
 		return
 
-	var/obj/item/clothing/outer = to_burst[length(to_burst)]
+	// Name every article that rips, outermost first: "labcoat and grey jumpsuit"
+	var/list/article_names = list()
+	for(var/i in length(to_burst) to 1 step -1)
+		var/obj/item/clothing/worn = to_burst[i]
+		article_names += worn.name
+	var/articles = english_list(article_names)
 	exposed_mob.visible_message(
-		span_userlove("[exposed_mob]'s [pick(bigger_boob_text_list)] swell against [exposed_mob.p_their()] [outer.name] until the fabric gives way with a loud rip!"),
-		span_userlove("Your [pick(bigger_boob_text_list)] swell against your [outer.name] until the fabric gives way with a loud rip!"),
+		span_userlove("[exposed_mob]'s [pick(bigger_boob_text_list)] swell against [exposed_mob.p_their()] [articles] until the fabric gives way with a loud rip!"),
+		span_userlove("Your [pick(bigger_boob_text_list)] swell against your [articles] until the fabric gives way with a loud rip!"),
 	)
 	playsound(exposed_mob, 'sound/effects/cloth_rip.ogg', 50, TRUE)
 	for(var/obj/item/clothing/worn as anything in to_burst)
