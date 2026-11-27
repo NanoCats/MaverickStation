@@ -1,6 +1,6 @@
 /obj/item/gun/energy/bimbo_ray
 	name = "bimbo pulse rifle"
-	desc = "A death squad pulse rifle that LustWish got their hands on and gave a candy pink paint job. It no longer destroys anything except attention spans. A tiny reactor recharges it on its own. Use it in hand to change its settings."
+	desc = "A death squad pulse rifle that LustWish got their hands on and gave a glossy white paint job with hot pink lights. It no longer destroys anything except attention spans. A tiny reactor recharges it on its own. Use it in hand to change its settings."
 	icon = 'modular_~maverick/icons/obj/weapons/bimbo_ray.dmi'
 	icon_state = "bimbo_pulse"
 	lefthand_file = 'modular_~maverick/icons/mob/inhands/bimbo_ray_lefthand.dmi'
