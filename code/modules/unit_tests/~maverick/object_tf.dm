@@ -25,6 +25,6 @@
 
 	victim.AddComponent(/datum/component/object_tf, shape)
 	TEST_ASSERT_EQUAL(victim.loc, shape, "Victim was not moved into the object")
-	victim.safeword()
+	victim.__gvb_safeword(list()) // The verb body; the verb itself queues through SSverbs and needs a player
 	TEST_ASSERT_EQUAL(victim.loc, start, "Safe word did not release the victim")
 	TEST_ASSERT_NULL(victim.GetComponent(/datum/component/object_tf), "Component stayed after the safe word")
