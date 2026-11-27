@@ -10797,6 +10797,7 @@
 #include "modular_~maverick\code\modules\age_gate\age_gate_subsystem.dm"
 #include "modular_~maverick\code\modules\age_gate\age_gate_vetting.dm"
 #include "modular_~maverick\code\modules\age_gate\config.dm"
+#include "modular_~maverick\code\modules\arousal_overlay\arousal_overlay.dm"
 #include "modular_~maverick\code\modules\automapper\automapper_disable.dm"
 #include "modular_~maverick\code\modules\bimbo\bimbo_body.dm"
 #include "modular_~maverick\code\modules\bimbo\bimbo_component.dm"
