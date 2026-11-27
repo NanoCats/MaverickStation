@@ -19,6 +19,10 @@
 
 /obj/effect/decal/cleanable/Initialize(mapload, list/datum/disease/diseases)
 	. = ..()
+	// MAVERICK EDIT BEGIN - A mess made at runtime that could not fall any further is left hanging over space or open space, which the nearstation map test flags. A blood streak out into space should just be lost.
+	if(!mapload && isspaceturf(loc))
+		return INITIALIZE_HINT_QDEL
+	// MAVERICK EDIT END
 	if (LAZYLEN(random_icon_states))
 		icon_state = pick(random_icon_states)
 		base_icon_state = icon_state
