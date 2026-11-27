@@ -103,10 +103,20 @@
 
 /datum/augment_item/organ/eyes/cybernetic/shield
 	name = "Welding shield eyes"
-	path = /obj/item/organ/eyes/robotic/shield
+	path = /obj/item/organ/eyes/robotic/shield/loadout
 	cost = 4
 
 /datum/augment_item/organ/eyes/cybernetic/shield_moth
 	name = "Welding shield moth eyes"
-	path = /obj/item/organ/eyes/robotic/shield/moth
+	path = /obj/item/organ/eyes/robotic/shield/moth/loadout
 	cost = 4
+
+// Loadout copies of the welding shield eyes. The stock ones are painted dark grey; these take the character's
+// own eye color when they go in, like other robotic eyes, and a multitool can still recolor them.
+/obj/item/organ/eyes/robotic/shield/loadout
+	eye_color_left = null
+	eye_color_right = null
+
+/obj/item/organ/eyes/robotic/shield/moth/loadout
+	eye_color_left = null
+	eye_color_right = null
