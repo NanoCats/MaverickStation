@@ -1,13 +1,15 @@
 // Pointer color: a character pref that tints the arrow you point with.
-// The Kommand skillchip still works and can change the color in the round, the same as before.
+// A Kommand skillchip takes over while it is active: it starts with the pref color, and its action can change it in the round.
 
 /mob/living/carbon/human
 	/// Color of this character's pointing arrow, from the pointer color pref. Null keeps the stock arrow.
 	var/pointer_color
+	/// TRUE while a Kommand skillchip is active. The chip colors the arrow then, so the pref handler stands down.
+	var/pointer_kommand_active = FALSE
 
 /mob/living/carbon/human/proc/color_pointer(datum/source, atom/pointed, obj/effect/temp_visual/point/point)
 	SIGNAL_HANDLER
-	if(!pointer_color || HAS_TRAIT(src, TRAIT_UNKNOWN_APPEARANCE))
+	if(!pointer_color || pointer_kommand_active || HAS_TRAIT(src, TRAIT_UNKNOWN_APPEARANCE))
 		return
 	// Bigger arrows from command ID trims or the Kommand chip keep their size, only the color changes.
 	var/obj/item/card/id/card = get_idcard(hand_first = FALSE)
@@ -46,3 +48,22 @@
 		return
 	target.pointer_color = value
 	target.RegisterSignal(target, COMSIG_MOVABLE_POINTED, TYPE_PROC_REF(/mob/living/carbon/human, color_pointer), override = TRUE)
+
+/obj/item/skillchip/big_pointer/on_activate(mob/living/carbon/user, silent = FALSE)
+	. = ..()
+	var/mob/living/carbon/human/human_user = user
+	if(!istype(human_user))
+		return
+	human_user.pointer_kommand_active = TRUE
+	if(!human_user.pointer_color)
+		return
+	var/datum/action/change_pointer_color/action = locate() in actions
+	if(action && !action.arrow_color)
+		action.arrow_color = human_user.pointer_color
+		action.build_all_button_icons(update_flags = UPDATE_BUTTON_ICON, force = TRUE)
+
+/obj/item/skillchip/big_pointer/on_deactivate(mob/living/carbon/user, silent = FALSE)
+	var/mob/living/carbon/human/human_user = user
+	if(istype(human_user))
+		human_user.pointer_kommand_active = FALSE
+	return ..()
