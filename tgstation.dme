@@ -10858,5 +10858,4 @@
 #include "modular_~maverick\code\modules\station_traits\trait_gear_pref.dm"
 #include "modular_~maverick\code\modules\surgery\synth_self_surgery.dm"
 #include "modular_~maverick\code\modules\synths\power_cord_optional.dm"
-#include "modular_~maverick\modules\robotics_surgery_tray\code\robotics_surgery_tray.dm"
 // END_INCLUDE
