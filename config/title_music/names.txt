@@ -55,3 +55,4 @@ title0 : Endless Space - Solus
 title1 : Flip-flap - X-Ceed
 title2 : Robocop Theme (gameboy) - Eric Schumacker
 title3 : Tintin On The Moon - Cuboos
+clown : Clown.wmv - Admiral Hippie

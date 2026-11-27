@@ -6,6 +6,7 @@ SUBSYSTEM_DEF(statpanels)
 	ss_flags = SS_NO_INIT
 	var/list/currentrun = list()
 	var/list/global_data
+	var/list/global_data_twelve_hour // MAVERICK EDIT ADDITION - Status panel honors the twelve-hour clock pref
 	var/list/mc_data
 
 	///how many subsystem fires between most tab updates
@@ -42,15 +43,22 @@ SUBSYSTEM_DEF(statpanels)
 		//var/current_date = "[time2text(world.realtime, "DDD Month DD")], [CURRENT_STATION_YEAR]" //Unused var for now.
 		// BUBBER EDIT ADDITION END - Extra stat panel info
 
+		// MAVERICK EDIT ADDITION BEGIN - Status panel honors the twelve-hour clock pref
+		var/station_date = server_timestamp(format = "YYYY-MM-DD", ic_time = TRUE)
+		var/server_date = time2text(world.timeofday, "YYYY-MM-DD", world.timezone)
+		var/station_time_line = "Station Time: [station_date] [server_timestamp()]"
+		var/server_time_line = "Server Time: [server_date] [server_timestamp()]"
+		// MAVERICK EDIT ADDITION END
+
 		global_data += list(
 			"Round ID: [GLOB.round_id ? GLOB.round_id : "NULL"]",
 			"Connected: [GLOB.clients.len] | Active: [active_players]/[CONFIG_GET(number/hard_popcap)] | Observing: [observing_players]", // BUBBER EDIT ADDITION - Extra stat panel info
 			"OOC: [GLOB.ooc_allowed ? "Enabled" : "Disabled"]", // BUBBER EDIT ADDITION - Extra stat panel info
 			" ", // BUBBER EDIT ADDITION - Extra stat panel info
 			"Storyteller: [SSgamemode.storyteller ? SSgamemode.storyteller.name : "N/A"]", // BUBBER EDIT ADDITION - Extra stat panel info
-			"Station Time: [server_timestamp(format = "YYYY-MM-DD hh:mm:ss", ic_time = TRUE)]",
+			station_time_line, // MAVERICK EDIT CHANGE - ORIGINAL: "Station Time: [server_timestamp(format = "YYYY-MM-DD hh:mm:ss", ic_time = TRUE)]",
 			"Round Time: [time2text(real_round_time, "hh:mm:ss", 0)]", // BUBBER EDIT CHANGE - Extra stat panel info - ORIGINAL: "Round Time: [ROUND_TIME()]"
-			"Server Time: [time2text(world.timeofday, "YYYY-MM-DD hh:mm:ss", world.timezone)]",
+			server_time_line, // MAVERICK EDIT CHANGE - ORIGINAL: "Server Time: [time2text(world.timeofday, "YYYY-MM-DD hh:mm:ss", world.timezone)]",
 			"Time Dilation: [round(SStime_track.time_dilation_current,1)]% AVG:([round(SStime_track.time_dilation_avg_fast,1)]%, [round(SStime_track.time_dilation_avg,1)]%, [round(SStime_track.time_dilation_avg_slow,1)]%)",
 		)
 
@@ -58,6 +66,14 @@ SUBSYSTEM_DEF(statpanels)
 			var/ETA = SSshuttle.emergency.getModeStr()
 			if(ETA)
 				global_data += "[ETA] [SSshuttle.emergency.getTimerStr()]"
+
+		// MAVERICK EDIT ADDITION BEGIN - Status panel honors the twelve-hour clock pref
+		// The date and clock are formatted apart because time_to_twelve_hour() wraps the time to one day, which breaks a YYYY-MM-DD format.
+		var/twelve_hour_clock = server_timestamp(twelve_hour_clock = TRUE)
+		global_data_twelve_hour = global_data.Copy()
+		global_data_twelve_hour[global_data_twelve_hour.Find(station_time_line)] = "Station Time: [station_date] [twelve_hour_clock]"
+		global_data_twelve_hour[global_data_twelve_hour.Find(server_time_line)] = "Server Time: [server_date] [twelve_hour_clock]"
+		// MAVERICK EDIT ADDITION END
 
 		src.currentrun = GLOB.clients.Copy()
 		mc_data = null
@@ -108,8 +124,9 @@ SUBSYSTEM_DEF(statpanels)
 /datum/controller/subsystem/statpanels/proc/set_status_tab(client/target)
 	if(!global_data)//statbrowser hasnt fired yet and we were called from immediate_send_stat_data()
 		return
+	var/use_twelve_hour = global_data_twelve_hour && target.prefs?.read_preference(/datum/preference/toggle/twelve_hour) // MAVERICK EDIT ADDITION - Status panel honors the twelve-hour clock pref
 	target.stat_panel.send_message("update_stat", list(
-		"global_data" = global_data,
+		"global_data" = use_twelve_hour ? global_data_twelve_hour : global_data, // MAVERICK EDIT CHANGE - ORIGINAL: "global_data" = global_data,
 		"other_str" = target.mob?.get_status_tab_items(),
 	))
 

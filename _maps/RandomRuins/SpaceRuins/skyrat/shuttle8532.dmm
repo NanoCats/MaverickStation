@@ -1585,7 +1585,7 @@
 /area/ruin/space/has_grav/shuttle8532researchbay)
 "Gv" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/mob_spawn/corpse/human/russian,
+/obj/effect/mob_spawn/corpse/human/syndicatecommando,
 /turf/open/floor/iron/airless,
 /area/ruin/space/has_grav/shuttle8532bridge)
 "Gz" = (

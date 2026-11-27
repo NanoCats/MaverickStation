@@ -129,7 +129,7 @@
 		return
 	if(action_experiment(source, target))
 		// BUBBERSTATION EDIT START
-		if (config_flags && EXPERIMENT_CONFIG_WORKS_FROM_RANGE)
+		if ((config_flags & EXPERIMENT_CONFIG_WORKS_FROM_RANGE) && target != user) // MAVERICK EDIT - was &&, and no beam when scanning yourself
 			user.Beam(target, icon_state = "rped_upgrade", time = 0.5 SECONDS)
 		// BUBBERSTATION EDIT END
 		playsound(user, 'sound/machines/ping.ogg', 25)

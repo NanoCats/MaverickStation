@@ -513,6 +513,7 @@
 /area/ruin/space/has_grav/waypoint)
 "Bi" = (
 /obj/structure/closet,
+/obj/item/ammo_casing/shotgun/pulverizer,
 /obj/item/ammo_box/advanced/s12gauge/buckshot,
 /obj/item/ammo_box/advanced/s12gauge/buckshot,
 /turf/open/floor/iron/airless,

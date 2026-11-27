@@ -489,7 +489,7 @@ GLOBAL_DATUM_INIT(operations, /datum/operation_holder, new)
 	if(!(operation_flags & OPERATION_STANDING_ALLOWED) && !IS_LYING_OR_CANNOT_LIE(patient))
 		return FALSE
 
-	if(!(operation_flags & OPERATION_SELF_OPERABLE) && patient == surgeon && !HAS_TRAIT(surgeon, TRAIT_SELF_SURGERY))
+	if(!(operation_flags & OPERATION_SELF_OPERABLE) && patient == surgeon && !HAS_TRAIT(surgeon, TRAIT_SELF_SURGERY) && !synth_can_self_operate(surgeon)) // MAVERICK EDIT - synths can self-operate
 		return FALSE
 
 	return snowflake_check_availability(operating_on, surgeon, tool, operated_zone)
@@ -747,7 +747,7 @@ GLOBAL_DATUM_INIT(operations, /datum/operation_holder, new)
 			total_mod *= get_location_modifier(get_turf(patient), patient, surgeon, tool)
 			total_mod *= get_mob_surgery_speed_mod(patient, surgeon, tool)
 		// Using TRAIT_SELF_SURGERY on a surgery which doesn't normally allow self surgery imparts a penalty
-		if(operating_on == surgeon && HAS_TRAIT(surgeon, TRAIT_SELF_SURGERY) && !(operation_flags & OPERATION_SELF_OPERABLE))
+		if(operating_on == surgeon && HAS_TRAIT(surgeon, TRAIT_SELF_SURGERY) && !(operation_flags & OPERATION_SELF_OPERABLE) && !synth_can_self_operate(surgeon)) // MAVERICK EDIT - no skillchip penalty for synths
 			total_mod *= 1.5
 	return round(total_mod, 0.01)
 
@@ -889,7 +889,7 @@ GLOBAL_DATUM_INIT(operations, /datum/operation_holder, new)
 
 		// Using TRAIT_SELF_SURGERY on a surgery which doesn't normally allow self surgery imparts a flat penalty
 		// (On top of the 1.5x real time surgery modifier, an effective time modifier of 3x under standard conditions)
-		if(patient == surgeon && HAS_TRAIT(surgeon, TRAIT_SELF_SURGERY) && !(operation_flags & OPERATION_SELF_OPERABLE))
+		if(patient == surgeon && HAS_TRAIT(surgeon, TRAIT_SELF_SURGERY) && !(operation_flags & OPERATION_SELF_OPERABLE) && !synth_can_self_operate(surgeon)) // MAVERICK EDIT - no skillchip penalty for synths
 			operation_args[OPERATION_SPEED] += 1.5
 
 		// Otherwise if we have TRAIT_IGNORE_SURGERY_MODIFIERS we cannot possibly fail, unless we specifically allow failure

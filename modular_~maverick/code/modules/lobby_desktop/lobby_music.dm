@@ -1,3 +1,8 @@
+/// How many played tracks SpaceAmp remembers per player.
+#define MAVERICK_MUSIC_HISTORY_MAX 20
+/// Shuffle avoids this many of the most recently played tracks when it can.
+#define MAVERICK_MUSIC_SHUFFLE_AVOID 5
+
 /// Display names for tracks we know the real title of. Anything else shows its file name.
 GLOBAL_LIST_INIT(maverick_track_names, list(
 	"sound/music/lobby_music/title0.ogg" = "Endless Space - Solus",
@@ -38,6 +43,8 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	var/maverick_music_picked = FALSE
 	/// A track was actually sent to the player this session. Until then, raising the volume has nothing to turn up.
 	var/maverick_music_sent = FALSE
+	/// Tracks this player heard this session, oldest first. Shuffle skips the recent ones; previous walks back through it.
+	var/list/maverick_music_history = list()
 
 /**
  * Same pool the round's lobby track is picked from: common config tracks plus this map's tracks.
@@ -292,6 +299,14 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	return entries[file] || entries[base]
 
 /proc/maverick_track_name(path)
+	var/name = maverick_track_base_name(path)
+	// Like any media player: no artist on record means "Unknown Artist".
+	if(!findtext(name, " - "))
+		name += " - Unknown Artist"
+	return name
+
+/// The track's name from names.txt, the stock list, or its file name, without the artist fallback.
+/proc/maverick_track_base_name(path)
 	var/list/entry = maverick_track_entry(path)
 	if(entry?["name"])
 		return entry["name"]
@@ -571,6 +586,7 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 		"elapsed" = elapsed,
 		"offset" = elapsed,
 		"needs_hello" = !maverick_music_greeted,
+		"shuffle" = maverick_music_shuffle_on(),
 	)
 
 /// Sends SpaceAmp the new state. started tells it the track changed.
@@ -603,6 +619,10 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 	maverick_music_track = path
 	maverick_music_base = SSticker.login_music
 	maverick_music_stopped = FALSE
+	if(!length(maverick_music_history) || maverick_music_history[length(maverick_music_history)] != path)
+		maverick_music_history += path
+		if(length(maverick_music_history) > MAVERICK_MUSIC_HISTORY_MAX)
+			maverick_music_history.Cut(1, 2)
 	maverick_music_paused = FALSE
 	maverick_music_started = world.time - offset * 10
 	maverick_music_push(started = TRUE)
@@ -650,10 +670,16 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 			maverick_music_push()
 		if("next")
 			maverick_music_manual = TRUE
-			maverick_music_play(next_track)
+			maverick_music_play(maverick_music_shuffle_on() ? maverick_music_shuffle_pick(tracks, current) : next_track)
 		if("prev")
 			maverick_music_manual = TRUE
-			maverick_music_play(index ? tracks[((index - 2 + length(tracks)) % length(tracks)) + 1] : tracks[length(tracks)])
+			var/previous = maverick_music_shuffle_on() ? maverick_music_previous(tracks, current) : null
+			maverick_music_play(previous || (index ? tracks[((index - 2 + length(tracks)) % length(tracks)) + 1] : tracks[length(tracks)]))
+		if("shuffle")
+			var/datum/preference/shuffle_pref = GLOB.preference_entries[/datum/preference/toggle/maverick_lobby_shuffle]
+			prefs.write_preference(shuffle_pref, !maverick_music_shuffle_on())
+			prefs.save_preferences() // write_preference only changes the copy in memory
+			maverick_music_push()
 		if("track")
 			var/pick = text2num(href_list["track"])
 			if(isnum(pick) && pick >= 1 && pick <= length(tracks))
@@ -683,7 +709,40 @@ GLOBAL_DATUM(maverick_lobby_alert_listener, /datum/maverick_lobby_alert_listener
 				if("one")
 					maverick_music_play(index ? current : next_track)
 				if("all")
-					maverick_music_play(next_track)
+					maverick_music_play(maverick_music_shuffle_on() ? maverick_music_shuffle_pick(tracks, current) : next_track)
 				else
 					maverick_music_stopped = TRUE
 					maverick_music_push()
+
+/// Whether this player has shuffle on. On by default.
+/client/proc/maverick_music_shuffle_on()
+	return !!prefs?.read_preference(/datum/preference/toggle/maverick_lobby_shuffle)
+
+/// A random track from the playlist, skipping the current one and the last few played when it can.
+/client/proc/maverick_music_shuffle_pick(list/tracks, current)
+	var/list/recent = maverick_music_history.Copy(max(1, length(maverick_music_history) - MAVERICK_MUSIC_SHUFFLE_AVOID + 1))
+	var/list/candidates = tracks - current - recent
+	if(!length(candidates))
+		candidates = tracks - current
+	if(!length(candidates))
+		candidates = tracks
+	return pick(candidates)
+
+/// The track played before this one, if it can still play. Steps the history back so pressing previous again keeps going.
+/client/proc/maverick_music_previous(list/tracks, current)
+	for(var/i in length(maverick_music_history) - 1 to 1 step -1)
+		var/track = maverick_music_history[i]
+		if(track == current || !(track in tracks))
+			continue
+		maverick_music_history.Cut(i)
+		return track
+	return null
+
+/datum/preference/toggle/maverick_lobby_shuffle
+	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
+	savefile_key = "maverick_lobby_shuffle"
+	savefile_identifier = PREFERENCE_PLAYER
+	default_value = TRUE
+
+#undef MAVERICK_MUSIC_HISTORY_MAX
+#undef MAVERICK_MUSIC_SHUFFLE_AVOID

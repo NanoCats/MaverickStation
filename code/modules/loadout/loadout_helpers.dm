@@ -94,6 +94,7 @@
 		else
 		// BUBBER EDIT ADDITION END
 			item.insert_path_into_outfit(equipped_outfit, src, visuals_only, loadout_placement_preference)
+	var/list/personal_effects = visuals_only ? null : equipped_outfit.take_personal_effects(loadout_datums) // MAVERICK EDIT - Small items go in a personal effects box
 	// Equip the outfit loadout items included
 	if(!equipped_outfit.equip(src, visuals_only))
 		return FALSE
@@ -102,6 +103,7 @@
 	if(travel_suitcase)
 		put_in_hands(travel_suitcase)
 	// BUBBER EDIT ADDITION END
+	pack_personal_effects(personal_effects) // MAVERICK EDIT - Small items go in a personal effects box
 
 	// Handle any snowflake on_equips.
 	var/list/new_contents = get_all_gear(INCLUDE_PROSTHETICS|INCLUDE_ABSTRACT|INCLUDE_ACCESSORIES)

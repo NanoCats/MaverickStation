@@ -34,3 +34,18 @@ MAVERICK_LOCAL_DEBUG
 
 ## Uncomment to bring back the old hexacrocin overdose bimbo trauma. Off by default, the overdose feeds the new bimbo system instead.
 #MAVERICK_LEGACY_BIMBO_TRAUMA
+
+## Automapper templates that never load. One template name per line, from the [templates.<name>] keys in
+## _maps/bubber/automapper/automapper_config.toml. The station blacksmith rooms are off by default.
+MAVERICK_AUTOMAPPER_DISABLED deltastation_blacksmith
+MAVERICK_AUTOMAPPER_DISABLED iceboxstation_blacksmith
+MAVERICK_AUTOMAPPER_DISABLED metastation_blacksmith
+
+## Uncomment to give the station its Blacksmith job slot. Forging works either way.
+#MAVERICK_BLACKSMITH_JOB
+
+## Uncomment to turn the Good Assistant Points punchcard program back on.
+#MAVERICK_GOOD_ASSISTANT_POINTS
+
+## Minutes an unpaid citation has before it becomes a Fine Evasion crime and sets arrest status. 0 turns fine evasion off.
+MAVERICK_FINE_EVASION_MINUTES 10
