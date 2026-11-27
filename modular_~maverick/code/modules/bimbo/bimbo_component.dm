@@ -356,7 +356,8 @@
 /atom/movable/screen/alert/bimbo_heat
 	name = "Hot and Bothered"
 	desc = "You're all warm and flustered, and it's making it really hard to think. Maybe you should take care of that."
-	icon_state = "hot"
+	icon = 'modular_~maverick/icons/hud/bimbo_alert.dmi'
+	icon_state = "bimbo_heat"
 
 /datum/actionspeed_modifier/bimbo
 	variable = TRUE

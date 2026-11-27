@@ -82,3 +82,8 @@
 /datum/mood_event/bimbo_bliss
 	description = "Thinking about bad stuff is hard, so I just don't."
 	mood_change = 0
+
+/datum/mood_event/bimbo_pulse
+	description = "Everything is so pink and fuzzy and nice!"
+	mood_change = 4
+	timeout = 2 MINUTES
