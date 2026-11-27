@@ -66,3 +66,6 @@ MAVERICK_SPECIES_ENABLED silverscale
 MAVERICK_SPECIES_ENABLED dullahan
 MAVERICK_SPECIES_ENABLED skeleton
 MAVERICK_SPECIES_ENABLED monkey
+
+## Uncomment to bring back the old hexacrocin overdose bimbo trauma. Off by default, the overdose feeds the new bimbo system instead.
+#MAVERICK_LEGACY_BIMBO_TRAUMA

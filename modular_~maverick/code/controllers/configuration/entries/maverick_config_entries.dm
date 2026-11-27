@@ -10,3 +10,6 @@
 
 /// Turns game debugging on when someone connects from localhost with the localhost admin rank on, so runtimes show in the Debug Log chat tab
 /datum/config_entry/flag/maverick_local_debug
+
+/// Turns the old hexacrocin overdose bimbo trauma back on. Off by default, the overdose feeds the bimbo component instead.
+/datum/config_entry/flag/maverick_legacy_bimbo_trauma
