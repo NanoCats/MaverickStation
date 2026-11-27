@@ -74,6 +74,8 @@
 // THOT Accelerator (the bimbo pulse rifle)
 /// Label shown when examining the rifle
 #define COMPANY_LUSTWISH "It has a glossy <b>[span_purple("LustWish")]</b> label on it."
+/// Shots per full pulse rifle cell
+#define BIMBO_RIFLE_SHOTS 100
 /// Bimbonium injected by one brain-melt pulse
 #define BIMBO_PULSE_DOSE 5
 /// Arousal gained the moment a pulse hits
@@ -87,8 +89,8 @@
 #define BIMBO_ID_ASSIGNMENT "Slut"
 
 // Bimbonium, the reagent the pulses inject
-/// Intensity added per life tick while Bimbonium is in your system
-#define BIMBONIUM_INTENSITY_PER_TICK 1
+/// Intensity added per life tick while Bimbonium is in your system. About 3 per pulse, so roughly 30 pulses to max.
+#define BIMBONIUM_INTENSITY_PER_TICK 0.3
 /// Arousal added per life tick while Bimbonium is in your system
 #define BIMBONIUM_AROUSAL_PER_TICK 2
 /// Chance per life tick to take the next makeover step (hair, figure, breasts)

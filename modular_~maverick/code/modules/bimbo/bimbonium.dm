@@ -22,7 +22,7 @@
 	/// TRUE once this overdose has done the full makeover. Once per overdose.
 	var/did_full_makeover = FALSE
 
-// Settings ride along in the reagent data: list("makeover" = TRUE/FALSE, "hair" = color or null, "wardrobe" = TRUE/FALSE)
+// Settings ride along in the reagent data: list("hair" = color or null, "lipstick" = color or null)
 /datum/reagent/drug/aphrodisiac/bimbonium/on_merge(list/mix_data, amount)
 	. = ..()
 	if(islist(mix_data))
@@ -34,7 +34,10 @@
 		return
 	bimbo.adjust_bonus(BIMBONIUM_INTENSITY_PER_TICK)
 	exposed_mob.adjust_arousal(BIMBONIUM_AROUSAL_PER_TICK)
-	if(get_setting("makeover", TRUE) && prob(BIMBONIUM_MAKEOVER_STEP_CHANCE))
+	var/lipstick = get_setting("lipstick")
+	if(lipstick && bimbo.lipstick_color != lipstick)
+		bimbo.lipstick_color = lipstick
+	if(prob(BIMBONIUM_MAKEOVER_STEP_CHANCE))
 		bimbo.makeover_step(get_setting("hair"))
 
 /datum/reagent/drug/aphrodisiac/bimbonium/overdose_start(mob/living/carbon/human/exposed_mob)
@@ -44,7 +47,7 @@
 	to_chat(exposed_mob, span_userlove("So much pink! Your thoughts melt into a warm, giggly haze!"))
 
 /datum/reagent/drug/aphrodisiac/bimbonium/overdose_effects(mob/living/carbon/human/exposed_mob)
-	if(did_full_makeover || !get_setting("wardrobe", TRUE))
+	if(did_full_makeover)
 		return
 	var/datum/component/bimbo/bimbo = exposed_mob.GetComponent(/datum/component/bimbo)
 	if(!bimbo)
