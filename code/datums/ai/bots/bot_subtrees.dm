@@ -149,7 +149,7 @@
 	var/atom/previous_target = controller.blackboard[BB_PREVIOUS_BEACON_TARGET]
 	for(var/obj/machinery/navbeacon/beacon as anything in GLOB.navbeacons["[bot_pawn.z]"])
 		var/dist = get_dist(bot_pawn, beacon)
-		if(beacon == previous_target || dist <= 1)
+		if(beacon == previous_target || dist <= 1 || (beacon in controller.blackboard[BB_BOT_RECENT_BEACONS])) // MAVERICK EDIT - skip recently reached beacons
 			continue
 		if(dist > closest_distance)
 			continue
@@ -207,6 +207,14 @@
 	if(get_dist(controller.pawn, beacon) > 0)
 		return AI_BEHAVIOR_INSTANT
 	controller.set_blackboard_key(BB_PREVIOUS_BEACON_TARGET, beacon)
+	// MAVERICK EDIT BEGIN - remember the last few beacons, so the nearest-beacon fallback can't loop on a broken patrol chain
+	var/list/recent_beacons = controller.blackboard[BB_BOT_RECENT_BEACONS]
+	if(beacon in recent_beacons)
+		controller.remove_thing_from_blackboard_key(BB_BOT_RECENT_BEACONS, beacon)
+	else if(LAZYLEN(recent_beacons) >= BOT_RECENT_BEACON_MEMORY)
+		controller.remove_thing_from_blackboard_key(BB_BOT_RECENT_BEACONS, recent_beacons[1])
+	controller.insert_blackboard_key_lazylist(BB_BOT_RECENT_BEACONS, beacon)
+	// MAVERICK EDIT END
 	controller.clear_blackboard_key(target_key)
 	return AI_BEHAVIOR_INSTANT | AI_BEHAVIOR_SUCCEEDED
 

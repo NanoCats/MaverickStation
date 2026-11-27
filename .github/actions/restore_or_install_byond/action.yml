@@ -44,6 +44,9 @@ runs:
       shell: bash
       run: |
         sudo dpkg --add-architecture i386
+        # MAVERICK EDIT BEGIN - Drop the runner's Microsoft package repo. We do not need it, and when it returns 403 apt-get update fails the whole job.
+        sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list /etc/apt/sources.list.d/microsoft-prod.sources
+        # MAVERICK EDIT END
         sudo apt-get update -qq
         sudo cp ~/apt-cache/*.deb /var/cache/apt/archives/
         sudo apt-get install -y --no-install-recommends libcurl4t64:i386
@@ -59,6 +62,9 @@ runs:
       shell: bash
       run: |
         sudo dpkg --add-architecture i386
+        # MAVERICK EDIT BEGIN - Drop the runner's Microsoft package repo. We do not need it, and when it returns 403 apt-get update fails the whole job.
+        sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list /etc/apt/sources.list.d/microsoft-prod.sources
+        # MAVERICK EDIT END
         sudo apt-get update -qq
         sudo rm -f /var/cache/apt/archives/*.deb
         sudo apt-get install -y -o Keep-Downloaded-Packages=true --no-install-recommends libcurl4t64:i386
