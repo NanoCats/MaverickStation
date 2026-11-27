@@ -46,13 +46,13 @@
 	icon = 'modular_~maverick/icons/hud/spacesuit_cell.dmi'
 	icon_state = "spacesuit_cell_[bar_style]_[lit_rows]"
 
-/// Hover text for the cell bar: percent, plus minutes and seconds left when we know them.
+/// Text under the cell bar: the percent always, with minutes and seconds left above it when given (on hover).
 /atom/movable/screen/spacesuit/proc/maverick_cell_maptext(cell_percent, seconds_left)
 	var/text = "[round(cell_percent, 0.1)]%"
 	if(!isnull(seconds_left))
 		var/whole_seconds = floor(seconds_left)
 		var/secs = whole_seconds % 60
-		text += "<br>[floor(whole_seconds / 60)]:[secs < 10 ? "0" : ""][secs]"
+		text = "[floor(whole_seconds / 60)]:[secs < 10 ? "0" : ""][secs]<br>[text]"
 	return MAPTEXT("<div align='right'>[text]</div>")
 
 /// How far back the MODsuit runtime estimate looks at charge use.
