@@ -74,6 +74,9 @@
 
 /// Does whatever the current mode does to the target.
 /obj/item/tf_toolgun/proc/use_tool_on(atom/target, mob/living/user)
+	// Leave other clicks alone, so the toolgun can still be put on tables and so on
+	if(mode == TF_TOOLGUN_TRANSFORM ? !ishuman(target) : !isitem(target))
+		return NONE
 	if(!COOLDOWN_FINISHED(src, use_cooldown) || busy)
 		balloon_alert(user, "recharging!")
 		return ITEM_INTERACT_BLOCKING
