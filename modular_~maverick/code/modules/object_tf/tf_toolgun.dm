@@ -162,7 +162,7 @@
 	new_shape.forceMove(get_turf(victim))
 	victim.AddComponent(/datum/component/object_tf, new_shape)
 	new_shape.visible_message(span_userlove("[victim] is now [new_shape]!"))
-	to_chat(victim, span_userlove("You are [new_shape] now. You can still talk. Use Resist to wriggle free."))
+	to_chat(victim, span_userlove("You are [new_shape] now. You can still talk. The OOC Safe Word verb lets you out at any time."))
 	log_combat(user, victim, "turned into [new_shape] ([new_shape.type])", src)
 
 /obj/item/tf_toolgun/proc/try_restore(atom/target, mob/user)
